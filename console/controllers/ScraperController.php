@@ -73,7 +73,7 @@ class ScraperController extends Controller
 		}
 		
 		if(!$url){
-			return $this->log("ERROR! Could not find the image for some reason...");
+			echo $this->log("ERROR! Could not find the image for some reason...");
 		}
 		
 		$strip = new ComicStrip();
@@ -82,9 +82,9 @@ class ScraperController extends Controller
 		$strip->img = new \MongoBinData(file_get_contents($url));
 		
 		if(!$strip->save()){
-			return $this->log("ERROR! model could not save because: " . var_export($strip->getErrors(), true));
+			echo $this->log("ERROR! model could not save because: " . var_export($strip->getErrors(), true));
 		}
 		
-		return $this->log("SUCCESS! Strip was downloaded");
+		echo $this->log("SUCCESS! Strip was downloaded");
 	}
 }
