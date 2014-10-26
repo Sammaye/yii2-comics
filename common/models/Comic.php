@@ -4,6 +4,8 @@ namespace common\models;
 
 use Yii;
 use yii\mongodb\ActiveRecord;
+use yii\data\ActiveDataProvider;
+use MongoRegex;
 
 class Comic extends ActiveRecord
 {
@@ -14,11 +16,7 @@ class Comic extends ActiveRecord
 	{
 		return [
 			'timestamp' => [
-				'class' => 'yii\behaviors\TimestampBehavior',
-				'attributes' => [
-					ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
-					ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
-				],
+				'class' => 'yii\behaviors\TimestampBehavior'
 			],
 		];
 	}
@@ -33,6 +31,19 @@ class Comic extends ActiveRecord
 	public function rules()
 	{
 		return [
+			[
+				[
+					'_id', 
+					'title', 
+					'slug', 
+					'description', 
+					'abstract', 
+					'updated_at', 
+					'created_at'
+				], 
+				'safe', 
+				'on' => 'search'
+			]
 		];
 	}
 	
@@ -47,5 +58,30 @@ class Comic extends ActiveRecord
 			'updated_at',
 			'created_at'
 		];
-	}	
+	}
+	
+	public function search()
+	{
+		foreach($this->attributes() as $field){
+			$this->$field = null;
+		}
+		if($get = Yii::$app->getRequest()->get('Comic')){
+			$this->attributes = $get;
+		}
+		
+		$query = static::find();
+		$query->filterWhere([
+			'_id' => new \MongoId($this->_id),
+			'title' => new MongoRegex("/$this->title/"),
+			'slug' => new MongoRegex("/$this->slug/"),
+			'description' => new MongoRegex("/$this->description/"),
+			'abstract' => new MongoRegex("/$this->abstract/"),
+			'created_at' => $this->created_at,
+			'updated_at' => $this->updated_at
+		]);
+		
+		return new ActiveDataProvider([
+			'query' => $query
+		]);
+	}
 }
