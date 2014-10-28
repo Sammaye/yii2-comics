@@ -38,9 +38,9 @@ class ComicController extends Controller
 	public function actionCreate()
 	{
 		$model = new Comic;
-		if($model->load()){
+		if($model->load($_POST)){
 			if($model->save()){
-				return Yii::$app->getResponse()->redirect(['update', 'id' => (string)$model->_id]);
+				return Yii::$app->getResponse()->redirect(['comic/update', 'id' => (string)$model->_id]);
 			}
 		}
 		return $this->render('create', ['model' => $model]);

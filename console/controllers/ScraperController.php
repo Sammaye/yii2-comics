@@ -31,7 +31,7 @@ class ScraperController extends Controller
 			
 			if($httpCode == 200){
 				echo $this->log("IT'S HERE IT'S HERE !!!!111");
-				$this->get($date->format('Y'), $date->format('m'), $date->format('d'));
+				$this->actionGet($date->format('Y'), $date->format('m'), $date->format('d'));
 				break;
 			}else{
 				echo $this->log("still not there");
@@ -51,6 +51,7 @@ class ScraperController extends Controller
 		}
 		
 		$ch = curl_init();
+		curl_setopt($curl, CURLOPT_USERAGENT, 'Googlebot/2.1 (http://www.googlebot.com/bot.html)');
 		curl_setopt($ch, CURLOPT_URL, 'http://garfield.com/comic/' . $date->format('Y-m-d'));
 		curl_setopt($ch, CURLOPT_HEADER, false);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
