@@ -23,14 +23,7 @@ class Comic extends ActiveRecord
 			],
 		];
 	}
-	
-	/*
-	public function collectionName()
-	{
-		return 'strips';'
-	}
-	*/
-	
+
 	public function rules()
 	{
 		return [
@@ -38,6 +31,7 @@ class Comic extends ActiveRecord
 			['slug', 'string', 'max' => 250],
 			['description', 'string', 'max' => 1500],
 			['abstract', 'string', 'max' => 250],
+			['scrape_url', 'string', 'max' => 250],
 			[
 				[
 					'_id', 
@@ -62,6 +56,7 @@ class Comic extends ActiveRecord
 			'slug',
 			'description',
 			'abstract',
+			'scrape_url',
 			'updated_at',
 			'created_at'
 		];
@@ -86,7 +81,6 @@ class Comic extends ActiveRecord
 		}
 		
 		$query = static::find();
-		
 		$query->filterWhere([
 			'_id' => $this->_id ? new \MongoId($this->_id) : null,
 			'title' => $this->title ? new MongoRegex("/$this->title/") : null,

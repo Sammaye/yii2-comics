@@ -60,7 +60,7 @@ use yii\db\Expression;
  * @author Alexander Kochetov <creocoder@gmail.com>
  * @since 2.0
  */
-class TimestampBehavior extends AttributeBehavior
+class MongoTimestampBehavior extends AttributeBehavior
 {
 	/**
 	 * @var string the attribute that will receive timestamp value
