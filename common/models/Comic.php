@@ -31,6 +31,9 @@ class Comic extends ActiveRecord
 			['description', 'string', 'max' => 1500],
 			['abstract', 'string', 'max' => 250],
 			['scrape_url', 'string', 'max' => 250],
+			['homepage', 'url'],
+			['date_format', 'validateDateFormat'],
+			['date_format', 'default', 'value' => 'Y-m-d'],
 			[
 				[
 					'_id', 
@@ -56,6 +59,8 @@ class Comic extends ActiveRecord
 			'description',
 			'abstract',
 			'scrape_url',
+			'homepage',
+			'date_format',
 			'updated_at',
 			'created_at'
 		];
@@ -68,6 +73,17 @@ class Comic extends ActiveRecord
 			$this->abstract = StringHelper::truncate($this->description, 150);
 		}
 		return parent::beforeSave($insert);
+	}
+	
+	public function validateDateFormat($attribute, $params)
+	{
+		if(
+			preg_match('/[d]/i', $this->$attribute) <= 0 || 
+			preg_match('/[m]/i', $this->$attribute) <= 0 || 
+			preg_match('/[y]/i', $this->$attribute) <= 0
+		){
+			$this->addError($attribute, 'The date format must be valid to PHP standards.');
+		}
 	}
 	
 	public function getStrips()

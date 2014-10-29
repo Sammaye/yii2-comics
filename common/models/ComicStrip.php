@@ -69,7 +69,7 @@ class ComicStrip extends ActiveRecord
 		
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_USERAGENT, 'Googlebot/2.1 (http://www.googlebot.com/bot.html)');
-		curl_setopt($ch, CURLOPT_URL, $this->comic->scrape_url . $date->format('Y-m-d'));
+		curl_setopt($ch, CURLOPT_URL, $this->comic->scrape_url . $date->format($this->comic->date_format));
 		curl_setopt($ch, CURLOPT_HEADER, false);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		$body = curl_exec($ch);
