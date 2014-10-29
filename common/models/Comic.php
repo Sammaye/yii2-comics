@@ -5,7 +5,6 @@ namespace common\models;
 use Yii;
 use yii\mongodb\ActiveRecord;
 use yii\data\ActiveDataProvider;
-use MongoRegex;
 use yii\helpers\Inflector;
 use yii\helpers\StringHelper;
 
@@ -64,11 +63,16 @@ class Comic extends ActiveRecord
 	
 	public function beforeSave($insert)
 	{
-		if($insert){
-			$this->slug = Inflector::slug($this->title);
+		$this->slug = Inflector::slug($this->title);
+		if($this->isAttributeChanged('description') || $insert){
 			$this->abstract = StringHelper::truncate($this->description, 150);
 		}
 		return parent::beforeSave($insert);
+	}
+	
+	public function getStrips()
+	{
+		return $this->hasMany('common\models\ComicStrip', ['comic_id' => '_id']);
 	}
 	
 	public function search()
@@ -83,10 +87,10 @@ class Comic extends ActiveRecord
 		$query = static::find();
 		$query->filterWhere([
 			'_id' => $this->_id ? new \MongoId($this->_id) : null,
-			'title' => $this->title ? new MongoRegex("/$this->title/") : null,
-			'slug' => $this->slug ? new MongoRegex("/$this->slug/") : null,
-			'description' => $this->description ? new MongoRegex("/$this->description/") : null,
-			'abstract' => $this->abstract ? new MongoRegex("/$this->abstract/") : null,
+			'title' => $this->title ? new \MongoRegex("/$this->title/") : null,
+			'slug' => $this->slug ? new \MongoRegex("/$this->slug/") : null,
+			'description' => $this->description ? new \MongoRegex("/$this->description/") : null,
+			'abstract' => $this->abstract ? new \MongoRegex("/$this->abstract/") : null,
 			'created_at' => $this->created_at,
 			'updated_at' => $this->updated_at
 		]);

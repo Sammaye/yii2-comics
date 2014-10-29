@@ -46,5 +46,6 @@ return [
 		        // your rules go here
 	        ]
         ],
+        'formatter' => ['class' => 'common\components\Formatter'],
     ],
 ];

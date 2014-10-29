@@ -51,7 +51,7 @@ class ScraperController extends Controller
 		}
 		
 		$ch = curl_init();
-		curl_setopt($curl, CURLOPT_USERAGENT, 'Googlebot/2.1 (http://www.googlebot.com/bot.html)');
+		curl_setopt($ch, CURLOPT_USERAGENT, 'Googlebot/2.1 (http://www.googlebot.com/bot.html)');
 		curl_setopt($ch, CURLOPT_URL, 'http://garfield.com/comic/' . $date->format('Y-m-d'));
 		curl_setopt($ch, CURLOPT_HEADER, false);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

@@ -5,11 +5,15 @@ use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 
 ?>
-<?php $form = ActiveForm::begin() ?>
+<?php $form = ActiveForm::begin(['enableClientValidation' => false]) ?>
 <?= $form->errorSummary($model) ?>
 <?= $form->field($model, 'title') ?>
-<?= $form->field($model, 'description') ?>
+<?= $form->field($model, 'description')->textarea() ?>
 <?= $form->field($model, 'slug') ?>
 <?= $form->field($model, 'abstract') ?>
-<?= Html::submitButton('Create Comic', ['class' => 'btn btn-success']) ?>
+<?= $form->field($model, 'scrape_url') ?>
+<?= Html::submitButton(
+	$model->getIsNewRecord() ? 'Create Comic' : 'Update Comic', 
+	['class' => 'btn btn-success']
+) ?>
 <?php $form->end() ?>

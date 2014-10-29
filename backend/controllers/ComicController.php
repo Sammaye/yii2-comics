@@ -7,6 +7,7 @@ use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use common\models\Comic;
+use common\models\ComicStrip;
 
 class ComicController extends Controller
 {
@@ -49,6 +50,14 @@ class ComicController extends Controller
 	public function actionUpdate($id)
 	{
 		if($model = Comic::find()->where(['_id' => new \MongoId($id)])->one()){
+			
+			if($model->load($_POST)){
+				if($model->save()){
+					Yii::$app->getSession()->setFlash('success', 'The record was saved');
+					return $this->redirect(['comic/update', 'id' => $id]);
+				}
+			}
+			
 			return $this->render('update', ['model' => $model]);
 		}else{
 			throw new NotFoundHttpException();
@@ -57,10 +66,16 @@ class ComicController extends Controller
 	
 	public function actionDelete($id)
 	{
-		if(Comic::deleteAll('id=:id', [':id' => $id])){
-			return Yii::$app->getResponse()->redirect(['index']);
-		}else{
-			// Prolly show an error
+		if(
+			($model = Comic::find()->where(['_id' => new \MongoId($id)])->one()) && 
+			($model->delete())
+		){
+			ComicStrip::deleteAll(['comic_id' => $model->_id]);
+			
+			Yii::$app->getSession()->setFlash('success', 'That comic was deleted');
+			return Yii::$app->getResponse()->redirect(['comic/index']);
 		}
+		Yii::$app->getSession()->setFlash('error', 'That comic could not be deleted');
+		return Yii::$app->getResponse()->redirect(['comic/index']);
 	}
 }

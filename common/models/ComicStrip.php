@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use yii\mongodb\ActiveRecord;
+use yii\data\ActiveDataProvider;
 
 class ComicStrip extends ActiveRecord
 {
@@ -23,10 +24,10 @@ class ComicStrip extends ActiveRecord
 	public function rules()
 	{
 		return [
-			[['comic_id', 'url', 'date'], 'required'],
+			[['comic_id', 'date'], 'required'],
 			['comic_id', 'common\components\MongoIdValidator'],
 			['url', 'string', 'max' => 250],
-			['date', 'common\components\MongoDateValidator'],
+			['date', 'common\components\MongoDateValidator', 'format' => 'php:d/m/Y'],
 			['date', 'unique', 'targetAttribute' => ['date', 'comic_id']],
 			[
 				[
@@ -58,13 +59,16 @@ class ComicStrip extends ActiveRecord
 	
 	public function getComic()
 	{
-		return $this->hasOne('common\models\ComicStrip', ['comic_id' => '_id']);
+		return $this->hasOne('common\models\Comic', ['_id' => 'comic_id']);
 	}
 	
 	public function getRemoteImage()
 	{
+		$date = new \DateTime();
+		$date->setDate(date('Y', $this->date->sec), date('m', $this->date->sec), date('d', $this->date->sec));
+		
 		$ch = curl_init();
-		curl_setopt($curl, CURLOPT_USERAGENT, 'Googlebot/2.1 (http://www.googlebot.com/bot.html)');
+		curl_setopt($ch, CURLOPT_USERAGENT, 'Googlebot/2.1 (http://www.googlebot.com/bot.html)');
 		curl_setopt($ch, CURLOPT_URL, $this->comic->scrape_url . $date->format('Y-m-d'));
 		curl_setopt($ch, CURLOPT_HEADER, false);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -87,6 +91,18 @@ class ComicStrip extends ActiveRecord
 		}
 		return $url;
 	}
+
+	public function populateRemoteImage()
+	{
+		if(!$this->url){
+			$this->url = $this->getRemoteImage();
+		}
+		if($binary = file_get_contents($this->url)){
+			$this->img = new \MongoBinData($binary);
+			return true;
+		}
+		return false;
+	}
 	
 	public function search($comic_id)
 	{
@@ -96,13 +112,13 @@ class ComicStrip extends ActiveRecord
 		if($get = Yii::$app->getRequest()->get('ComicStrip')){
 			$this->attributes = $get;
 		}
-	
+
 		$query = static::find();
 		$query->filterWhere([
 			'_id' => $this->_id ? new \MongoId($this->_id) : null,
-			'comic_id' => $this->comic_id ? new \MongoId($this->comic_id) : null,
-			'url' => $this->title ? new \MongoRegex("/$this->url/") : null,
-			'date' => $this->description ? new \MongoDate($this->date) : null,
+			'comic_id' => $comic_id,
+			'url' => $this->url ? new \MongoRegex("/$this->url/") : null,
+			'date' => $this->date ? new \MongoDate($this->date) : null,
 			'created_at' => $this->created_at,
 			'updated_at' => $this->updated_at
 		]);

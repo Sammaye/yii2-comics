@@ -13,5 +13,21 @@ $this->title = 'Administrate Comics';
 <?= GridView::widget([
 	'dataProvider' => $model->search(),
 	'filterModel' => $model,
-	'columns' => $model->attributes(),
+	'columns' => [
+		'_id',
+		'title',
+		'abstract',
+		[
+			'attribute' => 'updated_at',
+			'format' => 'date'
+		],
+		[
+			'attribute' => 'created_at',
+			'format' => 'date'
+		],
+		[
+			'class' => 'yii\grid\ActionColumn',
+			'template' => '{update} {delete}',
+		]
+	],
 ]) ?>
