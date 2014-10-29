@@ -13,6 +13,7 @@ class SignupForm extends Model
     public $username;
     public $email;
     public $password;
+    public $role;
 
     /**
      * @inheritdoc
@@ -29,6 +30,10 @@ class SignupForm extends Model
             ['email', 'required'],
             ['email', 'email'],
             ['email', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This email address has already been taken.'],
+            
+            ['role', 'string'],
+            ['role', 'default', 'value' => 'user'],
+            ['role', 'in', 'range' => [User::ROLE_USER, User::ROLE_STAFF, User::ROLE_AFFILIATE, User::ROLE_ADMIN, User::ROLE_GOD]],
 
             ['password', 'required'],
             ['password', 'string', 'min' => 6],
@@ -46,6 +51,7 @@ class SignupForm extends Model
             $user = new User();
             $user->username = $this->username;
             $user->email = $this->email;
+            $user->role = $this->role;
             $user->setPassword($this->password);
             $user->generateAuthKey();
             $user->save();

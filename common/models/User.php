@@ -6,6 +6,7 @@ use yii\base\NotSupportedException;
 use yii\mongodb\ActiveRecord;
 use yii\base\Security;
 use yii\web\IdentityInterface;
+use yii\data\ActiveDataProvider;
 
 /**
  * User model
@@ -32,6 +33,8 @@ class User extends ActiveRecord implements IdentityInterface
 	const ROLE_STAFF = 'staff';
 	const ROLE_ADMIN = 'admin';
 	const ROLE_GOD = 'god';
+	
+	public $newPassword;
 
     /**
      * @inheritdoc
@@ -59,7 +62,23 @@ class User extends ActiveRecord implements IdentityInterface
              ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
 
              ['role', 'default', 'value' => self::ROLE_USER],
-             ['role', 'in', 'range' => [self::ROLE_USER]],
+             ['role', 'in', 'range' => [self::ROLE_USER, self::ROLE_STAFF, self::ROLE_AFFILIATE, self::ROLE_ADMIN, self::ROLE_GOD]],
+             
+             ['newPassword', 'string', 'max' => 20, 'min' => 7],
+             
+             [
+             	[
+             		'_id',
+					'username',
+					'email',
+					'role',
+					'status',
+					'updated_at',
+					'created_at'
+				],
+             	'safe',
+             	'on' => 'search'
+       		]
          ];
      }
      
@@ -77,6 +96,14 @@ class User extends ActiveRecord implements IdentityInterface
 			'created_at',
 			'updated_at',
      	];
+     }
+     
+     public function beforeSave($insert)
+     {
+     	if($this->newPassword){
+     		$this->setPassword($this->newPassword);
+     	}
+     	return parent::beforeSave($insert);
      }
 
     /**
@@ -117,8 +144,8 @@ class User extends ActiveRecord implements IdentityInterface
 			return null;
 		}
 		return static::findOne([ 
-				'password_reset_token' => $token,
-				'status' => self::STATUS_ACTIVE 
+			'password_reset_token' => $token,
+			'status' => self::STATUS_ACTIVE 
 		]);
 	}
 	
@@ -205,5 +232,30 @@ class User extends ActiveRecord implements IdentityInterface
     public function removePasswordResetToken()
     {
         $this->password_reset_token = null;
+    }
+    
+    public function search()
+    {
+    	foreach($this->attributes() as $field){
+    		$this->$field = null;
+    	}
+    	if($get = Yii::$app->getRequest()->get('Comic')){
+    		$this->attributes = $get;
+    	}
+    
+    	$query = static::find();
+    	$query->filterWhere([
+    		'_id' => $this->_id ? new \MongoId($this->_id) : null,
+    		'username' => $this->username ? new \MongoRegex("/$this->username/") : null,
+    		'email' => $this->email ? new \MongoRegex("/$this->email/") : null,
+    		'role' => $this->role,
+    		'status' => $this->status,
+    		'created_at' => $this->created_at,
+    		'updated_at' => $this->updated_at
+    	]);
+    
+    	return new ActiveDataProvider([
+    		'query' => $query
+    	]);
     }
 }
