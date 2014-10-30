@@ -43,6 +43,7 @@ return [
 		        '<controller:[\w-]+>/<id:[\d\w]{24,}>'=>'<controller>/view',
 		        '<controller:[\w-]+>/<action:[\w-]+>/<id:[\d\w]{24,}>'=>'<controller>/<action>',
 		        '<controller:[\w-]+>/<action:[\w-]+>'=>'<controller>/<action>',
+		        'comic/<id:[\d\w]{24,}>/<date:.[^/]*>'=>'comic/view',
 		        // your rules go here
 	        ]
         ],
