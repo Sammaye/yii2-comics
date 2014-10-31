@@ -18,6 +18,7 @@ class ComicController extends Controller
 	{
 		$this->layout = 'tabbedComics';
 		
+		$comic = null;
 		if(!$id){
 			$comic = Comic::find()->orderBy(['title' => SORT_ASC])->one();
 		}
