@@ -11,16 +11,21 @@ class ComicController extends Controller
 {
 	public function actionIndex()
 	{
-		
+		return $this->actionView();
 	}
 	
 	public function actionView($id = null, $date = null)
 	{
+		$this->layout = 'tabbedComics';
+		
 		if(!$id){
-			return Yii::$app->getResponse()->redirect(['comic/index']);
+			$comic = Comic::find()->orderBy(['title' => SORT_ASC])->one();
 		}
 		
-		if(!($comic = Comic::find()->where(['_id' => new \MongoId($id)])->one())){
+		if(
+			(!$comic) &&
+			(!($comic = Comic::find()->where(['_id' => new \MongoId($id)])->one()))
+		){
 			return $this->render('comicNotFound');
 		}
 		
@@ -35,7 +40,12 @@ class ComicController extends Controller
 			// No date, get latest
 			$comicStrip = ComicStrip::find()->where(['comic_id' => $comic->_id])->orderBy(['date' => SORT_DESC])->one();
 		}else{
-			return $this->render('comicStripNotFound', ['model' => $comic]);
+			$comicStrip = new ComicStrip();
+			$comicStrip->comic_id = $comic->_id;
+			$comicStrip->date = date($coomic->date_format, strtotime($date));
+			if(!$comicStrip->populateRemoteImage() && !$comicStrip->save()){
+				return $this->render('comicStripNotFound', ['model' => $comic]);
+			}
 		}
 		
 		return $this->render('view', ['model' => $comic, 'comicStrip' => $comicStrip]);
