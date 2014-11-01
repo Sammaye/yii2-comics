@@ -29,12 +29,12 @@ AppAsset::register($this);
                 'brandLabel' => 'c!y',
                 'brandUrl' => Yii::$app->homeUrl,
                 'options' => [
-                    'class' => 'navbar-inverse navbar-fixed-top',
+                    'class' => 'navbar navbar-fixed-top',
                 ],
             ]);
             $menuItems = [
             	['label' => 'View Comics', 'url' => ['/comic']],
-                ['label' => 'About', 'url' => ['/site/about']],
+                ['label' => 'FAQ', 'url' => ['/site/faq']],
             ];
             if (Yii::$app->user->isGuest) {
                 $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];

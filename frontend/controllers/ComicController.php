@@ -30,6 +30,10 @@ class ComicController extends Controller
 			return $this->render('comicNotFound');
 		}
 		
+		if(!$date){
+			$date = date('d-m-Y');
+		}
+		
 		$comicStrip = null;
 		if(
 			$date && 
@@ -37,18 +41,14 @@ class ComicController extends Controller
 			($comicStrip = ComicStrip::find()->where(['date' => new \MongoDate(strtotime($date))])->one())
 		){
 			// We found our strip
-		}elseif(!$date){
-			// No date, get latest
-			$comicStrip = ComicStrip::find()->where(['comic_id' => $comic->_id])->orderBy(['date' => SORT_DESC])->one();
 		}else{
 			$comicStrip = new ComicStrip();
 			$comicStrip->comic_id = $comic->_id;
-			$comicStrip->date = date($coomic->date_format, strtotime($date));
-			if(!$comicStrip->populateRemoteImage() && !$comicStrip->save()){
+			$comicStrip->date = new \MongoDate(strtotime($date));
+			if(!$comicStrip->populateRemoteImage() || !$comicStrip->save()){
 				return $this->render('comicStripNotFound', ['model' => $comic]);
 			}
 		}
-		
-		return $this->render('view', ['model' => $comic, 'comicStrip' => $comicStrip]);
+		return $this->render('view', ['model' => $comic, 'comicStrip' => $comicStrip, 'date' => $date]);
 	}
 }

@@ -16,5 +16,5 @@ $this->beginContent('@app/views/layouts/main.php'); ?>
 	);
 } ?>
 </ul>
-<div style="border:1px solid #ddd; border-top:0; background:#fff;"><?= $content ?></div>
+<div class="view-comic-content"><?= $content ?></div>
 <?php $this->endContent() ?>

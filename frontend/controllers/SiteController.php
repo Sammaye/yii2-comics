@@ -106,9 +106,9 @@ class SiteController extends Controller
         return $this->goHome();
     }
 
-    public function actionAbout()
+    public function actionFaq()
     {
-        return $this->render('about');
+        return $this->render('faq');
     }
 
     public function actionSignup()
