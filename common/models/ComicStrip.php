@@ -5,9 +5,14 @@ namespace common\models;
 use Yii;
 use yii\mongodb\ActiveRecord;
 use yii\data\ActiveDataProvider;
+use common\components\Mongo;
+use common\models\Comic;
 
 class ComicStrip extends ActiveRecord
 {
+	public $isFirstStrip = null;
+	public $isLastStrip = null;
+	
 	/**
 	 * @inheritdoc
 	 */
@@ -60,6 +65,41 @@ class ComicStrip extends ActiveRecord
 	public function getComic()
 	{
 		return $this->hasOne('common\models\Comic', ['_id' => 'comic_id']);
+	}
+	
+	public function getIsFirstStrip()
+	{
+		if($this->isFirstStrip === null){
+			if($comicStrip = ComicStrip::find()->where()->orderBy(['date' => SORT_DESC])->one()){
+				if(Mongo::date($this->date) != Mongo::date($comicStrip->date)){
+					$this->isFirstStrip = false;
+				}else{
+					$this->isFirstStrip = true;
+				}
+			}else{
+				$this->isFirstStrip = true;
+			}
+		}
+		return $this->isFirstStrip;
+	}
+	
+	public function getIsLastStrip()
+	{
+		if($this->isLastStrip === null){
+			if(
+				(Mongo::date($this->date) == Mongo::date(new \MongoDate)) || 
+				($comicStrip = ComicStrip::find()->where()->orderBy(['date' => SORT_ASC])->one())
+			){
+				if(Mongo::date($this->date) != Mongo::date($comicStrip->date)){
+					$this->isLastStrip = false;
+				}else{
+					$this->isLastStrip = true;
+				}
+			}else{
+				$this->isLastStrip = true;
+			}
+		}
+		return $this->isLastStrip;
 	}
 	
 	public function getRemoteImage()

@@ -17,11 +17,11 @@ $this->params['comic_id'] = (String)$model->_id;
 <?php if($model->description){
 	echo Html::tag('p', $model->description);
 } ?>
-<a href="" class="btn btn-primary">Subscribe</a>
+<a href="" class="btn btn-primary">Add to my email</a>
+<div class="comic-date-picker">
 <div>
-<div class="">
-  <a href="" class="btn btn-lg btn-default">&laquo;</a>
-  <input type="text" class="form-control input-lg" id="datepicker" style='width:auto;' value="<?= $date ?>" />
+  <a href="" disabled="disabled" class="btn btn-lg btn-default">&laquo;</a>
+  <input type="text" class="form-control input-lg" id="datepicker" value="<?= $date ?>" />
   <a href="" class="btn btn-lg btn-default">&raquo;</a>
 </div>
 </div>
