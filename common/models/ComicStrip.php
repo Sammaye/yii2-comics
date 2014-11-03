@@ -70,7 +70,7 @@ class ComicStrip extends ActiveRecord
 	public function getIsFirstStrip()
 	{
 		if($this->isFirstStrip === null){
-			if($comicStrip = ComicStrip::find()->where()->orderBy(['date' => SORT_DESC])->one()){
+			if($comicStrip = ComicStrip::find()->orderBy(['date' => SORT_ASC])->one()){
 				if(Mongo::date($this->date) != Mongo::date($comicStrip->date)){
 					$this->isFirstStrip = false;
 				}else{
@@ -86,10 +86,9 @@ class ComicStrip extends ActiveRecord
 	public function getIsLastStrip()
 	{
 		if($this->isLastStrip === null){
-			if(
-				(Mongo::date($this->date) == Mongo::date(new \MongoDate)) || 
-				($comicStrip = ComicStrip::find()->where()->orderBy(['date' => SORT_ASC])->one())
-			){
+			if(Mongo::date($this->date) == Mongo::date(new \MongoDate)){
+				$this->isLastStrip = true;
+			}elseif(($comicStrip = ComicStrip::find()->orderBy(['date' => SORT_DESC])->one())){
 				if(Mongo::date($this->date) != Mongo::date($comicStrip->date)){
 					$this->isLastStrip = false;
 				}else{
@@ -123,6 +122,10 @@ class ComicStrip extends ActiveRecord
 		
 		$el = $doc->getElementById('comic_wrap');
 		
+		if(!$el){
+			return null;
+		}
+		
 		$url = null;
 		foreach($el->childNodes as $child){
 			if($child instanceof \DOMElement && $child->tagName == 'img'){
@@ -137,7 +140,7 @@ class ComicStrip extends ActiveRecord
 		if(!$this->url){
 			$this->url = $this->getRemoteImage();
 		}
-		if($binary = file_get_contents($this->url)){
+		if(($this->url) && ($binary = file_get_contents($this->url))){
 			$this->img = new \MongoBinData($binary);
 			return true;
 		}

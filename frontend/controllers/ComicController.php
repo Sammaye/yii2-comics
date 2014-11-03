@@ -49,6 +49,18 @@ class ComicController extends Controller
 				return $this->render('comicStripNotFound', ['model' => $comic]);
 			}
 		}
+		
+		if(
+			($oldDate = new \MongoDate(strtotime("-1 day", $comicStrip->date->sec))) && 
+			!($oldComicStrip = ComicStrip::find()->where(['date' => $oldDate])->one())
+		){
+			$nextComicStrip = new ComicStrip();
+			$nextComicStrip->comic_id = $comic->_id;
+			$nextComicStrip->date = new \MongoDate(strtotime("-1 day", $comicStrip->date->sec));
+			if($nextComicStrip->populateRemoteImage()){
+				$nextComicStrip->save();
+			}
+		}
 		return $this->render('view', ['model' => $comic, 'comicStrip' => $comicStrip, 'date' => $date]);
 	}
 }

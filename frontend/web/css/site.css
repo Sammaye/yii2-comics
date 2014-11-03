@@ -11,6 +11,10 @@ body {
 	background:#f8f8f8;
 }
 
+.wrap-white{
+	background:#fff;
+}
+
 .wrap > .container {
     padding: 70px 15px 20px;
 }

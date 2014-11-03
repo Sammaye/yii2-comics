@@ -1,5 +1,7 @@
 <?php
 
+namespace common\components;
+
 use Yii;
 
 class Mongo
