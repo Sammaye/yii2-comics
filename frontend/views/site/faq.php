@@ -9,23 +9,36 @@ $this->title = 'Frequently Asked Questions';
 $this->params['wrapClass'] = 'wrap-white';
 
 $this->registerJs("
-$('#myAffix').affix({
-		  offset: {
-    top: 100,
-    bottom: function () {
-      return (this.bottom = $('.footer').outerHeight(true))
-    }
-  }
-})
+
 ")
 ?>
 <div class="site-faq">
 <h1 class="text-muted"><?= Html::encode($this->title) ?></h1>
 <div class="row">
-<div class="col-sm-12"><div id="myAffix"></div></div>
+<div class="col-sm-12"><div id="faqAffix" class="faq-affix">
+<div class="panel panel-default">
+  <div class="panel-heading">FAQ Contents</div>
+  <div class="panel-body">
+<a href="#what-is-site">What is this site?</a>
+<a href="#is-it-free">Is it free?</a>
+<a href="#supported-comics">What comics do you support?</a>
+<a href="#add-comics">What can I do to get a comic I like put into my email?</a>
+<a href="#why">Why did you create this site?</a>
+<a href="#cookies">Does this site use cookies?</a>
+<a href="#profit">Does this site earn money?</a>
+<a href="#copyright">Are you breaking copyright?</a>
+<a href="#use-service">I am a comic author...can I use your service?</a>
+<a href="#earn-money">Can I earn money from my cartoon on your network?</a>
+<a href="#dmca">I want to sue/DMCA you!</a>
+<a href="#terms">Terms & Conditions</a>
+  </div>
+</div>
+
+</div></div>
 <div class="col-sm-36">
 
 <div class="faq-item">
+<span id="what-is-site" class="head-anchor"></span>
 <h2>What is this site?</h2>
 <p>This site is a new comic destribution service I made for my own personal use which I have decided to release to the general internet community.</p>
 <p>Essentially it allows you batch, for free, your daily comics across the internet and have them sent directly to your inbox.</p>
@@ -33,12 +46,14 @@ $('#myAffix').affix({
 </div>
 
 <div class="faq-item">
+<span id="is-it-free" class="head-anchor"></span>
 <h2>Is it free?</h2>
 <p>Yes.</p>
 <p>I have no intention on charging for this, nor ever.</p>
 </div>
 
 <div class="faq-item">
+<span id="supported-comics" class="head-anchor"></span>
 <h2>What comics do you support?</h2>
 <p>Currently only my personal favourites:</p>
 <ul>
@@ -51,6 +66,7 @@ $('#myAffix').affix({
 </div>
 
 <div class="faq-item">
+<span id="add-comics" class="head-anchor"></span>
 <h2>What can I do to get a comic I like put into my email?</h2>
 <p>You can do it one of two ways, depending on who you are:</p>
 <ul>
@@ -63,6 +79,7 @@ is one of these, however, I must state in that case it is unlikely I can add it 
 </div>
 
 <div class="faq-item">
+<span id="why" class="head-anchor"></span>
 <h2>Why did you create this site?</h2>
 <p>Personal use.</p>
 <p>I am a big fan of certain comics:- Dilbert, Garfield, US Acres and xkcd, to name a few. When I tried to "subscribe" I found that either they didn't have a function 
@@ -79,6 +96,7 @@ and not them instead.</p>
 </div>
 
 <div class="faq-item">
+<span id="cookies" class="head-anchor"></span>
 <h2>Does this site use cookies?</h2>
 <p>Name me a site that allows login and a user account section that doesn't and is slightly secure...</p>
 <p>In other words: yes.</p>
@@ -93,6 +111,7 @@ and not them instead.</p>
 </div>
 
 <div class="faq-item">
+<span id="profit" class="head-anchor"></span>
 <h2>Does this site earn money?</h2>
 <p>No.</p>
 <p>This site is non-profit. It makes no money from its services, no even in advertising.</p>
@@ -102,6 +121,7 @@ third party pressure causes me to pay a significant amount.</p
 </div>
 
 <div class="faq-item">
+<span id="copyright" class="head-anchor"></span>
 <h2>Are you breaking copyright?</h2>
 <p>I am not pretending to have ownership over these cartoons nor do I claim to be their author. Instead I am just an average guy who wanted to get his daily dose of 
 cartoon fever in a easy to manage email subscription.</p>
@@ -110,6 +130,7 @@ cartoon fever in a easy to manage email subscription.</p>
 </div>
 
 <div class="faq-item">
+<span id="use-service" class="head-anchor"></span>
 <h2>I am a comic author...can I use your service?</h2>
 <p><b>That would be...AWESOME!</b></p>
 <p>However, the necessary parts are not yet there. I would have to implement a method by which you can feed a list into my service to mail to.</p>
@@ -121,6 +142,7 @@ me know by emailing me</a> and I would be quite excited to work wth you.</p>
 </div>
 
 <div class="faq-item">
+<span id="earn-money" class="head-anchor"></span>
 <h2>Can I earn money from my cartoon on your network?</h2>
 <p>Not currently, however, if this were to become serious I would look into allowing royalties and for cartoonists to advertise their books/merchandise.</p>
 <p>I am reluctant to allow paid ads within emails like they do in Dilbert emails since those ads really suck and have no reference to those who actually 
@@ -128,12 +150,14 @@ read Dilbert. I mean seriously; why would I want to see some random, spammy look
 </div>
 
 <div class="faq-item">
+<span id="dmca" class="head-anchor"></span>
 <h2>I want to sue/DMCA you!</h2>
 <p>This is nopthing more than a pesonal project that I have shared to others who might be interested in it, however, if you really want 
 to go ahead with this you <a href="mailto:before_i_sleep@hotmail.co.uk?subject=DMCA or Sueing">can email me about it</a>.</p>
 </div>
 
 <div class="faq-item faq-tac">
+<span id="terms" class="head-anchor"></span>
 <h2>Terms & Conditions</h2>
 <p>These are quite simple.</p>
 <h4>Your Email Address</h4>

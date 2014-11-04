@@ -201,3 +201,24 @@ a.desc:after {
 .site-faq .faq-tac h4{
 	margin-top:20px;
 }
+
+.site-faq .faq-affix{
+	margin-top:25px;
+}
+
+.site-faq .panel-default a{
+	display:block;
+	margin:0 0 10px 0;
+	line-height:17px;
+}
+
+.site-faq .panel-default a:last-child{
+	margin-bottom:0;
+}
+
+.head-anchor{
+	display: block;
+	height: 50px;
+	margin-top: -50px;
+	visibility: hidden;
+}
