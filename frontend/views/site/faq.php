@@ -70,7 +70,7 @@ to do so or it costed money.</p>
 <p>Many sites also implemented extremely intrusive advertising if you didn't cough up. GoComics was one which would physically disjoint and shift your screen. 
 I also suffer virus warnings on Dilbert regularly from their popup ads.</p>
 <p>Fair enough, I could use an Ad Blocker, but then how is that any different to just making this service in terms of "support" (remember that ads pay money). 
-Not only that but I still have all thoise tabs and websites to check every day!</p>
+Not only that but I still have all those tabs and websites to check every day!</p>
 <p><b>Why not just make this service and make my life easier by spending maybe a week of my time making it?</b></p>
 <p>I am not the sort to shy from paying money but I find it difficult to see how the &dollar;11 (&pound;6.87) a year I pay to GoComics really helps the cartoonists 
 and not them instead.</p> 
@@ -95,7 +95,7 @@ and not them instead.</p>
 <div class="faq-item">
 <h2>Does this site earn money?</h2>
 <p>No.</p>
-<p>This site is currently non-profit. It makes no money from its services, no even in advertising.</p>
+<p>This site is non-profit. It makes no money from its services, no even in advertising.</p>
 <p>As a fore-warning, that could change to include non-intrusive advertising at a later date if this site expands to take a significant budget or 
 third party pressure causes me to pay a significant amount.</p
 <p>I intend to never make money (for site maintenance or third party payments) from this site by charging for it.</p>
