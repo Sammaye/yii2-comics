@@ -42,7 +42,4 @@ $this->beginContent('@app/views/layouts/base.php') ?>
         <?= $content ?>
         </div>
     </div>
-    <?php $this->endBody() ?>
-</body>
-</html>
 <?php $this->endContent() ?>

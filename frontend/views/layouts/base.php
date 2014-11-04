@@ -20,6 +20,7 @@ AppAsset::register($this);
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <?php Yii::$app->getResponse()->getHeaders()->set('X-UA-Compatible', 'IE=edge'); ?>
     <title><?= Html::encode($this->title) ?></title>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,800,700,600' rel='stylesheet' type='text/css'>
     <?php $this->head() ?>
     
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->

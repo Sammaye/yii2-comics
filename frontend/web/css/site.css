@@ -1,6 +1,7 @@
 html,
 body {
 	height: 100%;
+	font-family: 'Open Sans', sans-serif;
 }
 
 .wrap {
@@ -184,4 +185,19 @@ a.desc:after {
 .comic-date-picker a[disabled]{
 	background:#eee;
 	cursor:not-allowed;
+}
+
+.site-faq .faq-item{
+	margin-bottom:50px;
+}
+
+.site-faq .faq-item:last-child{
+	margin-bottom:0;
+}
+
+.site-faq .faq-item h2{
+}
+
+.site-faq .faq-tac h4{
+	margin-top:20px;
 }
