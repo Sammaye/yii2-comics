@@ -1,6 +1,5 @@
 <?php
 
-use Yii;
 use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
 
@@ -9,6 +8,8 @@ use yii\bootstrap\ActiveForm;
 <?= $form->errorSummary($model) ?>
 <?= $form->field($model, 'title') ?>
 <?= $form->field($model, 'homepage') ?>
+<?= $form->field($model, 'author') ?>
+<?= $form->field($model, 'author_homepage') ?>
 <?= $form->field($model, 'description')->textarea() ?>
 <?= $form->field($model, 'slug') ?>
 <?= $form->field($model, 'abstract') ?>

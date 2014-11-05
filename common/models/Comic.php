@@ -32,6 +32,8 @@ class Comic extends ActiveRecord
 			['abstract', 'string', 'max' => 250],
 			['scrape_url', 'string', 'max' => 250],
 			['homepage', 'url'],
+			['author', 'string', 'max' => 400],
+			['author_homepage', 'url'],
 			['date_format', 'validateDateFormat'],
 			['date_format', 'default', 'value' => 'Y-m-d'],
 			[
@@ -60,6 +62,8 @@ class Comic extends ActiveRecord
 			'abstract',
 			'scrape_url',
 			'homepage',
+			'author',
+			'author_homepage',
 			'date_format',
 			'updated_at',
 			'created_at'

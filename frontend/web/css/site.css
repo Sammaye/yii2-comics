@@ -151,21 +151,21 @@ a.desc:after {
 	text-align: center;
 }
 
-.comic-date-picker > div{
+.comic-date-picker > form > div{
 	display: inline-block;
 	position: relative;
 	vertical-align: middle;
 	margin:auto;
 }
 
-.comic-date-picker > div > a:first-child{
+.comic-date-picker > form > div > a:first-child{
 	border-top-right-radius:0; 
 	border-bottom-right-radius:0; 
 	float:left; 
 	position:relative;
 }
 
-.comic-date-picker > div > a:last-child{
+.comic-date-picker > form > div > a:last-child{
 	border-top-left-radius:0;
 	border-bottom-left-radius:0;
 	float:left;
@@ -180,6 +180,7 @@ a.desc:after {
 	position:relative;
 	border-right:0;
 	border-left:0;
+	text-align:center;
 }
 
 .comic-date-picker a[disabled]{
@@ -188,7 +189,7 @@ a.desc:after {
 }
 
 .site-faq .faq-item{
-	margin-bottom:50px;
+	margin-bottom:30px;
 }
 
 .site-faq .faq-item:last-child{
@@ -198,7 +199,7 @@ a.desc:after {
 .site-faq .faq-item h2{
 }
 
-.site-faq .faq-tac h4{
+.site-faq .faq-tac h5{
 	margin-top:20px;
 }
 
@@ -214,6 +215,39 @@ a.desc:after {
 
 .site-faq .panel-default a:last-child{
 	margin-bottom:0;
+}
+
+.site-faq .faq-head{
+	margin-top:30px;
+}
+
+.comic-info-outer{
+	padding:20px;
+}
+
+
+.comic-info-outer .comic-homepage{
+	margin-left:20px;
+}
+
+.nav-tabs.comics-view-nav > li.active > a, 
+.nav-tabs.comics-view-nav > li.active > a:hover, 
+.nav-tabs.comics-view-nav > li.active > a:focus{
+	padding:15px 20px;
+	font-size:18px;
+	font-weight:bold;
+}
+
+.nav-tabs.comics-view-nav > li > a{
+	padding:18px 20px;
+}
+
+.comic-view-item{
+	text-align:center;
+}
+
+.comic-view-item .comic-img{
+	margin:auto;
 }
 
 .head-anchor{

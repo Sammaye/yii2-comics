@@ -38,7 +38,7 @@ class ComicController extends Controller
 		if(
 			$date && 
 			preg_match('/^(0[1-9]|[12][0-9]|3[01])[-](0[1-9]|1[012])[-](19|20)\d\d$/', $date) > 0 && 
-			($comicStrip = ComicStrip::find()->where(['date' => new \MongoDate(strtotime($date))])->one())
+			($comicStrip = ComicStrip::find()->where(['comic_id' => $comic->_id, 'date' => new \MongoDate(strtotime($date))])->one())
 		){
 			// We found our strip
 		}else{
@@ -52,7 +52,7 @@ class ComicController extends Controller
 		
 		if(
 			($oldDate = new \MongoDate(strtotime("-1 day", $comicStrip->date->sec))) && 
-			!($oldComicStrip = ComicStrip::find()->where(['date' => $oldDate])->one())
+			!($oldComicStrip = ComicStrip::find()->where(['comic_id' => $comic->_id, 'date' => $oldDate])->one())
 		){
 			$nextComicStrip = new ComicStrip();
 			$nextComicStrip->comic_id = $comic->_id;

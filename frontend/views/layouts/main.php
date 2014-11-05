@@ -18,7 +18,7 @@ $this->beginContent('@app/views/layouts/base.php') ?>
             ]);
             $menuItems = [
             	['label' => 'View Comics', 'url' => ['/comic']],
-                ['label' => 'FAQ', 'url' => ['/site/faq']],
+                ['label' => 'Help', 'url' => ['/site/help']],
             ];
             if (Yii::$app->user->isGuest) {
                 $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];

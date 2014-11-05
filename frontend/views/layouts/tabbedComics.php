@@ -4,7 +4,7 @@ use yii\helpers\Html;
 use common\models\Comic;
 
 $this->beginContent('@app/views/layouts/main.php'); ?>
-<ul class="nav nav-tabs" role="tablist">
+<ul class="nav nav-tabs comics-view-nav" role="tablist">
 <?php foreach(Comic::find()->orderBy(['title' => SORT_ASC])->all() as $comic){
 	echo Html::tag(
 		'li', 
