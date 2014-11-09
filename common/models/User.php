@@ -3,7 +3,7 @@ namespace common\models;
 
 use Yii;
 use yii\base\NotSupportedException;
-use yii\mongodb\ActiveRecord;
+use common\components\ActiveRecord;
 use yii\base\Security;
 use yii\web\IdentityInterface;
 use yii\data\ActiveDataProvider;
@@ -92,6 +92,15 @@ class User extends ActiveRecord implements IdentityInterface
 			'status',
 			'created_at',
 			'updated_at',
+			'comics',
+			'testArray'
+     	];
+     }
+     
+     public function subdocuments()
+     {
+     	return [
+			'testArray'
      	];
      }
      
@@ -229,6 +238,20 @@ class User extends ActiveRecord implements IdentityInterface
     public function removePasswordResetToken()
     {
         $this->password_reset_token = null;
+    }
+    
+    public function isSubscribed($comic_id)
+    {
+    	if($comic_id instanceof \MongoId){
+    		$comic_id = (String)$comic_id;
+    	}
+    	
+    	foreach($this->comics as $comic){
+    		if((String)$comic['comic_id'] === $comic_id){
+    			return true;
+    		}
+    	}
+    	return false;
     }
     
     public function search()

@@ -5,13 +5,14 @@ namespace common\components;
 use Yii;
 use common\components\ActiveRecord;
 use yii\base\Arrayable;
+use yii\base\Object;
 
-class Subdocument extends ActiveRecord implements \ArrayAccess, \Iterator, Arrayable
+class Subdocument extends Object implements \ArrayAccess, \Iterator
 {
 	public $attribute;
-	public $value;
+	public $value = [];
 	public $class;
-	public $options;
+	public $options = [];
 	
 	public $isArray = true;
 	public $isFlatArray = true;
@@ -21,14 +22,14 @@ class Subdocument extends ActiveRecord implements \ArrayAccess, \Iterator, Array
 	public function init()
 	{
 		parent::init();
-		
+
 		foreach($this->value as $k => $v){
 			if(!is_numeric($k)){
 				// This is not an array
 				$this->isArray = false;
 			}
 			
-			if(!is_scalar($k)){
+			if(!is_scalar($v)){
 				// This is not a 1d array
 				$this->isFlatArray = false;
 			}
@@ -61,7 +62,7 @@ class Subdocument extends ActiveRecord implements \ArrayAccess, \Iterator, Array
 	
 	public function instantiateOne($value)
 	{
-		if($value instanceof ActiveRecord){
+		if($value instanceof Subdocument){
 			return $value;
 		}
 		
@@ -76,6 +77,11 @@ class Subdocument extends ActiveRecord implements \ArrayAccess, \Iterator, Array
 			$value = $model;
 		}
 		return $value;
+	}
+	
+	public function validate()
+	{
+		
 	}
 	
 	public function offsetSet($offset, $value)

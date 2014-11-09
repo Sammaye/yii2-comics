@@ -3,12 +3,35 @@
 namespace frontend\controllers;
 
 use Yii;
+use yii\filters\AccessControl;
 use common\components\Controller;
 use common\models\Comic;
 use common\models\ComicStrip;
+use common\models\User;
 
 class ComicController extends Controller
 {
+	public function behaviors()
+	{
+		return [
+			'access' => [
+				'class' => AccessControl::className(),
+				'rules' => [
+					[
+						'allow' => true,
+						'actions' => ['subscribe', 'unsubscribe'],
+						'roles' => ['@'],
+					],
+					[
+						'allow' => true,
+						'roles' => ['?', '@']
+					]
+				],
+			],
+		];
+	}
+	
+	
 	public function actionIndex()
 	{
 		return $this->actionView();
@@ -62,5 +85,64 @@ class ComicController extends Controller
 			}
 		}
 		return $this->render('view', ['model' => $comic, 'comicStrip' => $comicStrip, 'date' => $date]);
+	}
+	
+	public function actionSubscribe()
+	{
+		if(
+			($comic_id = Yii::$app->getRequest()->get('comic_id')) && 
+			($model = Comic::find()->where(['_id' => new \MongoId($comic_id)])->one())
+		){
+			$user = Yii::$app->user->identity;
+			if(User::updateAll(
+				[
+					'$push' => [
+						'comics' => [
+							'date' => new \MongoDate(),
+							'comic_id' => $model->_id
+						]
+					]
+				],
+				['_id' => $user->_id, 'comics.comic_id' => ['$ne' => $model->_id]]
+			)){
+				return json_encode(['success' => true, 'message' => 'You are now subscribed']);
+			}
+			
+			foreach($user->comics as $comic){
+				if((String)$comic['comic_id'] === (String)$model->_id){
+					return json_encode(['success' => false, 'message' => 'You are already subscribed']);
+				}
+			}
+			return json_encode(['success' => false, 'message' => 'There was an unknown error']);
+		}
+		return json_encode(['success' => false, 'message' => 'That comic does not exist']);
+	}
+	
+	public function actionUnsubscribe()
+	{
+		if(
+			($comic_id = Yii::$app->getRequest()->get('comic_id')) &&
+			($model = Comic::find()->where(['_id' => new \MongoId($comic_id)])->one())
+		){
+			$user = Yii::$app->user->identity;
+			if(User::updateAll(
+				[
+					'$pull' => [
+						'comics' => ['comic_id' => $model->_id]
+					]
+				],
+				['_id' => $user->_id]
+			)){
+				return json_encode(['success' => true, 'message' => 'You are now unsubscribed']);
+			}
+				
+			foreach($user->comics as $comic){
+				if((String)$comic['comic_id'] === (String)$model->_id){
+					return json_encode(['success' => false, 'message' => 'There was an unknown error']);
+				}
+			}
+			return json_encode(['success' => false, 'message' => 'You are already unsubscribed']);
+		}
+		return json_encode(['success' => false, 'message' => 'That comic does not exist']);
 	}
 }

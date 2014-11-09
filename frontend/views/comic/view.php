@@ -16,6 +16,32 @@ $('#datepicker').datepicker({
 $('#datepicker').on('change', function(e){
 	$(this).parents('form').submit();
 });
+
+$(document).on('click', '.btn-subscribe', function(e){
+	e.preventDefault();
+	$.get('" . Url::to(['comic/subscribe']) . "', {comic_id: '" . (String)$model->_id . "'}, null, 'json')
+	.done(function(data){
+		if(data.success){
+			var btn = $('.btn-subscribe');
+			btn.find('span').removeClass('glyphicon-ok').addClass('glyphicon-remove');
+			btn.get(0).lastChild.nodeValue = ' Remove from email';
+			btn.addClass('btn-unsubscribe btn-danger').removeClass('btn-subscribe btn-success');
+		}
+	});
+});
+
+$(document).on('click', '.btn-unsubscribe', function(e){
+	e.preventDefault();
+	$.get('" . Url::to(['comic/unsubscribe']) . "', {comic_id: '" . (String)$model->_id . "'}, null, 'json')
+	.done(function(data){
+		if(data.success){
+			var btn = $('.btn-unsubscribe');
+			btn.find('span').removeClass('glyphicon-remove').addClass('glyphicon-ok')
+			btn.get(0).lastChild.nodeValue = ' Add to my email';
+			btn.addClass('btn-subscribe btn-success').removeClass('btn-unsubscribe btn-danger');
+		}
+	});
+});
 ");
 
 $this->params['comic_id'] = (String)$model->_id;
@@ -43,8 +69,17 @@ if($model->author || $model->homepage){
 	echo Html::endTag('p');
 }?>
 </div>
-<div class="col-sm-10 col-sm-push-3">
-<a href="" class="btn btn-lg btn-success"><span class="glyphicon glyphicon-ok"></span> Add to my email</a>
+<div class="col-sm-10 col-sm-push-2">
+<?php 
+if(
+	($user = Yii::$app->getUser()->identity) && 
+	($user->isSubscribed($model->_id))
+){
+?>
+<a href="#" class="btn btn-lg btn-danger btn-unsubscribe"><span class="glyphicon glyphicon-remove"></span> Remove from email</a>
+<?php }else{ ?>
+<a href="#" class="btn btn-lg btn-success btn-subscribe"><span class="glyphicon glyphicon-ok"></span> Add to my email</a>
+<?php } ?>
 </div>
 </div>
 </div>
