@@ -1,53 +1,60 @@
 <?php
+
+use common\models\SignupForm;
+use yii\widgets\ActiveForm;
+use yii\helpers\Html;
+use yii\helpers\Url;
+
 /**
  * @var yii\web\View $this
  */
-$this->title = 'My Yii Application';
+$this->title = 'Welcome to c!y';
+
+$this->params['excludeContainer'] = true;
 ?>
 <div class="site-index">
-
+<div class="top-ribbon">
+<div class="container alert-container"><?= common\widgets\Alert::widget() ?></div>
+<div class="container">
     <div class="jumbotron">
-        <h1>Congratulations!</h1>
-
-        <p class="lead">You have successfully created your Yii-powered application.</p>
-
-        <p><a class="btn btn-lg btn-success" href="http://www.yiiframework.com">Get started with Yii</a></p>
+    <h1>Welcome to c!y</h1>
+    <div class="row">
+    <div class="col-sm-24">
+	<p class="text-success"><i>noun</i> [U] /ci-lee/</p>
+    <p>A new free cartoon distribution service catering for email, and currently Facebook, allowing you to aggregate and view your 
+    daily/weekly/monthly cartoons by a schedule of your choosing.</p>
+    <p>c!y allows you aggregate your favourite comics and bundle them into a single message to be sent to you, normally via email, however, also over Facebook.</p>
+    <p>And the best part? It is absolutely free! No charges, ever.</p>
     </div>
-
-    <div class="body-content">
-
-        <div class="row">
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/doc/">Yii Documentation &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/forum/">Yii Forum &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/extensions/">Yii Extensions &raquo;</a></p>
-            </div>
+    <div class="col-sm-19 col-sm-push-5 col-signup">
+    <h2>Try it out!</h2>
+    <p>Already have an account? <a href="<?= Url::to(['site/login']) ?>">Click here to sign in</a></p>
+    <?php 
+    	$model = new SignupForm();
+        $form = ActiveForm::begin(['id' => 'form-signup', 'action' => ['site/signup']]); ?>
+        <div class="signup-form">
+        <?= $form->field($model, 'username') ?>
+        <?= $form->field($model, 'email') ?>
+        <?= $form->field($model, 'password')->passwordInput() ?>
         </div>
-
+        <div class="form-group form-submit" style="text-align:center">
+        <?= Html::submitButton('Sign up', ['class' => 'btn btn-lg btn-transparent', 'name' => 'signup-button']) ?>
+        </div>
+    <?php ActiveForm::end(); ?>
     </div>
+    </div>
+    </div>
+</div>
+</div>
+
+<div>
+<div class="container">
+<div class="jumbotron jumbo-more-info">
+<h2>Need more information?</h2>
+<p><a href="<?= Url::to(['site/help', '#' => 'faqs']) ?>">Why not try the FAQ section? It should help you get a more 
+detailed idea of what this site is and does</a></p>
+</div>
+</div>
+</div>
+
 </div>

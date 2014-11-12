@@ -65,11 +65,6 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
-    	$m = \common\models\User::findOne(['_id' => new \MongoId('544c189d6803fa85038b4567')]);
-    	var_dump($m);
-    	
-    	$m->testArray[1] = 't';
-    	var_dump($m->testArray);
         return $this->render('index');
     }
 

@@ -27,6 +27,7 @@ and like an agony aunt, I will endeavour to solve them (well, any to do with thi
 </div>
 </div>
 
+<span id="faqs" class="head-anchor"></span>
 <h2 class="faq-head">Frequently Asked Questions</h2>
 <div class="row">
 <div class="col-sm-12"><div id="faqAffix" class="faq-affix">
@@ -56,7 +57,6 @@ and like an agony aunt, I will endeavour to solve them (well, any to do with thi
 <h3>What is this site?</h3>
 <p>This site is a new comic destribution service I made for my own personal use which I have decided to release to the general internet community.</p>
 <p>Essentially it allows you batch, for free, your daily comics across the internet and have them sent directly to your inbox.</p>
-<p>You can look to the <a href="<?= Url::to(['/']) ?>">homepage for a more flambouyant</a> edition of what was just said.</p>
 </div>
 
 <div class="faq-item">

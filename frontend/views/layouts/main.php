@@ -37,9 +37,13 @@ $this->beginContent('@app/views/layouts/base.php') ?>
             NavBar::end();
         ?>
 
+        <?php if(isset($this->params['excludeContainer']) && $this->params['excludeContainer'] === true){ ?>
+        <?= $content ?>
+        <?php }else{ ?>
         <div class="container">
         <?= Alert::widget() ?>
         <?= $content ?>
         </div>
+        <?php } ?>
     </div>
 <?php $this->endContent() ?>
