@@ -8,6 +8,7 @@ use common\components\Controller;
 use common\models\Comic;
 use common\models\ComicStrip;
 use common\models\User;
+use common\models\RequestComicForm;
 
 class ComicController extends Controller
 {
@@ -24,6 +25,7 @@ class ComicController extends Controller
 					],
 					[
 						'allow' => true,
+						'actions' => ['index', 'view', 'request'],
 						'roles' => ['?', '@']
 					]
 				],
@@ -144,5 +146,16 @@ class ComicController extends Controller
 			return json_encode(['success' => false, 'message' => 'You are already unsubscribed']);
 		}
 		return json_encode(['success' => false, 'message' => 'That comic does not exist']);
+	}
+	
+	public function actionRequest()
+	{
+		$model = new RequestComicForm;
+		if($model->load($_POST) && $model->validate()){
+			/// send email
+			return json_encode(['success' => true]);
+		}else{
+			return json_encode(['success' => false, 'errors' => $model->getErrors()]);
+		}
 	}
 }

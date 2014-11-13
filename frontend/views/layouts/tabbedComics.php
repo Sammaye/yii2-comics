@@ -15,6 +15,7 @@ $this->beginContent('@app/views/layouts/main.php'); ?>
 		['class' => (String)$comic->_id === $this->params['comic_id'] ? 'active' : '', 'role' => 'presentation']
 	);
 } ?>
+<li class="float-right"><a href="#" data-toggle="modal" data-target=".request-comic-modal"><span class="glyphicon glyphicon-plus"></span> Demand addition</a></li>
 </ul>
 <div class="view-comic-content"><?= $content ?></div>
 <?php $this->endContent() ?>

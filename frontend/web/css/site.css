@@ -228,6 +228,16 @@ a.desc:after {
 	font-weight:bold;
 }
 
+.nav-tabs.comics-view-nav .float-right{
+	float:right;
+}
+
+.nav-tabs.comics-view-nav .float-right a{
+	background:#337AB7;
+	border:1px solid #2E6DA4;
+	color:#fff;
+}
+
 .nav-tabs.comics-view-nav > li > a{
 	padding:18px 20px;
 }
@@ -300,4 +310,12 @@ a.desc:after {
 
 .site-index .col-signup a{
 	color:#ccc;
+}
+
+.request-comic-modal .margined-p{
+	margin-top:40px;
+}
+
+.display-none{
+	display:none;
 }
