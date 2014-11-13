@@ -3,7 +3,6 @@
 use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use common\models\RequestComicForm;
 
 $this->title = 'View ' . $model->title . ' for ' . date('d-m-Y', $comicStrip->date->sec);
 
@@ -41,38 +40,6 @@ $(document).on('click', '.btn-unsubscribe', function(e){
 			btn.find('span').removeClass('glyphicon-remove').addClass('glyphicon-ok')
 			btn.get(0).lastChild.nodeValue = ' Add to my email';
 			btn.addClass('btn-subscribe btn-success').removeClass('btn-unsubscribe btn-danger');
-		}
-	});
-});
-
-$('#requestComicForm').on('submit', function(e){
-	e.preventDefault();
-		
-	$.post('" . Url::to(['comic/request']) . "', $('#requestComicForm').serialize(), null, 'json')
-	.done(function(data){
-		$('#requestComicForm').find('.alert-request-errors').removeClass('alert-danger alert-success').html('');
-		
-		if(data.success){
-		
-			$('#requestComicForm').find('.alert-request-errors').addClass('alert-success').css({display: 'block'});
-		
-			$('#requestComicForm').find('.alert-request-errors').append(
-				$('<p/>').text('Your request was successfully sent, thank you helping to make this site better!')
-			);
-		}else{
-		
-			$('#requestComicForm').find('.alert-request-errors').addClass('alert-danger').css({display: 'block'});
-		
-			var ul = $('<ul/>');
-			$.each(data.errors, function(){
-				for(var i = 0; i < $(this).length; i++){
-					ul.append($('<li/>').text($(this)[i]));
-				}
-			});
-		
-			$('#requestComicForm').find('.alert-request-errors').append(
-				$('<p/>').text('Your request could not be sent because:')
-			).append(ul);
 		}
 	});
 });
@@ -140,40 +107,3 @@ if(
 <img src="<?= Url::to(['comic-strip/render-image', 'id' => (String)$comicStrip->_id]) ?>" class="img-responsive comic-img"/>
 </a>
 </div>
-
-<?php $model = new RequestComicForm(); ?>
-<div class="modal fade request-comic-modal">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <h4 class="modal-title">Demand a comic/cartoon to be added</h4>
-      </div>
-      <?php $form = ActiveForm::begin(['id' => 'requestComicForm']) ?>
-      <div class="modal-body">
-      <p>Currently comics are added manually by hand for modertion reasons.</p>
-      <p>You can demand to have your comic added by just filling in the name and URL of the comic, however, 
-      you must be aware that some sites are not crawlable.</p>
-      <div class="alert alert-warning">
-      <p>If your comic/cartoon suggestion cannot be added I will attempt to emaiil you if an address is provided. For logged in users the field is already filled, however, 
-      for those users who are not you must fill in the field to be notified.</p>
-      </div>
-      <div class="alert alert-request-errors display-none"></div>
-      <?= $form->field($model, 'name') ?>
-      <?= $form->field($model, 'url') ?>
-      <?php if(Yii::$app->getUser()->identity === null){
-      	echo Html::tag('p', 'Since you are not logged in, add your email address here if you would like to be notified of when your comic is added', ['class' => 'margined-p']);
-      	echo $form->field($model, 'email'); 
-      }else{
-      	echo $form->field($model, 'email')->textInput(['value' => Yii::$app->getUser()->identity->email, 'readonly' => true]);
-      } ?>
-      
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-        <button type="submit" class="btn btn-success">Submit demands</button>
-      </div>
-      <?php $form->end() ?>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
