@@ -31,7 +31,7 @@ return [
         ],
         'authManager' => [
 	        'class' => 'common\components\PhpManager',
-	        'defaultRoles' => ['guest'],
+	        'defaultRoles' => ['guest', 'tier2User'],
 	        'ruleFile' => '@common/rbac/rules.php',
 	        'itemFile' => '@common/rbac/items.php'
         ],

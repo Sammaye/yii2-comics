@@ -14,8 +14,8 @@ $this->params['excludeContainer'] = true;
 ?>
 <div class="site-index">
 <div class="top-ribbon">
-<div class="container alert-container"><?= common\widgets\Alert::widget() ?></div>
-<div class="container">
+<div class="container alert-container">
+	<?= common\widgets\Alert::widget() ?>
     <div class="jumbotron">
     <h1>Welcome to c!y</h1>
     <div class="row">

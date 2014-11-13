@@ -40,9 +40,16 @@ class ActiveRecord extends MongoActiveRecord
 		return $this->getRawAttributes($attributes);
 	}
 	
-	public function getRawAttributes()
+	public function getRawAttributes($attributes)
 	{
-		
+		foreach($attributes as $k => $v){
+			if(is_array($v)){
+				$attributes[$k] = $this->getRawAttributes($v);
+			}elseif($v instanceof Subdocument){
+				$attributes[$k] = $v->getRawAttributes();
+			}
+		}
+		return $attributes;
 	}
 	
 	public function createSubdocument($options, $value)

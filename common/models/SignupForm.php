@@ -56,7 +56,7 @@ class SignupForm extends Model
             $user->generateAuthKey();
             $user->save();
             
-            Yii::$app->session->set('tier2Timeout', Yii::$app->user->tier2Timeout);
+            Yii::$app->session->set('tier2Timeout', time() + Yii::$app->user->tier2Timeout);
             
             return $user;
         }

@@ -42,7 +42,7 @@ class Controller extends \yii\web\Controller
 			!Yii::$app->user->getIsGuest() &&
 			Yii::$app->session->get('tier2Timeout') > time()
 		){
-			Yii::$app->session->set('tier2Timeout', Yii::$app->user->tier2Timeout);
+			Yii::$app->session->set('tier2Timeout', time() + Yii::$app->user->tier2Timeout);
 		}
 		return parent::beforeAction($action);
 	}

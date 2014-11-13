@@ -56,15 +56,24 @@ class User extends ActiveRecord implements IdentityInterface
      public function rules()
      {
          return [
+             ['username', 'string', 'min' => 3, 'max' => 20],
+             //['username', 'unique', 'when' => return $this->isChangedAttribute('username');],
+             
+             ['email', 'email'],
+         
              ['status', 'default', 'value' => self::STATUS_ACTIVE],
              ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
 
              ['role', 'default', 'value' => self::ROLE_USER],
              ['role', 'in', 'range' => [self::ROLE_USER, self::ROLE_STAFF, self::ROLE_AFFILIATE, self::ROLE_ADMIN, self::ROLE_GOD]],
              
-             ['newPassword', 'string', 'max' => 20, 'min' => 7],
+             ['oldPassword', 'string', 'max' => 20, 'min' => 7],
+             ['oldPassword', 'validateOldPassword'],
              
-             ['email_frequency', 'in', 'range' => ['daily' => 'Daily', 'weekly' => 'Weekly', 'monthly' => 'Monthly']],
+             ['newPassword', 'string', 'max' => 20, 'min' => 7],
+             ['newPassword', 'validateNewPassword'],
+             
+             ['email_frequency', 'in', 'range' => array_keys($this->emailFrequencies())],
              
              [
              	[
@@ -111,6 +120,25 @@ class User extends ActiveRecord implements IdentityInterface
      public function emailFrequencies()
      {
      	return ['daily' => 'Daily', 'weekly' => 'Weekly', 'monthly' => 'Monthly'];
+     }
+     
+     public function validateOldPassword($attribute, $params)
+     {
+     	if(strlen(trim($this->oldPassword)) > 0){
+     		if(strlen(trim($this->newPassword)) <= 0){
+     			$this->addError($attribute, 'If you wish to change your password you must fill in both the old and new password fields');
+     		}
+     		if(!$this->validatePassword($this->oldPassword)){
+     			$this->addError($attribute, 'The old password does not match what we have on record for you');
+     		}
+     	}
+     }
+     
+     public function validateNewPassword($attribute, $params)
+     {
+     	if(strlen(trim($this->oldPassword)) <= 0 && strlen(trim($this->newPassword)) > 0){
+     		$this->addError($attribute, 'You must confirm your current password by entering it into the old password field provided');
+     	}
      }
      
      public function beforeSave($insert)

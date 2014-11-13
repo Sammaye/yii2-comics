@@ -1,5 +1,6 @@
 <?php
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\bootstrap\ActiveForm;
 use common\widgets\Alert;
 
@@ -8,29 +9,27 @@ use common\widgets\Alert;
  * @var yii\widgets\ActiveForm $form
  * @var common\models\LoginForm $model
  */
-$this->title = 'Please confirm your login';
+$this->title = 'Login';
 echo Alert::widget();
 ?>
-<div class="site-login">
-	<div class="row">
-		<div class="col-sm-6">
-			<h2><?= Html::encode('Please login') ?></h2>
+<div class="row">
+<div class="site-login col-sm-15">
+    <h1><?= Html::encode($this->title) ?></h1>
+    <p class="new-user-signup">Now to c!y? <a href="<?= Url::to(['site/signup']) ?>">You can register for an account by clicking here</a>.</p>
 
-			<?php $form = ActiveForm::begin(['id' => 'login-form', 'enableClientValidation' => false]); ?>
-				<?= $form->field($model, 'email') ?>
-				<?= $form->field($model, 'password')->passwordInput() ?>
-				<?= $form->field($model, 'rememberMe')->checkbox() ?>
-				<div style="color:#999;margin:1em 0">
-					If you forgot your password you can <?= Html::a('reset it', ['site/request-password-reset']) ?>.
-				</div>
-				<div class="form-group">
-					<?= Html::submitButton('Login', ['class' => 'btn btn-success btn-lg']) ?>
-				</div>
-			<?php ActiveForm::end(); ?>
-		</div>
-		<div class="col-sm-6">
-		<h2>New User</h2>
-		<?= Html::a('Continue', ['site/signup'], ['class' => 'btn btn-lg btn-success']) ?>
-		</div>
-	</div>
+    <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
+    	<div class="login-form">
+        	<?= $form->field($model, 'email')->textInput(['class' => 'form-control', 'value' => Yii::$app->getUser()->identity->email]) ?>
+            <?= $form->field($model, 'password')->passwordInput() ?>
+            <?= $form->field($model, 'rememberMe')->checkbox() ?>
+
+            <div class="password-reset">
+               If you forgot your password you can <?= Html::a('reset it', ['site/request-password-reset']) ?>.
+            </div>
+        </div>
+        <div class="form-group form-submit">
+            <?= Html::submitButton('Login', ['class' => 'btn btn-success btn-lg', 'name' => 'login-button']) ?>
+        </div>
+    <?php ActiveForm::end(); ?>
+</div>
 </div>

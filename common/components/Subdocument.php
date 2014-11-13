@@ -84,6 +84,12 @@ class Subdocument extends Object implements \ArrayAccess, \Iterator
 		
 	}
 	
+	
+	public function getRawAttributes()
+	{
+		return $this->value;
+	}
+	
 	public function offsetSet($offset, $value)
 	{
 		if(is_null($offset)){
