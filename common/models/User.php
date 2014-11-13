@@ -57,7 +57,7 @@ class User extends ActiveRecord implements IdentityInterface
      {
          return [
              ['username', 'string', 'min' => 3, 'max' => 20],
-             //['username', 'unique', 'when' => return $this->isChangedAttribute('username');],
+             ['username', 'unique'],
              
              ['email', 'email'],
          
@@ -119,7 +119,12 @@ class User extends ActiveRecord implements IdentityInterface
      
      public function emailFrequencies()
      {
-     	return ['daily' => 'Daily', 'weekly' => 'Weekly', 'monthly' => 'Monthly'];
+     	return [
+     		'daily' => 'Daily', 
+     		'weekly' => 'Weekly', 
+     		'monthly' => 'Monthly', 
+     		'paused' => 'Paused'
+		];
      }
      
      public function validateOldPassword($attribute, $params)

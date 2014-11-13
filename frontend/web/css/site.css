@@ -326,3 +326,35 @@ a.desc:after {
 .site-login .new-user-signup{
 	text-align:center;
 }
+
+.user-settings .sortable-outer{
+	border:1px solid #ccc;
+	border-top:0;
+	border-bottom:0;
+	margin:30px 0;
+}
+
+.user-settings .sortable-subscriptions{
+	padding:0;
+}
+
+.user-settings .sortable-subscriptions li{
+	border-top:1px solid #ccc;
+	list-style:none;
+	padding:15px;
+}
+
+.user-settings .sortable-subscriptions li span{
+	font-size:16px;
+	display:block;
+	padding-top:5px;
+	float:left;
+}
+
+.user-settings .sortable-subscriptions li .btn{
+	float:right;
+}
+
+.user-settings .sortable-subscriptions li:last-child{
+	border-bottom:1px solid #ccc;
+}

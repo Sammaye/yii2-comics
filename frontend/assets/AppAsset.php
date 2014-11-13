@@ -22,6 +22,7 @@ class AppAsset extends AssetBundle
     ];
     public $js = [
     	'js/site.js',
+    	'js/jquery.touch.js'
     ];
     public $depends = [
         'yii\web\YiiAsset',

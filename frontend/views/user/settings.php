@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
+use common\models\Comic;
 
 $this->title = 'Your Settings';
 
@@ -10,21 +11,37 @@ $this->registerJs("
 	$(document).on('click', '.btn-delete', function(e){
 		window.location.replace('" . Url::to(['user/delete']) . "');
 	});
-")
+
+	$( '#sortable' ).sortable();
+	$( '#sortable' ).disableSelection();
+	$( '#sortable' ).bind( 'sortstop', function(event, ui) {
+	});
+");
 ?>
 <div class="user-settings">
 <h2>Subscriptions</h2>
 <?php $form = ActiveForm::begin() ?>
 <?= $form->errorSummary($model) ?>
 <div class="row">
-<div class="col-sm-15">
+<div class="col-sm-17">
 <?php if(count($model->comics) > 0){ ?>
+	<p>Hold down (click or touch) on each row and move around to re-order your subscriptions.</p>
+  <div class="sortable-outer">
+    <ul class="sortable-subscriptions" id="sortable">
+    <?php foreach($model->comics as $k => $comic){ 
+    	if($comic = Comic::find()->where(['_id' => $comic['comic_id']])->one()){ ?>
+    	<li class="clearfix"><span><?= $comic->title ?></span>
+    	<?= Html::a('Unsubscribe', ['comic/unsubscribe', 'comic_id' => (String)$comic->_id], ['class' => 'btn btn-sm btn-danger']) ?></li>
+    	<?php }
+    } ?>
+    </ul>
+  </div>
 
 <?php }else{ ?>
 <p>You are currently not subscribed to any comics, pick some and return here to be able to manage them.</p>
 <?php } ?>
 </div>
-<div class="col-sm-15 col-sm-push-10"><?= $form->field($model, 'email_frequency')->dropDownList($model->emailFrequencies()) ?></div>
+<div class="col-sm-15 col-sm-push-8"><?= $form->field($model, 'email_frequency')->dropDownList($model->emailFrequencies()) ?></div>
 </div>
 <?= Html::submitButton('Save Subscriptions', ['class' => 'btn btn-success']) ?>
 <div class="row">
