@@ -153,6 +153,11 @@ class ComicController extends Controller
 		$model = new RequestComicForm;
 		if($model->load($_POST) && $model->validate()){
 			/// send email
+			\Yii::$app->mail->compose('requestComic', ['model' => $model])
+				->setFrom([\Yii::$app->params['supportEmail'] => 'c!y Administrator'])
+				->setTo(\Yii::$app->params['adminEmail'])
+				->setSubject('Comic Request for c!y')
+				->send();
 			return json_encode(['success' => true]);
 		}else{
 			return json_encode(['success' => false, 'errors' => $model->getErrors()]);

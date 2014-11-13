@@ -35,6 +35,7 @@ class User extends ActiveRecord implements IdentityInterface
 	const ROLE_GOD = 'god';
 	
 	public $newPassword;
+	public $oldPassword;
 
     /**
      * @inheritdoc
@@ -62,6 +63,8 @@ class User extends ActiveRecord implements IdentityInterface
              ['role', 'in', 'range' => [self::ROLE_USER, self::ROLE_STAFF, self::ROLE_AFFILIATE, self::ROLE_ADMIN, self::ROLE_GOD]],
              
              ['newPassword', 'string', 'max' => 20, 'min' => 7],
+             
+             ['email_frequency', 'in', 'range' => ['daily' => 'Daily', 'weekly' => 'Weekly', 'monthly' => 'Monthly']],
              
              [
              	[
@@ -93,6 +96,7 @@ class User extends ActiveRecord implements IdentityInterface
 			'created_at',
 			'updated_at',
 			'comics',
+			'email_frequency',
 			'testArray'
      	];
      }
@@ -102,6 +106,11 @@ class User extends ActiveRecord implements IdentityInterface
      	return [
 			'testArray'
      	];
+     }
+     
+     public function emailFrequencies()
+     {
+     	return ['daily' => 'Daily', 'weekly' => 'Weekly', 'monthly' => 'Monthly'];
      }
      
      public function beforeSave($insert)
@@ -244,6 +253,10 @@ class User extends ActiveRecord implements IdentityInterface
     {
     	if($comic_id instanceof \MongoId){
     		$comic_id = (String)$comic_id;
+    	}
+    	
+    	if(!is_array($this->comics)){
+    		return false;
     	}
     	
     	foreach($this->comics as $comic){

@@ -24,6 +24,10 @@ $this->beginContent('@app/views/layouts/base.php') ?>
                 $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];
                 $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
             } else {
+            	$menuItems[] = [
+					'label' => 'Settings',
+					'url' => ['user/settings']
+            	];
                 $menuItems[] = [
                     'label' => 'Logout (' . Yii::$app->user->identity->username . ')',
                     'url' => ['/site/logout'],

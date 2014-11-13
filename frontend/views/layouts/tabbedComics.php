@@ -69,7 +69,7 @@ $this->beginContent('@app/views/layouts/main.php'); ?>
       </div>
       <?php $form = ActiveForm::begin(['id' => 'requestComicForm']) ?>
       <div class="modal-body">
-      <p>Currently comics are added manually by hand for modertion reasons.</p>
+      <p>Currently comics are added manually by hand for moderation reasons.</p>
       <p>You can demand to have your comic added by just filling in the name and URL of the comic, however, 
       you must be aware that some sites are not crawlable.</p>
       <div class="alert alert-warning">
