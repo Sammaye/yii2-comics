@@ -358,3 +358,7 @@ a.desc:after {
 .user-settings .sortable-subscriptions li:last-child{
 	border-bottom:1px solid #ccc;
 }
+
+.user-settings .delete-account-link{
+	margin-top:50px;
+}

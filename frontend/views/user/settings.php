@@ -58,7 +58,7 @@ $this->registerJs("
 <?= Html::submitButton('Change Password', ['class' => 'btn btn-success']) ?>
 </div>
 </div>
-<div style="margin-top:50px;">
+<div class="delete-account-link">
 <a href="#confirmDeletion" data-toggle="modal" class="text-danger delete-account-link">Delete Account</a>
 </div>
 <?php $form->end() ?>
