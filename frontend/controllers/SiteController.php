@@ -65,7 +65,11 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
-        return $this->render('index');
+    	if(Yii::$app->getUser()->identity){
+    		return $this->redirect(['comic/index']);
+    	}else{
+        	return $this->render('index');
+    	}
     }
 
     public function actionLogin()
@@ -116,7 +120,7 @@ class SiteController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             if ($user = $model->signup()) {
                 if (Yii::$app->getUser()->login($user)) {
-                    return $this->goHome();
+                    return $this->redirect(['comic/index']);
                 }
             }
         }
