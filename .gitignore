@@ -25,3 +25,6 @@ Thumbs.db
 phpunit.phar
 # local phpunit config
 /phpunit.xml
+
+# environments folder will be done via bitbucket from now on
+environments
