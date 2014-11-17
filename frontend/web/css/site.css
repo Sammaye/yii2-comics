@@ -95,7 +95,7 @@ a.desc:after {
 }
 
 .site-signup .signup-form{
-	margin:55px 0;
+	margin:20px 0;
 }
 
 .site-signup .form-submit{
@@ -118,7 +118,7 @@ a.desc:after {
 }
 
 .site-login .login-form{
-	margin:55px 0;
+	margin:20px 0;
 }
 
 .view-comic-content{
@@ -361,4 +361,37 @@ a.desc:after {
 
 .user-settings .delete-account-link{
 	margin-top:50px;
+}
+
+.navbar-toggle{
+	border:1px solid #ddd;
+}
+
+.navbar-toggle .icon-bar{
+	background:#ddd;
+}
+
+.navbar-toggle:focus{
+	background:#f8f8f8;
+}
+
+.auth-client{
+	float:none;
+	display:inline-block;
+}
+
+.auth-clients{
+	text-align:center;
+}
+
+.social-login-desc{
+	text-align:center;
+}
+
+.social-login-desc:first-child{
+	margin:20px 0;
+}
+
+.site-index .col-signup .auth-clients a{
+	color:#fff;
 }

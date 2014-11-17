@@ -12,7 +12,13 @@ $this->title = 'Signup';
 <div class="row">
 <div class="site-signup col-sm-15">
     <h1><?= Html::encode($this->title) ?></h1>
-
+    <div>
+    <p class="social-login-desc">With your favourite network:</p>
+<?= common\widgets\AuthChoice::widget([
+     'baseAuthUrl' => ['site/auth']
+]) ?>
+<p class="social-login-desc">Or:</p>
+    </div>
     <div>
         <?php $form = ActiveForm::begin(['id' => 'form-signup']); ?>
         	<div class="signup-form">

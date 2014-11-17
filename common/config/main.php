@@ -48,5 +48,21 @@ return [
 	        ]
         ],
         'formatter' => ['class' => 'common\components\Formatter'],
+        
+        'authClientCollection' => [
+	        'class' => 'yii\authclient\Collection',
+	        'clients' => [
+	        	'google' => [
+	        		'class' => 'yii\authclient\clients\GoogleOAuth',
+	        		'clientId' => '',
+	        		'clientSecret' => ''
+        		],
+        		'facebook' => [
+        			'class' => 'yii\authclient\clients\Facebook',
+        			'clientId' => 'facebook_client_id',
+        			'clientSecret' => 'facebook_client_secret',
+        		],
+        	],
+        ]
     ],
 ];

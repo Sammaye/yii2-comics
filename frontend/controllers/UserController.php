@@ -27,7 +27,11 @@ class UserController extends Controller
 	{
 		$model = Yii::$app->user->identity;
 		
-		if($model->load($_POST) && $model->save()){
+		if(
+			$model->load($_POST) && 
+			$model->setSubscriptions(Yii::$app->getRequest()->post('subscriptions')) && 
+			$model->save()
+		){
 			Yii::$app->getSession()->setFlash('success', 'Your changes have been saved.');
 			return Yii::$app->getResponse()->redirect(['user/settings']);
 		}

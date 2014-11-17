@@ -12,7 +12,13 @@ $this->title = 'Login';
 <div class="row">
 <div class="site-login col-sm-15">
     <h1><?= Html::encode($this->title) ?></h1>
-
+    <div>
+    <p class="social-login-desc">With your favourite network:</p>
+<?= common\widgets\AuthChoice::widget([
+     'baseAuthUrl' => ['site/auth']
+]) ?>
+<p class="social-login-desc">Or:</p>
+    </div>
     <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
     	<div class="login-form">
         	<?= $form->field($model, 'email')->textInput(['class' => 'form-control']) ?>

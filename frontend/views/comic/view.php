@@ -50,7 +50,7 @@ $this->params['comic_id'] = (String)$model->_id;
 ?>
 <div class="comic-info-outer">
 <div class="row">
-<div class="col-sm-35">
+<div class="col-md-35 col-sm-30">
 <?php if($model->description){
 	echo Html::tag('p', $model->description);
 } ?>
@@ -70,7 +70,7 @@ if($model->author || $model->homepage){
 	echo Html::endTag('p');
 }?>
 </div>
-<div class="col-sm-10 col-sm-push-2">
+<div class="col-md-10 col-md-push-2 col-sm-18">
 <?php 
 if(
 	($user = Yii::$app->getUser()->identity) && 

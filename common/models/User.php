@@ -282,6 +282,26 @@ class User extends ActiveRecord implements IdentityInterface
         $this->password_reset_token = null;
     }
     
+    public function setSubscriptions($subs)
+    {
+    	$currentSubs = is_array($this->comics) ? $this->comics : [];
+    	if(count($currentSubs) <= 0){
+    		// Cannot resolve nuttin
+    		return true;
+    	}
+    	$newSubs = [];
+    	foreach($currentSubs as $k => $sub){
+    		foreach($subs as $sk => $subKey){
+    			if($subKey === (String)$sub['comic_id']){
+    				$newSubs[$sk] = $sub;
+    			}
+    		}
+    	}
+    	ksort($newSubs);
+    	$this->comics = $newSubs;
+    	return true;
+    }
+    
     public function isSubscribed($comic_id)
     {
     	if($comic_id instanceof \MongoId){

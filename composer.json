@@ -20,7 +20,9 @@
 		"bower-asset/jquery": "~1.11@stable",
 		"bower-asset/jquery-ui": "~1.11@stable",
 		"yiisoft/yii2-jui": "*",
-		"yiisoft/yii2-imagine": "*"
+		"yiisoft/yii2-imagine": "*",
+		"yiisoft/yii2-authclient": "*",
+		"ivaynberg/select2": "*"
 	},
 	"require-dev": {
 		"yiisoft/yii2-codeception": "*",

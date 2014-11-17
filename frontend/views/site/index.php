@@ -29,6 +29,13 @@ $this->params['excludeContainer'] = true;
     <div class="col-sm-19 col-sm-push-5 col-signup">
     <h2>Try it out!</h2>
     <p>Already have an account? <a href="<?= Url::to(['site/login']) ?>">Click here to sign in</a></p>
+        <div>
+    <p class="social-login-desc">With your favourite network:</p>
+<?= common\widgets\AuthChoice::widget([
+     'baseAuthUrl' => ['site/auth']
+]) ?>
+<p class="social-login-desc">Or:</p>
+    </div>
     <?php 
     	$model = new SignupForm();
         $form = ActiveForm::begin(['id' => 'form-signup', 'action' => ['site/signup']]); ?>
