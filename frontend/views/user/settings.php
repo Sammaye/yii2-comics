@@ -11,6 +11,10 @@ $this->registerJs("
 	$(document).on('click', '.btn-delete', function(e){
 		window.location.replace('" . Url::to(['user/delete']) . "');
 	});
+		
+	$(document).on('click', '.btn-unsubscribe', function(e){
+		
+	});
 
 	$( '#sortable' ).sortable();
 	$( '#sortable' ).disableSelection();
@@ -30,8 +34,11 @@ $this->registerJs("
     <ul class="sortable-subscriptions" id="sortable">
     <?php foreach($model->comics as $k => $comic){ 
     	if($comic = Comic::find()->where(['_id' => $comic['comic_id']])->one()){ ?>
-    	<li class="clearfix"><span><?= $comic->title ?></span>
-    	<?= Html::a('Unsubscribe', ['comic/unsubscribe', 'comic_id' => (String)$comic->_id], ['class' => 'btn btn-sm btn-danger']) ?></li>
+    	<li class="clearfix">
+    	<span><?= $comic->title ?></span>
+    	<?= Html::a('Unsubscribe', ['comic/unsubscribe', 'comic_id' => (String)$comic->_id], ['class' => 'btn btn-sm btn-danger btn-unsubscribe']) ?>
+    	<?= Html::hiddenInput('subscriptions[]', (String)$comic->_id) ?>
+    	</li>
     	<?php }
     } ?>
     </ul>
