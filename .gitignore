@@ -28,3 +28,6 @@ phpunit.phar
 
 # environments folder will be done via bitbucket from now on
 environments
+
+# Some composer packages used components folder
+components
