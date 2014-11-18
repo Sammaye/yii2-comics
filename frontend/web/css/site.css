@@ -269,7 +269,7 @@ a.desc:after {
 .btn-transparent.focus{
 	background:#fff;
 	border-color:#fff;
-	color:#4B9F4B;
+	color:#E74A39;
 }
 
 .site-index .jumbotron{
@@ -282,7 +282,13 @@ a.desc:after {
 }
 
 .site-index .top-ribbon{
-	background:#4b9f4b;
+	background:#e74a39;
+}
+
+.site-index .top-ribbon .container{
+	background-image:url('../images/garfield-ribbon.jpg');
+	background-repeat:no-repeat;
+	background-position:center 130%;
 }
 
 .site-index .jumbo-more-info h2,
