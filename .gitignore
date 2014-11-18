@@ -27,4 +27,4 @@ phpunit.phar
 /phpunit.xml
 
 # environments folder will be done via bitbucket from now on
-environments
+#environments
