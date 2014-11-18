@@ -49,6 +49,7 @@ return [
         ],
         'formatter' => ['class' => 'common\components\Formatter'],
         
+        # You will need to setup your environments to add these application keys
         'authClientCollection' => [
 	        'class' => 'yii\authclient\Collection',
 	        'clients' => [
@@ -59,8 +60,8 @@ return [
         		],
         		'facebook' => [
         			'class' => 'yii\authclient\clients\Facebook',
-        			'clientId' => 'facebook_client_id',
-        			'clientSecret' => 'facebook_client_secret',
+        			'clientId' => '',
+        			'clientSecret' => '',
         		],
         	],
         ]
