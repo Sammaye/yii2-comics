@@ -6,7 +6,7 @@ use yii\widgets\ActiveForm;
 
 $this->title = 'Create user';
 ?>
-<h1>Create user</h1>
+<h1 class="form-head">Create user</h1>
 <?php $form = ActiveForm::begin(['enableClientValidation' => false]) ?>
 <?= $form->errorSummary($model) ?>
 <?= $form->field($model, 'username') ?>

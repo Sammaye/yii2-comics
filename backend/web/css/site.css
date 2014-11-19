@@ -2,6 +2,7 @@ html,
 body {
 	height: 100%;
 	font-family: 'Open Sans', sans-serif;
+	background:#f8f8f8;
 }
 
 .wrap {
@@ -72,4 +73,20 @@ a.desc:after {
 	border-left: 3px solid #eed3d7;
 	padding: 10px 20px;
 	margin: 0 0 15px 0;
+}
+
+.admin-toolbar{
+	margin:20px 0;
+}
+
+.toolbar .btn + .btn{
+	margin-left:20px;
+}
+
+.table{
+	background:#fff;
+}
+
+.form-head{
+	margin-bottom:30px;
 }

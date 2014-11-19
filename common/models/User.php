@@ -36,6 +36,8 @@ class User extends ActiveRecord implements IdentityInterface
 	
 	public $newPassword;
 	public $oldPassword;
+	
+	public $adminSetPassword;
 
     /**
      * @inheritdoc
@@ -73,6 +75,8 @@ class User extends ActiveRecord implements IdentityInterface
              
              ['newPassword', 'string', 'max' => 20, 'min' => 7],
              ['newPassword', 'validateNewPassword'],
+             
+             ['adminSetPassword', 'string', 'max' => 20, 'min' => 7],
              
              ['email_frequency', 'in', 'range' => array_keys($this->emailFrequencies())],
              
@@ -114,6 +118,13 @@ class User extends ActiveRecord implements IdentityInterface
      	];
      }
      
+     public function attributeLabels()
+     {
+     	return [
+			'adminSetPassword' => 'Password'
+     	];
+     }
+     
      public function subdocuments()
      {
      	return [
@@ -152,6 +163,10 @@ class User extends ActiveRecord implements IdentityInterface
      
      public function beforeSave($insert)
      {
+     	if($this->adminSetPassword){
+     		$this->newPassword = $this->adminSetPassword;
+     	}
+     	
      	if($this->newPassword){
      		$this->setPassword($this->newPassword);
      	}

@@ -7,8 +7,8 @@ use yii\grid\GridView;
 $this->title = 'Administrate Users';
 ?>
 <h1>Users</h1>
-<div>
-<?= Html::a('Create User', ['create']) ?>
+<div class="admin-toolbar">
+<?= Html::a('Create User', ['create'], ['class' => 'btn btn-primary']) ?>
 </div>
 <?= GridView::widget([
 	'dataProvider' => $model->search(),

@@ -7,8 +7,8 @@ use yii\grid\GridView;
 $this->title = 'Administrate Comics';
 ?>
 <h1>Comics</h1>
-<div>
-<?= Html::a('Create Comic', ['create']) ?>
+<div class="admin-toolbar">
+<?= Html::a('Create Comic', ['create'], ['class' => 'btn btn-primary']) ?>
 </div>
 <?= GridView::widget([
 	'dataProvider' => $model->search(),
