@@ -60,6 +60,7 @@ class User extends ActiveRecord implements IdentityInterface
              ['username', 'unique'],
              
              ['email', 'email'],
+             ['email', 'unique'],
          
              ['status', 'default', 'value' => self::STATUS_ACTIVE],
              ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
@@ -106,7 +107,10 @@ class User extends ActiveRecord implements IdentityInterface
 			'updated_at',
 			'comics',
 			'email_frequency',
-			'testArray'
+			'facebook_id',
+			'google_id',
+			'facebook_token',
+			'testArray',
      	];
      }
      

@@ -11,6 +11,8 @@ use yii\web\BadRequestHttpException;
 use common\components\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use common\models\User;
+use yii\web\HttpException;
 
 /**
  * Site controller
@@ -70,7 +72,90 @@ class SiteController extends Controller
     public function successCallback($client)
     {
     	$attributes = $client->getUserAttributes();
-    	// user login or signup comes here
+    	$token = $client->getAccessToken();
+    	
+    	if(!($authclient = Yii::$app->getRequest()->get('authclient'))){
+    		// boom
+    		throw new HttpException(403, 'Something went terribly wrong in 
+    			the social network and they have given off a bad request');
+    	}
+    	
+    	if($authclient === 'facebook'){
+    		
+    		// Nomralise googlemail to gmail
+    		$gmailEmail = preg_replace('/googlemail.com/', 'gmail.com', $attributes['email']);
+    		$googleEmail = preg_replace('/gmail.com/', 'googlemail.com', $attributes['email']);
+
+    		if(
+    			!($user = User::find()->where(['facebook_id' => $attributes['id']])->one()) && 
+    			!($user = User::find()->where(['or', ['email' => $gmailEmail], ['email' => $googleEmail]])->one())
+			){
+				// New user
+				$user = new User;
+				$user->username = $attributes['name'] . rand(100, 3234567);
+				$user->email = $attributes['email'];
+    		}
+    		
+    		$user->facebook_id = $attributes['id'];
+    		if(!$user->save()){
+    			// Boom
+    			throw new HttpException(403, 'Could not seem to save your user,
+    				you may wish to visit this sites help section for support');
+    		}
+    	}elseif($authclient === 'google'){
+    		
+    		$email = null;
+    		foreach($attributes['emails'] as $e){
+    			if(
+    				(
+    					preg_match('/googlemail.com/', $e['value']) || 
+    					preg_match('/gmail.com/', $e['value']) 
+    				) && 
+    				$e['type'] === 'account'
+				){
+    				$email = $e['value'];
+    				break;
+    			}
+    		}
+    		
+    		if(!$email){
+    			// boom
+    			throw new HttpException(403, 'Could not seem to get an email for your account');
+    		}
+    		
+    		$gmailEmail = preg_replace('/googlemail.com/', 'gmail.com', $email);
+    		$googleEmail = preg_replace('/gmail.com/', 'googlemail.com', $email);
+    		
+    		if(
+    			!($user = User::find()->where(['google_id' => $attributes['id']])->one()) &&
+    			!($user = User::find()->where(['or', ['email' => $gmailEmail], ['email' => $googleEmail]])->one())
+    		){
+    			// New user
+    			$user = new User;
+    			$user->username = $attributes['displayName'] . rand(100, 3234567);
+    			$user->email = $attributes['email'];
+    		}
+    		
+    		$user->google_id = $attributes['id'];
+    		if(!$user->save()){
+    			// Boom
+    			throw new HttpException(403, 'Could not seem to save your user, 
+    				you may wish to visit this sites help section for support');
+    		}
+    	}else{
+    		// Boom again
+    		throw new HttpException(403, 'That is not currently a valid sign in method');
+    	}
+    	
+    	// then log them in
+    	$model = new LoginForm();
+    	$model->email = $user->email;
+    	if ($model->login(false)) {
+    	} else {
+    		// Boom
+    		throw new HttpException(403, 'Could not seem to log you in however, everything 
+    			else succeeded. You could try again or visit the help section for support');
+    	}
     }
 
     public function actionIndex()

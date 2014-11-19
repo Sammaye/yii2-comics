@@ -401,3 +401,7 @@ a.desc:after {
 .site-index .col-signup .auth-clients a{
 	color:#fff;
 }
+
+.text-discolored{
+	color:#ccc;
+}

@@ -20,10 +20,9 @@ $this->params['excludeContainer'] = true;
     <h1>Welcome to c!y</h1>
     <div class="row">
     <div class="col-sm-24">
-	<p class="text-muted"><i>noun</i> /ci-lee/</p>
+	<p class="text-muted text-discolored"><i>noun</i> /ci-lee/</p>
     <p>A new free cartoon distribution service catering for email, and currently Facebook, allowing you to aggregate and view your 
-    daily/weekly/monthly cartoons by a schedule of your choosing.</p>
-    <p>c!y allows you aggregate your favourite comics and bundle them into a single message to be sent to you, normally via email, however, also over Facebook.</p>
+    cartoons by a schedule of your choosing; currently allowing you to batch cartoons by daily, weekly or monthly schedule.</p>
     <p>And the best part? It is absolutely free! No charges, ever.</p>
     </div>
     <div class="col-sm-19 col-sm-push-5 col-signup">

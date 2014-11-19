@@ -49,17 +49,17 @@ class LoginForm extends Model
      *
      * @return boolean whether the user is logged in successfully
      */
-    public function login()
+    public function login($runValidation = true)
     {
-        if ($this->validate()) {
-            $response = Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600 * 24 * 30 : 0);
-            if($response){
-            	Yii::$app->session->set('tier2Timeout', time() + Yii::$app->user->tier2Timeout);
-            }
-            return $response;
-        } else {
-            return false;
+    	if($runValidation && !$this->validate()){
+    		return false;
+    	}
+
+        $response = Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600 * 24 * 30 : 0);
+        if($response){
+        	Yii::$app->session->set('tier2Timeout', time() + Yii::$app->user->tier2Timeout);
         }
+        return $response;
     }
 
     /**
