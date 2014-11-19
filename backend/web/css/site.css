@@ -90,3 +90,16 @@ a.desc:after {
 .form-head{
 	margin-bottom:30px;
 }
+
+.comic-update-strip-head{
+	margin-top:40px;
+}
+
+.comic-strip-form-end{
+	margin:25px 0;
+}
+
+.return-to-comic-link{
+	margin-bottom:20px;
+	display:inline-block;
+}

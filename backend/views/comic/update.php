@@ -8,9 +8,12 @@ use yii\helpers\Url;
 $this->title = 'Update ' . $model->title;
 
 ?>
-<h1>Update Comic</h1>
+<h1 class="form-head">Update Comic</h1>
 <?= $this->render('_form', ['model' => $model]) ?>
+<h2 class="comic-update-strip-head">Strips for this comic</h2>
+<div class="admin-toolbar">
 <?= Html::a('Add Strip', ['comic-strip/create', 'comic_id' => (String)$model->_id], ['class' => 'btn btn-primary']) ?>
+</div>
 <?php 
 $comicStrip = new ComicStrip;
 echo GridView::widget([

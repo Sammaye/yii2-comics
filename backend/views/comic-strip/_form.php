@@ -5,6 +5,7 @@ use yii\helpers\Url;
 use yii\bootstrap\ActiveForm;
 
 ?>
+<?= Html::a('Back to ' . $model->comic->title, ['comic/uupdate', 'id' => (String)$model->comic->_id], ['class' => 'return-to-comic-link']) ?>
 <?php $form = ActiveForm::begin(['enableClientValidation' => false]) ?>
 <?= $form->errorSummary($model) ?>
 <?= Html::activeHiddenInput($model, 'comic_id') ?>
@@ -15,5 +16,12 @@ use yii\bootstrap\ActiveForm;
 	<img src="<?= Url::to(['comic-strip/render-image', 'id' => (String)$model->_id]) ?>"/>
 	</div>
 <?php } ?>
+<div class="toolbar comic-strip-form-end">
 <?= Html::submitButton($model->getIsNewRecord() ? 'Create Comic Strip' : 'Update Comic Strip', ['class' => 'btn btn-success']) ?>
+<?php
+if(!$model->getIsNewRecord()){ 
+	echo Html::a('Refresh Image', ['comic-strip/refresh-image', 'id' => (string)$model->_id], ['class' => 'btn btn-default']);
+} 
+?>
+</div>
 <?php $form->end() ?>
