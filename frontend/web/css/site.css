@@ -153,6 +153,7 @@ a.desc:after {
 	border-bottom-right-radius:0; 
 	float:left; 
 	position:relative;
+	height:46px;
 }
 
 .comic-date-picker > form > div > a:last-child{
@@ -160,10 +161,11 @@ a.desc:after {
 	border-bottom-left-radius:0;
 	float:left;
 	position:relative;
+	height:46px;
 }
 
 .comic-date-picker input[type="text"]{
-	width:auto;
+	width:70%;
 	border-radius:0;
 	display:inline-block;
 	float:left;
@@ -218,6 +220,10 @@ a.desc:after {
 
 .comic-info-outer .comic-homepage{
 	margin-left:20px;
+}
+
+.nav-tabs.comics-view-nav{
+	border:0;
 }
 
 .nav-tabs.comics-view-nav > li.active > a, 
@@ -404,4 +410,62 @@ a.desc:after {
 
 .text-discolored{
 	color:#ccc;
+}
+
+.form-control.select2-container{
+	margin-bottom:5px;
+}
+
+.select2-container .select2-choice{
+	background:#fff;
+	font-size:22px;
+	font-weight:bold;
+}
+
+.select2-container .select2-choice > .select2-chosen span{
+	color:#999999;
+	font-size:13px;
+	margin-left:10px;
+}
+
+.select2-container .select2-choice > .select2-chosen{
+	padding:12px 0;
+}
+
+.select2-container .select2-choice{
+	height:50px;
+}
+
+.select2-container .select2-choice .select2-arrow{
+	background:#fff;
+	border-left:0;
+}
+
+.select2-container .select2-choice .select2-arrow b{
+	background-position:0 100%;
+}
+
+.select2-search input{
+	font-size:22px;
+	border-radius:5px;
+	border-color:#ccc;
+}
+
+.select2-results li{
+	font-size:16px;
+}
+
+.select2-results .select2-highlighted{
+	background:#337AB7;
+	border-radius:2px;
+}
+
+.select2-results .select2-result-label span{
+	color:#999999;
+	font-size:12px;
+	margin-left:10px;
+}
+
+.view-comic-nav-top{
+	border-bottom:1px solid #ddd;
 }

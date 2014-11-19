@@ -5,6 +5,9 @@ use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use common\models\Comic;
 use common\models\RequestComicForm;
+use common\widgets\Select2Asset;
+
+Select2Asset::register($this);
 
 $this->registerJs("
 $('#requestComicForm').on('submit', function(e){
@@ -40,23 +43,48 @@ $('#requestComicForm').on('submit', function(e){
 		}
 	});
 });
+
+function format(row) {
+	row = $.parseJSON(row.text);
+	if (!row.author) return row.title; // optgroup
+	return row.title + '<span>By ' + row.author + '</span>';
+}
+
+$('#comicSelector').select2({
+	formatSelection: format,
+	formatResult: format
+});
+
+$('#comicSelector').on('change', function(e){
+	window.location.href = '" . Url::to(['/comic']) . '/' . "' + $('#comicSelector option:selected').val();
+});
 ");
 
 
 $this->beginContent('@app/views/layouts/main.php'); ?>
+
+<?php 
+$comics = [];
+foreach(Comic::find()->orderBy(['title' => SORT_ASC])->all() as $comic){
+	//if($this->params['comic_id'] !== (String)$comic['_id']){
+		$comics[(String)$comic['_id']] = json_encode(['title' => $comic->title, 'author' => $comic->author]);
+	//}
+}
+?><div class="view-comic-nav-top">
+<div class="row">
+<div class="col-sm-35">
+<?php echo Html::dropDownList('comcSelector', $this->params['comic_id'], $comics, ['id' => 'comicSelector', 'class' => 'form-control']); ?>
+</div>
+<div class="col-sm-13">
 <ul class="nav nav-tabs comics-view-nav" role="tablist">
-<?php foreach(Comic::find()->orderBy(['title' => SORT_ASC])->all() as $comic){
-	echo Html::tag(
-		'li', 
-		Html::a(
-			$comic->title, 
-			['comic/view', 'id' => (String)$comic->_id]
-		), 
-		['class' => (String)$comic->_id === $this->params['comic_id'] ? 'active' : '', 'role' => 'presentation']
-	);
-} ?>
 <li class="float-right"><a href="#" data-toggle="modal" data-target=".request-comic-modal"><span class="glyphicon glyphicon-plus"></span> Demand addition</a></li>
 </ul>
+</div>
+</div>
+</div>
+
+
+
 <div class="view-comic-content"><?= $content ?></div>
 
 <?php $model = new RequestComicForm(); ?>
