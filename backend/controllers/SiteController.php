@@ -31,7 +31,7 @@ class SiteController extends Controller
                     ],
                     [
                         'allow' => true,
-                        'roles' => ['@'],
+                        'roles' => ['staff'],
                     ],
                 ],
             ],

@@ -19,7 +19,7 @@ class ComicStripController extends Controller
 				'rules' => [
 					[
 						'allow' => true,
-						'roles' => ['@'],
+						'roles' => ['staff'],
 					],
 				],
 			],
