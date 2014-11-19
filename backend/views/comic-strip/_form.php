@@ -5,7 +5,6 @@ use yii\helpers\Url;
 use yii\bootstrap\ActiveForm;
 
 ?>
-<?= Html::a('Back to ' . $model->comic->title, ['comic/uupdate', 'id' => (String)$model->comic->_id], ['class' => 'return-to-comic-link']) ?>
 <?php $form = ActiveForm::begin(['enableClientValidation' => false]) ?>
 <?= $form->errorSummary($model) ?>
 <?= Html::activeHiddenInput($model, 'comic_id') ?>
