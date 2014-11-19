@@ -133,7 +133,7 @@ class SiteController extends Controller
     			// New user
     			$user = new User;
     			$user->username = $attributes['displayName'] . rand(100, 3234567);
-    			$user->email = $attributes['email'];
+    			$user->email = $email;
     		}
     		
     		$user->google_id = $attributes['id'];
