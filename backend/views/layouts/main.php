@@ -57,7 +57,7 @@ AppAsset::register($this);
         }
         ?>
 
-        <div class="container">
+        <div class="container-fluid">
         <?= Alert::widget() ?>
         <?= $content ?>
         </div>
