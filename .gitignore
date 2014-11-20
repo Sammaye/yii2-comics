@@ -30,4 +30,4 @@ phpunit.phar
 environments
 
 # Some composer packages used components folder
-components
+/components
