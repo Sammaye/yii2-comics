@@ -394,6 +394,7 @@ a.desc:after {
 
 .auth-clients{
 	text-align:center;
+	overflow:visible;
 }
 
 .social-login-desc{
