@@ -23,7 +23,7 @@ $this->params['excludeContainer'] = true;
 	<p class="text-muted text-discolored"><i>noun</i> /ci-lee/</p>
     <p>A new free cartoon distribution service catering for email, and currently Facebook, allowing you to aggregate and view your 
     cartoons by a schedule of your choosing; currently allowing you to batch cartoons by daily, weekly or monthly schedule.</p>
-    <p>And the best part? It is absolutely free! No charges, ever.</p>
+    <p>And the best part? It is absolutely free!</p>
     </div>
     <div class="col-sm-19 col-sm-push-5 col-signup">
     <h2>Try it out!</h2>

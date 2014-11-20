@@ -22,7 +22,9 @@
 		"yiisoft/yii2-jui": "*",
 		"yiisoft/yii2-imagine": "*",
 		"yiisoft/yii2-authclient": "*",
-		"ivaynberg/select2": "*"
+		"ivaynberg/select2": "*",
+		"aws/aws-sdk-php": "*",
+		"ofat/yii2-yashop-ses": "*"
 	},
 	"require-dev": {
 		"yiisoft/yii2-codeception": "*",
