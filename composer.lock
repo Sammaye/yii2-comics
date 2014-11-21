@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "0fc1d60fa4f4b9fe1921c3725ebce26035dea405"
+                "reference": "26df03201f01d81dc6e7f903285b3f4bdaaca7d4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/0fc1d60fa4f4b9fe1921c3725ebce26035dea405",
-                "reference": "0fc1d60fa4f4b9fe1921c3725ebce26035dea405",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/26df03201f01d81dc6e7f903285b3f4bdaaca7d4",
+                "reference": "26df03201f01d81dc6e7f903285b3f4bdaaca7d4",
                 "shasum": ""
             },
             "require": {
@@ -71,7 +71,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2014-11-19 23:47:06"
+            "time": "2014-11-20 22:53:37"
         },
         {
             "name": "bower-asset/bootstrap",
@@ -196,16 +196,16 @@
         },
         {
             "name": "bower-asset/jquery.inputmask",
-            "version": "3.1.38",
+            "version": "3.1.40",
             "source": {
                 "type": "git",
                 "url": "https://github.com/RobinHerbots/jquery.inputmask.git",
-                "reference": "464cddbdea65411896468f40321e68abcc75a34c"
+                "reference": "b8f06eef3ccf9b8009607f30d47f66133670afc2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/RobinHerbots/jquery.inputmask/zipball/464cddbdea65411896468f40321e68abcc75a34c",
-                "reference": "464cddbdea65411896468f40321e68abcc75a34c",
+                "url": "https://api.github.com/repos/RobinHerbots/jquery.inputmask/zipball/b8f06eef3ccf9b8009607f30d47f66133670afc2",
+                "reference": "b8f06eef3ccf9b8009607f30d47f66133670afc2",
                 "shasum": ""
             },
             "require": {
@@ -659,12 +659,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ivaynberg/select2.git",
-                "reference": "69e8e6e355957e472702b8e80f3ebd501a5e42ca"
+                "reference": "9913cb7c2574a00251f9dc160ac26efee8ae2b2d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ivaynberg/select2/zipball/69e8e6e355957e472702b8e80f3ebd501a5e42ca",
-                "reference": "69e8e6e355957e472702b8e80f3ebd501a5e42ca",
+                "url": "https://api.github.com/repos/ivaynberg/select2/zipball/9913cb7c2574a00251f9dc160ac26efee8ae2b2d",
+                "reference": "9913cb7c2574a00251f9dc160ac26efee8ae2b2d",
                 "shasum": ""
             },
             "require": {
@@ -694,7 +694,7 @@
             ],
             "description": "Select2 is a jQuery based replacement for select boxes.",
             "homepage": "http://ivaynberg.github.io/select2/",
-            "time": "2014-11-14 22:38:28"
+            "time": "2014-11-21 02:46:38"
         },
         {
             "name": "kriswallsmith/assetic",
@@ -702,12 +702,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/kriswallsmith/assetic.git",
-                "reference": "eb82167d176eb40078469ef9408ff56fd32a5d66"
+                "reference": "ec53b62cc24cde991062fa50798fe0b6436fd884"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kriswallsmith/assetic/zipball/eb82167d176eb40078469ef9408ff56fd32a5d66",
-                "reference": "eb82167d176eb40078469ef9408ff56fd32a5d66",
+                "url": "https://api.github.com/repos/kriswallsmith/assetic/zipball/ec53b62cc24cde991062fa50798fe0b6436fd884",
+                "reference": "ec53b62cc24cde991062fa50798fe0b6436fd884",
                 "shasum": ""
             },
             "require": {
@@ -768,7 +768,7 @@
                 "compression",
                 "minification"
             ],
-            "time": "2014-10-30 11:33:12"
+            "time": "2014-11-21 00:35:09"
         },
         {
             "name": "ofat/yii2-yashop-ses",
@@ -1469,12 +1469,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/fzaninotto/Faker.git",
-                "reference": "44eae4deeb065454e68b3c9911181285f01003c6"
+                "reference": "d6d0d9d7caf1083cd458836898644dffb714162d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fzaninotto/Faker/zipball/44eae4deeb065454e68b3c9911181285f01003c6",
-                "reference": "44eae4deeb065454e68b3c9911181285f01003c6",
+                "url": "https://api.github.com/repos/fzaninotto/Faker/zipball/d6d0d9d7caf1083cd458836898644dffb714162d",
+                "reference": "d6d0d9d7caf1083cd458836898644dffb714162d",
                 "shasum": ""
             },
             "require": {
@@ -1510,7 +1510,7 @@
                 "faker",
                 "fixtures"
             ],
-            "time": "2014-11-12 17:27:49"
+            "time": "2014-11-21 08:40:16"
         },
         {
             "name": "phpspec/php-diff",

@@ -163,7 +163,6 @@ class SiteController extends Controller
     	Yii::$app->getMailer()->compose()->setTextBody('test')
     	->setFrom(['sam.millman@googlemail.com' => 'Sam Millman'])
     	->setTo('sam.millman@googlemail.com')
-    	//->setReturnPath('sam.millman@googlemail.com')
     	->setSubject('damn test')
     	->send();
     	if(Yii::$app->getUser()->identity){

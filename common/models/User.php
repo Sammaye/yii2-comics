@@ -114,6 +114,7 @@ class User extends ActiveRecord implements IdentityInterface
 			'facebook_id',
 			'google_id',
 			'facebook_token',
+			'last_feed_sent',
 			'testArray',
      	];
      }

@@ -5,6 +5,7 @@ namespace common\components;
 use Yii;
 use common\components\Subdocument;
 use yii\mongodb\ActiveRecord as MongoActiveRecord;
+use common\components\ActiveQuery;
 
 class ActiveRecord extends MongoActiveRecord
 {
@@ -13,7 +14,6 @@ class ActiveRecord extends MongoActiveRecord
 	public function init()
 	{
 		parent::init();
-		
 		foreach($this->subdocuments() as $k => $options){
 			if(is_numeric($k)){
 				$this->_subdocuments[$options] = [];
@@ -21,6 +21,11 @@ class ActiveRecord extends MongoActiveRecord
 				$this->_subdocuments[$k] = $options;
 			}
 		}
+	}
+	
+	public static function find()
+	{
+		return Yii::createObject(ActiveQuery::className(), [get_called_class()]);
 	}
 	
 	public function subdocuments()
@@ -67,18 +72,18 @@ class ActiveRecord extends MongoActiveRecord
 		}
 	}
 	
-	public static function populateRecord($record, $row)
+	public static function populateRecord($model, $row)
 	{
-		$columns = array_flip($record->attributes());
+		$columns = array_flip($model->attributes());
 		foreach ($row as $name => $value) {
-			if($record->hasSubdocument($name)){
-				$record->setAttribute($name, new Subdocument(['attribute' => $name, 'value' => $value]));
+			if($model->hasSubdocument($name)){
+				$model->setAttribute($name, new Subdocument(['attribute' => $name, 'value' => $value]));
 			}elseif (isset($columns[$name])) {
-				$record->setAttribute($name, $value);
-			} elseif ($record->canSetProperty($name)) {
-				$record->$name = $value;
+				$model->setAttribute($name, $value);
+			} elseif ($model->canSetProperty($name)) {
+				$model->$name = $value;
 			}
 		}
-		$record->setOldAttributes($record->getAttributes());
+		$model->setOldAttributes($model->getAttributes());
 	}
 }

@@ -65,6 +65,7 @@ class Comic extends ActiveRecord
 			'author',
 			'author_homepage',
 			'date_format',
+			'last_checked',
 			'updated_at',
 			'created_at'
 		];
