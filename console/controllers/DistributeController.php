@@ -7,6 +7,7 @@ use console\controllers\ScraperController;
 use common\models\ComicStrip;
 use common\models\Comic;
 use common\models\User;
+use yii\helpers\Url;
 
 class DistributeController extends Controller
 {
@@ -54,6 +55,9 @@ class DistributeController extends Controller
 	
 	public function actionEmail()
 	{
+		Yii::$app->getUrlManager()->setBaseUrl('http://frontend/');
+		Yii::$app->getUrlManager()->setHostInfo('http://frontend/');
+	
 		foreach(User::find()->orderBy(['_id' => SORT_ASC])->each() as $user){
 			
 			$comics = [];
@@ -63,15 +67,15 @@ class DistributeController extends Controller
 				continue;
 			}
 			
-			$user->last_feed_sent = $timeToday;
+			//$user->last_feed_sent = $timeToday;
 			
 			foreach($user->comics as $sub){
 				if($comic = Comic::find()->where(['_id' => $sub['comic_id']])->one()){
-					if($comc->last_checked != $timeToday){
+					if($comic->last_checked != $timeToday){
 						// try and scrape one
 						$strip = new ComicStrip();
-						$strip->date = new \MongoDate($ts);
-						$strp->comic_id = $comic->_id;
+						$strip->date = new \MongoDate($timeToday);
+						$strip->comic_id = $comic->_id;
 						if(!$strip->populateRemoteImage() || !$strip->save()){
 							// Error
 							$this->logComicError('Comic: ' . (String)$comic->_id . ' with strip: ' . date('d-m-Y') . ' could not be saved');
@@ -96,12 +100,15 @@ class DistributeController extends Controller
 				}
 			}
 			
-			Yii::$app->getMailer()
-				->compose('comicFeed', ['comics' => $comics])
-				->setFrom([\Yii::$app->params['supportEmail'] => 'Sam Millman'])
-				->setTo($user->email)
-				->setSubject('Your c!y Feed for ' . date('d-m-Y'))
-				->send();
+			if(count($comics) > 0){
+				//echo "worked";
+				Yii::$app->getMailer()
+					->compose('comicFeed', ['comics' => $comics])
+					->setFrom([\Yii::$app->params['supportEmail'] => 'Sam Millman'])
+					->setTo($user->email)
+					->setSubject('Your c!y Feed for ' . date('d-m-Y'))
+					->send();
+			}
 		}
 		
 		$this->sendLog();

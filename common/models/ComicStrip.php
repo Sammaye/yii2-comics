@@ -62,6 +62,11 @@ class ComicStrip extends ActiveRecord
 		];
 	}
 	
+	public function setComic($rows)
+	{
+		return $this->populateRelation('comic', $rows);
+	}
+	
 	public function getComic()
 	{
 		return $this->hasOne('common\models\Comic', ['_id' => 'comic_id']);

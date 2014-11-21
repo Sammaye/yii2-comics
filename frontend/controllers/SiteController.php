@@ -160,11 +160,6 @@ class SiteController extends Controller
 
     public function actionIndex()
     {
-    	Yii::$app->getMailer()->compose()->setTextBody('test')
-    	->setFrom(['sam.millman@googlemail.com' => 'Sam Millman'])
-    	->setTo('sam.millman@googlemail.com')
-    	->setSubject('damn test')
-    	->send();
     	if(Yii::$app->getUser()->identity){
     		return $this->redirect(['comic/index']);
     	}else{

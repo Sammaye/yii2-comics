@@ -8,7 +8,6 @@ use yii\widgets\ActiveForm;
  * @var \common\models\ResetPasswordForm $model
  */
 $this->title = 'Reset password';
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="site-reset-password">
     <h1><?= Html::encode($this->title) ?></h1>
@@ -16,7 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>Please choose your new password:</p>
 
     <div class="row">
-        <div class="col-lg-5">
+        <div class="col-sm-15">
             <?php $form = ActiveForm::begin(['id' => 'reset-password-form']); ?>
                 <?= $form->field($model, 'password')->passwordInput() ?>
                 <div class="form-group">
