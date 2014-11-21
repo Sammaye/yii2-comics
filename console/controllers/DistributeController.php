@@ -35,7 +35,7 @@ class DistributeController extends Controller
 			Yii::$app->getMailer()
 				->compose()
 				->setTextBody(implode('', $this->userErrors))
-				->setFrom([\Yii::$app->params['supportEmail'] => 'Sam Millman'])
+				->setFrom([\Yii::$app->params['adminEmail'] => 'Sam Millman'])
 				->setTo($user->email)
 				->setSubject('User Errors for the comic Feed for ' . date('d-m-Y'))
 				->send();
@@ -45,7 +45,7 @@ class DistributeController extends Controller
 			Yii::$app->getMailer()
 				->compose()
 				->setTextBody(implode('', $this->comicErrors))
-				->setFrom([\Yii::$app->params['supportEmail'] => 'Sam Millman'])
+				->setFrom([\Yii::$app->params['adminEmail'] => 'Sam Millman'])
 				->setTo($user->email)
 				->setSubject('Comic Errors for the comic Feed for ' . date('d-m-Y'))
 				->send();
