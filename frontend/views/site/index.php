@@ -21,8 +21,9 @@ $this->params['excludeContainer'] = true;
     <div class="row">
     <div class="col-sm-24">
 	<p class="text-muted text-discolored"><i>noun</i> /ci-lee/</p>
-    <p>A new free cartoon distribution service catering for email, and currently Facebook, allowing you to aggregate and view your 
-    cartoons by a schedule of your choosing; currently allowing you to batch cartoons by daily, weekly or monthly schedule.</p>
+    <p>A new free cartoon distribution service which allows you to aggregate and view your 
+    cartoons by a schedule of your choosing from the comfort of your email inbox; currently allowing you 
+    to batch cartoons by daily, weekly or monthly schedule .</p>
     <p>And the best part? It is absolutely free!</p>
     </div>
     <div class="col-sm-19 col-sm-push-5 col-signup">

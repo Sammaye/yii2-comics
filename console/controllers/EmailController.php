@@ -25,12 +25,12 @@ class EmailController extends Controller
 	
 	public function logUserError($message)
 	{
-		return $this->userErrors = $this->log('USER ERROR: ' . $message);
+		return $this->userErrors[] = $this->log('USER ERROR: ' . $message);
 	}
 	
 	public function logComicError($message)
 	{
-		return $this->comicErrors = $this->log('COMIC ERROR: ' . $message);
+		return $this->comicErrors[] = $this->log('COMIC ERROR: ' . $message);
 	}
 	
 	public function log($message)
@@ -45,7 +45,7 @@ class EmailController extends Controller
 				->compose()
 				->setTextBody(implode('', $this->userErrors))
 				->setFrom([\Yii::$app->params['adminEmail'] => 'Sam Millman'])
-				->setTo($user->email)
+				->setTo(\Yii::$app->params['adminEmail'])
 				->setSubject('User Errors for the comic Feed for ' . date('d-m-Y'))
 				->send();
 		}
@@ -55,7 +55,7 @@ class EmailController extends Controller
 				->compose()
 				->setTextBody(implode('', $this->comicErrors))
 				->setFrom([\Yii::$app->params['adminEmail'] => 'Sam Millman'])
-				->setTo($user->email)
+				->setTo(\Yii::$app->params['adminEmail'])
 				->setSubject('Comic Errors for the comic Feed for ' . date('d-m-Y'))
 				->send();
 		}

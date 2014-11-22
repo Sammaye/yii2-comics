@@ -9,9 +9,31 @@ use common\models\Comic;
 
 class ScraperController extends Controller
 {
+	public $log = [];
+	
 	public function log($message)
 	{
-		return '[ '.date('d-m-Y H:i:s').' '.microtime(true).' ] '.$message."\n";
+		return $this->log[] = '[ '.date('d-m-Y H:i:s').' '.microtime(true).' ] '.$message."\n";
+	}
+	
+	public function sendLog()
+	{
+		if(count($this->log) > 0){
+			Yii::$app->getMailer()
+			->compose()
+			->setTextBody(implode('', $this->log))
+			->setFrom([\Yii::$app->params['adminEmail'] => 'Sam Millman'])
+			->setTo(\Yii::$app->params['adminEmail'])
+			->setSubject('Scraper report for ' . date('d-m-Y'))
+			->send();
+		}
+	}
+	
+	public function printLog()
+	{
+		foreach($this->log as $entry){
+			echo $entry;
+		}
 	}
 	
 	public function actionCheckTimeOfNew($comic_id)
@@ -36,13 +58,15 @@ class ScraperController extends Controller
 			curl_close($ch);
 			
 			if($httpCode == 200){
-				echo $this->log("IT'S HERE IT'S HERE !!!!111");
+				$this->log("IT'S HERE IT'S HERE !!!!111");
 				$this->actionGetDate($date->format('d'), $date->format('m'), $date->format('Y'), (String)$comic->_id);
 				break;
 			}else{
-				echo $this->log("still not there");
+				$this->log("still not there");
 				sleep(3600);
 			}
+			
+			$this->printLog();
 		}
 	}
 	
@@ -66,7 +90,9 @@ class ScraperController extends Controller
 	{
 		if($comic_id){
 			if(ComicStrip::find()->where(['comic_id' => new \MongoId($comic_id), 'date' => new \MongoDate($ts)])->one()){
-				echo $this->log('Strip for ' . date('d/m/Y') . ' : ' . $comic->title . ' already exists');
+				$this->log('Strip for ' . date('d/m/Y') . ' : ' . $comic->title . ' already exists');
+				$this->printLog();
+				$this->sendLog();
 				return 1;
 			}
 			
@@ -80,17 +106,18 @@ class ScraperController extends Controller
 				$strip->comic->last_checked = $ts;
 				if(!$comic->save()){
 					// Error
-					$this->logComicError('Comic: ' . (String)$comic->_id . 'could not be saved');
-					return false;
+					$this->log('Comic: ' . (String)$comic->_id . 'could not be saved');
 				}
 			}else{
 				$this->log('Strip for ' . date('d/m/Y') . ' : ' . $comic->title . ' did not save');
 			}
 			
-			
+			$this->printLog();
+			$this->sendLog();
 		}else{
 			foreach(Comic::find()->all() as $comic){
 				if(ComicStrip::find()->where(['comic_id' => $comic->_id, 'date' => new \MongoDate($ts)])->one()){
+					$this->log('Strip for ' . date('d/m/Y') . ' : ' . $comic->title . ' already exists');
 					// Don't drown us in crappy messages
 					continue;
 				}
@@ -99,20 +126,22 @@ class ScraperController extends Controller
 				$strip->date = new \MongoDate($ts);
 				$strip->populateRemoteImage();
 				if($strip->save()){
-					echo $this->log('Strip for ' . date('d/m/Y') . ' : ' . $comic->title . ' was saved successfully');
+					$this->log('Strip for ' . date('d/m/Y') . ' : ' . $comic->title . ' was saved successfully');
 					
 					$comic = $strip->comic;
 					$strip->comic->last_checked = $ts;
 					if(!$comic->save()){
 						// Error
-						$this->logComicError('Comic: ' . (String)$comic->_id . 'could not be saved');
-						return false;
+						$this->log('Comic: ' . (String)$comic->_id . 'could not be saved');
 					}
 					
 				}else{
-					echo $this->log('Strip for ' . date('d/m/Y') . ' : ' . $comic->title . ' did not save');
+					$this->log('Strip for ' . date('d/m/Y') . ' : ' . $comic->title . ' did not save');
 				}
 			}
+			
+			$this->printLog();
+			$this->sendLog();
 		}
 		return 0;
 	}
