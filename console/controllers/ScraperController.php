@@ -75,9 +75,19 @@ class ScraperController extends Controller
 			$strip->populateRemoteImage();
 			if($strip->save()){
 				$this->log('Strip for ' . date('d/m/Y') . ' : ' . $comic->title . ' was saved successfully');
+				
+				$comic = $strip->comic;
+				$strip->comic->last_checked = $ts;
+				if(!$comic->save()){
+					// Error
+					$this->logComicError('Comic: ' . (String)$comic->_id . 'could not be saved');
+					return false;
+				}
 			}else{
 				$this->log('Strip for ' . date('d/m/Y') . ' : ' . $comic->title . ' did not save');
 			}
+			
+			
 		}else{
 			foreach(Comic::find()->all() as $comic){
 				if(ComicStrip::find()->where(['comic_id' => $comic->_id, 'date' => new \MongoDate($ts)])->one()){
@@ -90,6 +100,15 @@ class ScraperController extends Controller
 				$strip->populateRemoteImage();
 				if($strip->save()){
 					echo $this->log('Strip for ' . date('d/m/Y') . ' : ' . $comic->title . ' was saved successfully');
+					
+					$comic = $strip->comic;
+					$strip->comic->last_checked = $ts;
+					if(!$comic->save()){
+						// Error
+						$this->logComicError('Comic: ' . (String)$comic->_id . 'could not be saved');
+						return false;
+					}
+					
 				}else{
 					echo $this->log('Strip for ' . date('d/m/Y') . ' : ' . $comic->title . ' did not save');
 				}

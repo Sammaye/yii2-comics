@@ -24,7 +24,8 @@
 		"yiisoft/yii2-authclient": "*",
 		"ivaynberg/select2": "*",
 		"aws/aws-sdk-php": "*",
-		"ofat/yii2-yashop-ses": "*"
+		"ofat/yii2-yashop-ses": "*",
+		"facebook/php-sdk-v4": "*"
 	},
 	"require-dev": {
 		"yiisoft/yii2-codeception": "*",

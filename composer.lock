@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "bd998af7c489e202bf3146203bd86e0e",
+    "hash": "4e3ec69d8a4617c7c35564feed0bc986",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -447,6 +447,61 @@
                 "html"
             ],
             "time": "2013-11-30 08:25:19"
+        },
+        {
+            "name": "facebook/php-sdk-v4",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/facebook/facebook-php-sdk-v4.git",
+                "reference": "b14328e82c4b139f02f38006e6bce680c4890c70"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/facebook/facebook-php-sdk-v4/zipball/b14328e82c4b139f02f38006e6bce680c4890c70",
+                "reference": "b14328e82c4b139f02f38006e6bce680c4890c70",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "guzzlehttp/guzzle": "~4.0",
+                "mockery/mockery": "~0.8",
+                "phpunit/phpunit": "~4.0"
+            },
+            "suggest": {
+                "guzzlehttp/guzzle": "Allows for implementation of the Guzzle HTTP client"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Facebook\\": "src/Facebook/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Facebook Platform"
+            ],
+            "authors": [
+                {
+                    "name": "Facebook",
+                    "homepage": "https://github.com/facebook/facebook-php-sdk-v4/contributors"
+                }
+            ],
+            "description": "Facebook SDK for PHP",
+            "homepage": "https://github.com/facebook/facebook-php-sdk-v4",
+            "keywords": [
+                "facebook",
+                "sdk"
+            ],
+            "time": "2014-11-20 21:03:12"
         },
         {
             "name": "fxp/composer-asset-plugin",
@@ -1019,12 +1074,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-framework.git",
-                "reference": "7b9f2c37cc5af1f41d28225b7e42e3601942879e"
+                "reference": "8ce3914abc24c0c2902366e8a4f687cd16f2d9c4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/7b9f2c37cc5af1f41d28225b7e42e3601942879e",
-                "reference": "7b9f2c37cc5af1f41d28225b7e42e3601942879e",
+                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/8ce3914abc24c0c2902366e8a4f687cd16f2d9c4",
+                "reference": "8ce3914abc24c0c2902366e8a4f687cd16f2d9c4",
                 "shasum": ""
             },
             "require": {
@@ -1099,7 +1154,7 @@
                 "framework",
                 "yii2"
             ],
-            "time": "2014-11-20 12:18:34"
+            "time": "2014-11-21 17:19:32"
         },
         {
             "name": "yiisoft/yii2-authclient",

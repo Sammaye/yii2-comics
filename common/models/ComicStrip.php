@@ -3,7 +3,7 @@
 namespace common\models;
 
 use Yii;
-use yii\mongodb\ActiveRecord;
+use common\components\ActiveRecord;
 use yii\data\ActiveDataProvider;
 use common\components\Mongo;
 use common\models\Comic;
