@@ -98,6 +98,8 @@ class ScraperController extends Controller
 			
 			$strip = new ComicStrip();
 			$strip->date = new \MongoDate($ts);
+			$strip->comic = $comic;
+			$strip->comic_id = $comic->_id;
 			$strip->populateRemoteImage();
 			if($strip->save()){
 				$this->log('Strip for ' . date('d/m/Y') . ' : ' . $comic->title . ' was saved successfully');
@@ -124,6 +126,8 @@ class ScraperController extends Controller
 				
 				$strip = new ComicStrip();
 				$strip->date = new \MongoDate($ts);
+				$strip->comic = $comic;
+				$strip->comic_id = $comic->_id;
 				$strip->populateRemoteImage();
 				if($strip->save()){
 					$this->log('Strip for ' . date('d/m/Y') . ' : ' . $comic->title . ' was saved successfully');
