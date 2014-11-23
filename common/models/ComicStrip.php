@@ -135,6 +135,20 @@ class ComicStrip extends ActiveRecord
 				$url = $element->getAttribute('src');
 			}
 		}
+		
+		if(
+			$url && 
+			($parts = parse_url($url)) && 
+			(
+				!isset($parts['scheme']) || 
+				!isset($part['host'])
+			) && 
+			isset($parts['path'])
+		){
+			// The URL is relative as such add the homepage onto the beginning
+			$url = trim($this->comic->homepage, '/') . '/' . trim($parts['path'], '/'); 
+		}
+		
 		return $url;
 	}
 

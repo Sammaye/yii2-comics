@@ -63,14 +63,15 @@ class ScraperController extends Controller
 			libxml_clear_errors();
 			
 			$el = new \DOMXPath($doc);
-			$elements = $el->query("//div[@id='comic_wrap']/img");
-			var_dump($elements);
+			$elements = $el->query($comic->dom_path);
 			
 			if (!is_null($elements)) {
 				foreach ($elements as $element) {
 					echo "[". $element->nodeName. "]" . $element->getAttribute('src') . '\n';
 				}
 			}
+
+			exit();
 			/*
 			$ch = curl_init();
 			curl_setopt($ch, CURLOPT_URL, $comic->scrape_url . $date->format($comic->date_format));
