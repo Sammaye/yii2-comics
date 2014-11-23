@@ -470,3 +470,15 @@ a.desc:after {
 .view-comic-nav-top{
 	border-bottom:1px solid #ddd;
 }
+
+.comic-view-not-found{
+	padding:20px;
+}
+
+.comic-view-not-found h1{
+	margin:0;
+}
+
+.comic-view-strip-not-found{
+	padding:20px;
+}

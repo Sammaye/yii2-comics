@@ -67,13 +67,20 @@ $this->beginContent('@app/views/layouts/main.php'); ?>
 $comics = [];
 foreach(Comic::find()->orderBy(['title' => SORT_ASC])->all() as $comic){
 	//if($this->params['comic_id'] !== (String)$comic['_id']){
-		$comics[(String)$comic['_id']] = json_encode(['title' => $comic->title, 'author' => $comic->author]);
+		$comics[(String)$comic->_id] = json_encode(['title' => $comic->title, 'author' => $comic->author]);
 	//}
 }
 ?><div class="view-comic-nav-top">
 <div class="row">
 <div class="col-sm-35">
-<?php echo Html::dropDownList('comcSelector', $this->params['comic_id'], $comics, ['id' => 'comicSelector', 'class' => 'form-control']); ?>
+<?php if(count($comics) > 0){
+	echo Html::dropDownList(
+		'comcSelector', 
+		isset($this->params['comic_id']) ? $this->params['comic_id'] : null, 
+		$comics, 
+		['id' => 'comicSelector', 'class' => 'form-control']
+	); 
+} ?>
 </div>
 <div class="col-sm-13">
 <ul class="nav nav-tabs comics-view-nav" role="tablist">

@@ -17,6 +17,7 @@ $this->registerJs("
 
 <div class="row">
 <div class="col-sm-48">
+<span id="need-help-support" class="head-anchor"></span>
 <h2>I need help and/or support!</h2>
 <p>You have come to the right place!</p>
 <p>Currently the most suitable help provided would be via email. You can email me with your problems, 
