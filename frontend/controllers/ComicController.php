@@ -59,6 +59,10 @@ class ComicController extends Controller
 			$date = date('d-m-Y');
 		}
 		
+		if(strtotime(date('d-m-Y 9:00:00')) > time()){
+			$date = mktime(0, 0, 0, date('m'), date('d') -1, date('Y'));
+		}
+		
 		$comicStrip = null;
 		if(
 			$date && 
