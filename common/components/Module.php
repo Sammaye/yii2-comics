@@ -20,7 +20,7 @@ class Module extends DebugModule
 		){
 			return true;
 		}
-		parent::checkAccess();
+		return parent::checkAccess();
 	}
 	
 	/**
