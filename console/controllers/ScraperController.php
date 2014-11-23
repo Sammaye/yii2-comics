@@ -38,7 +38,7 @@ class ScraperController extends Controller
 	
 	public function actionCheckTimeOfNew($comic_id)
 	{
-		if(!($comic = Comic::find()->where(['id' => new \MongoId($comic_id)])->one())){
+		if(!($comic = Comic::find()->where(['_id' => new \MongoId($comic_id)])->one())){
 			echo $this->log('That comic does not exist! Try another.');
 			return 1;
 		}
@@ -48,6 +48,30 @@ class ScraperController extends Controller
 			$date = new \DateTime();
 			$date->setDate(2014, 10, 18);
 			
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_USERAGENT, 'Googlebot/2.1 (http://www.googlebot.com/bot.html)');
+			curl_setopt($ch, CURLOPT_URL, $comic->scrape_url . $date->format($comic->date_format));
+			curl_setopt($ch, CURLOPT_HEADER, false);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			$body = curl_exec($ch);
+			$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+			curl_close($ch);
+			
+			$doc = new \DOMDocument();
+			libxml_use_internal_errors(true);
+			$doc->loadHtml($body);
+			libxml_clear_errors();
+			
+			$el = new \DOMXPath($doc);
+			$elements = $el->query("//div[@id='comic_wrap']/img");
+			var_dump($elements);
+			
+			if (!is_null($elements)) {
+				foreach ($elements as $element) {
+					echo "[". $element->nodeName. "]" . $element->getAttribute('src') . '\n';
+				}
+			}
+			/*
 			$ch = curl_init();
 			curl_setopt($ch, CURLOPT_URL, $comic->scrape_url . $date->format($comic->date_format));
 			curl_setopt($ch, CURLOPT_HEADER, true);
@@ -65,7 +89,7 @@ class ScraperController extends Controller
 				$this->log("still not there");
 				sleep(3600);
 			}
-			
+			*/
 			$this->printLog();
 		}
 	}

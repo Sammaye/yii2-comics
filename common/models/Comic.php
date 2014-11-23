@@ -36,6 +36,7 @@ class Comic extends ActiveRecord
 			['author_homepage', 'url'],
 			['date_format', 'validateDateFormat'],
 			['date_format', 'default', 'value' => 'Y-m-d'],
+			['dom_path', 'string', 'max' => 400],
 			[
 				[
 					'_id', 
@@ -65,6 +66,7 @@ class Comic extends ActiveRecord
 			'author',
 			'author_homepage',
 			'date_format',
+			'dom_path',
 			'last_checked',
 			'updated_at',
 			'created_at'

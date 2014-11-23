@@ -108,6 +108,8 @@ class ComicStrip extends ActiveRecord
 	
 	public function getRemoteImage()
 	{
+		$url = null;
+		
 		$date = new \DateTime();
 		$date->setDate(date('Y', $this->date->sec), date('m', $this->date->sec), date('d', $this->date->sec));
 		
@@ -125,16 +127,12 @@ class ComicStrip extends ActiveRecord
 		$doc->loadHtml($body);
 		libxml_clear_errors();
 		
-		$el = $doc->getElementById('comic_wrap');
-		
-		if(!$el){
-			return null;
-		}
-		
-		$url = null;
-		foreach($el->childNodes as $child){
-			if($child instanceof \DOMElement && $child->tagName == 'img'){
-				$url = $child->getAttribute('src');
+		$el = new \DOMXPath($doc);
+		$elements = $el->query($this->comic->dom_path);
+
+		if(!is_null($elements)){
+			foreach($elements as $element){
+				$url = $element->getAttribute('src');
 			}
 		}
 		return $url;

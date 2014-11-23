@@ -19,6 +19,7 @@ use yii\bootstrap\ActiveForm;
 <?= $form->field($model, 'abstract') ?>
 <?= $form->field($model, 'scrape_url') ?>
 <?= $form->field($model, 'date_format') ?>
+<?= $form->field($model, 'dom_path') ?>
 </div>
 </div>
 <?= Html::submitButton(
