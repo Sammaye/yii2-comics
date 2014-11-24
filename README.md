@@ -1,2 +1,2 @@
-comics.ly
+cly
 =========
