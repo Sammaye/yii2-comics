@@ -37,6 +37,10 @@ class Comic extends ActiveRecord
 			['date_format', 'validateDateFormat'],
 			['date_format', 'default', 'value' => 'Y-m-d'],
 			['dom_path', 'string', 'max' => 400],
+			['is_increment', 'integer'],
+			['inc_at_create', 'integer'],
+			['date_of_inc', 'common\components\MongoDateValidator', 'format' => 'php:d/m/Y'],
+			['day_step', 'integer'],
 			[
 				[
 					'_id', 
@@ -67,6 +71,10 @@ class Comic extends ActiveRecord
 			'author_homepage',
 			'date_format',
 			'dom_path',
+			'is_increment',
+			'inc_at_create',
+			'date_of_inc',
+			'day_step',
 			'last_checked',
 			'updated_at',
 			'created_at'

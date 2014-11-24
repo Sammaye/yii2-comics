@@ -91,13 +91,13 @@ if(
 	<?php if($comicStrip->getIsFirstStrip()){ ?>
   <a href="#" disabled="disabled" class="btn btn-lg btn-default">&laquo;</a>
 	<?php }else{ ?>
-  <a href="<?= Url::to(['comic/view', 'id' => (String)$model->_id, 'date' => date('d-m-Y', strtotime("-1 day", $comicStrip->date->sec))]) ?>" class="btn btn-lg btn-default">&laquo;</a>
+  <a href="<?= $comicStrip->getPreviousUrl() ?>" class="btn btn-lg btn-default">&laquo;</a>
 	<?php } ?>
   <input type="text" class="form-control input-lg" name="date" id="datepicker" value="<?= $date ?>" />
 	<?php if($comicStrip->getIsLastStrip()){ ?>
   <a href="#" disabled="disabled" class="btn btn-lg btn-default">&raquo;</a>
 	<?php }else{ ?>
-  <a href="<?= Url::to(['comic/view', 'id' => (String)$model->_id, 'date' => date('d-m-Y', strtotime("+1 day", $comicStrip->date->sec))]) ?>" class="btn btn-lg btn-default">&raquo;</a>
+  <a href="<?= $comicStrip->getNextUrl() ?>" class="btn btn-lg btn-default">&raquo;</a>
 	<?php } ?>
 </div>
 </form>

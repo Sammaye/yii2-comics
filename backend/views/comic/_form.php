@@ -13,13 +13,17 @@ use yii\bootstrap\ActiveForm;
 <?= $form->field($model, 'homepage') ?>
 <?= $form->field($model, 'author') ?>
 <?= $form->field($model, 'author_homepage') ?>
+<?= $form->field($model, 'description')->textarea() ?>
 </div>
 <div class="col-sm-22 col-sm-push-4">
-<?= $form->field($model, 'description')->textarea() ?>
 <?= $form->field($model, 'abstract') ?>
 <?= $form->field($model, 'scrape_url') ?>
 <?= $form->field($model, 'date_format') ?>
 <?= $form->field($model, 'dom_path') ?>
+<?= $form->field($model, 'is_increment')->checkbox() ?>
+<?= $form->field($model, 'inc_at_create') ?>
+<?= $form->field($model, 'date_of_inc') ?>
+<?= $form->field($model, 'day_step') ?>
 </div>
 </div>
 <?= Html::submitButton(

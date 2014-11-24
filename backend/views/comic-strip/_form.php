@@ -9,7 +9,12 @@ use yii\bootstrap\ActiveForm;
 <?= $form->errorSummary($model) ?>
 <?= Html::activeHiddenInput($model, 'comic_id') ?>
 <?= $form->field($model, 'url') ?>
-<?= $form->field($model, 'date')->textInput(['value' => $model->date instanceof \MongoDate ? date('d/m/Y', $model->date->sec) : null]) ?>
+<?php 
+if($model->comic->is_increment){
+	echo $form->field($model, 'inc_id'); 
+}else{
+	echo $form->field($model, 'date')->textInput(['value' => $model->date instanceof \MongoDate ? date('d/m/Y', $model->date->sec) : null]);
+} ?>
 <?php if(!$model->getIsNewRecord()){ ?>
 	<div>
 	<img src="<?= Url::to(['comic-strip/render-image', 'id' => (String)$model->_id]) ?>"/>

@@ -7,6 +7,7 @@ use common\components\ActiveRecord;
 use yii\data\ActiveDataProvider;
 use common\components\Mongo;
 use common\models\Comic;
+use yii\helpers\Url;
 
 class ComicStrip extends ActiveRecord
 {
@@ -34,6 +35,7 @@ class ComicStrip extends ActiveRecord
 			['url', 'string', 'max' => 250],
 			['date', 'common\components\MongoDateValidator', 'format' => 'php:d/m/Y'],
 			['date', 'unique', 'targetAttribute' => ['date', 'comic_id']],
+			['inc_id', 'integer'],
 			[
 				[
 					'_id',
@@ -57,6 +59,7 @@ class ComicStrip extends ActiveRecord
 			'url',
 			'img',
 			'date',
+			'inc_id',
 			'updated_at',
 			'created_at'
 		];
@@ -72,17 +75,63 @@ class ComicStrip extends ActiveRecord
 		return $this->hasOne('common\models\Comic', ['_id' => 'comic_id']);
 	}
 	
+	public function getNextUrl()
+	{
+		if($this->comic->is_increment){
+			return Url::to([
+				'comic/view',
+				'id' => (String)$this->comic_id,
+				'inc' => $this->inc_id + 1
+			]);
+		}else{
+			return Url::to([
+				'comic/view',
+				'id' => (String)$this->comic_id,
+				'date' => date('d-m-Y', strtotime("+" . ($this->comic->day_step ?: 1) . " day", $this->date->sec))
+			]);
+		}
+	}
+	
+	public function getPreviousUrl()
+	{
+		if($this->comic->is_increment){
+			return Url::to([
+				'comic/view',
+				'id' => (String)$this->comic_id,
+				'inc' => $this->inc_id - 1
+			]);
+		}else{
+			return Url::to([
+				'comic/view', 
+				'id' => (String)$this->comic_id, 
+				'date' => date('d-m-Y', strtotime("-" . ($this->comic->day_step ?: 1) . " day", $this->date->sec))
+			]);
+		}
+	}
+	
 	public function getIsFirstStrip()
 	{
 		if($this->isFirstStrip === null){
-			if($comicStrip = ComicStrip::find()->orderBy(['date' => SORT_ASC])->one()){
-				if(Mongo::date($this->date) != Mongo::date($comicStrip->date)){
-					$this->isFirstStrip = false;
+			if($this->comic->is_increment){
+				if($comicStrip = ComicStrip::find()->orderBy(['inc_id' => SORT_ASC])->one()){
+					if($this->inc_id != $comicStrip->inc_id){
+						$this->isFirstStrip = false;
+					}else{
+						$this->isFirstStrip = true;
+					}
 				}else{
 					$this->isFirstStrip = true;
 				}
 			}else{
-				$this->isFirstStrip = true;
+				if($comicStrip = ComicStrip::find()->orderBy(['date' => SORT_ASC])->one()){
+					if(Mongo::date($this->date) != Mongo::date($comicStrip->date)){
+						$this->isFirstStrip = false;
+					}else{
+						$this->isFirstStrip = true;
+					}
+				}else{
+					$this->isFirstStrip = true;
+				}
 			}
 		}
 		return $this->isFirstStrip;
@@ -91,16 +140,30 @@ class ComicStrip extends ActiveRecord
 	public function getIsLastStrip()
 	{
 		if($this->isLastStrip === null){
-			if(Mongo::date($this->date) == Mongo::date(new \MongoDate)){
-				$this->isLastStrip = true;
-			}elseif(($comicStrip = ComicStrip::find()->orderBy(['date' => SORT_DESC])->one())){
-				if(Mongo::date($this->date) != Mongo::date($comicStrip->date)){
-					$this->isLastStrip = false;
+			if($this->comic->is_increment){
+				if(Mongo::date($this->date) == Mongo::date(new \MongoDate)){
+					$this->isLastStrip = true;
+				}elseif(($comicStrip = ComicStrip::find()->orderBy(['inc_id' => SORT_DESC])->one())){
+					if($this->inc_id != $comicStrip->inc_id){
+						$this->isLastStrip = false;
+					}else{
+						$this->isLastStrip = true;
+					}
 				}else{
 					$this->isLastStrip = true;
 				}
 			}else{
-				$this->isLastStrip = true;
+				if(Mongo::date($this->date) == Mongo::date(new \MongoDate)){
+					$this->isLastStrip = true;
+				}elseif(($comicStrip = ComicStrip::find()->orderBy(['date' => SORT_DESC])->one())){
+					if(Mongo::date($this->date) != Mongo::date($comicStrip->date)){
+						$this->isLastStrip = false;
+					}else{
+						$this->isLastStrip = true;
+					}
+				}else{
+					$this->isLastStrip = true;
+				}
 			}
 		}
 		return $this->isLastStrip;
