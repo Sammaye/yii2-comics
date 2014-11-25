@@ -97,6 +97,11 @@ class ComicStrip extends ActiveRecord
 		return parent::beforeSave($insert);
 	}
 	
+	public function getUrl()
+	{
+		return Url::to($this->comic->scrape_url . ($this->comic->is_increment ? $this->inc_id : date($this->comic->date_format, $this->date->sec)));
+	}
+	
 	public function getNextUrl()
 	{
 		if($this->comic->is_increment){

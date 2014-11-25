@@ -79,19 +79,34 @@ class EmailController extends Controller
 		$timeToday = mktime(0, 0, 0, date('m'), date('d'), date('Y'));
 	
 		if(
-			$strip = ComicStrip::find()->where([
+			!$comic->is_increment && 
+			($strip = ComicStrip::find()->where([
 				'comic_id' => $comic->_id,
 				'date' => new \MongoDate($timeToday)
-			])->one()
+			])->one())
 		){
 			return true;
 		}
 	
 		if($comic->last_checked != $timeToday){
+			
+			if($comic->is_increment){
+				$lastStrip = ComicStrip::find()
+					->where(['comic_id' => $comic->_id])
+					->orderBy(['inc_id' => SORT_DESC])
+					->one();
+			}
+			
 			// try and scrape one
 			$strip = new ComicStrip();
 			$strip->date = new \MongoDate($timeToday);
 			$strip->comic_id = $comic->_id;
+			$strip->comic = $comic;
+			
+			if($comic->is_increment){
+				$comic->inc_id = isset($lastStrip) ? $lastComic->inc_id + 1 : $comic->inc_at_create;
+			}
+			
 			if(!$strip->populateRemoteImage() || !$strip->save()){
 				// Error
 				$this->logComicError('Comic: ' . (String)$comic->_id . ' with strip: ' . date('d-m-Y') . ' could not be saved');

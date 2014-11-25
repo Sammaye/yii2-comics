@@ -142,6 +142,9 @@ class ComicController extends Controller
 				}
 			}
 		}
+		
+		$comicStrip->comic = $comic;
+		
 		return $this->render('view', ['model' => $comic, 'comicStrip' => $comicStrip, 'date' => $date]);
 	}
 	

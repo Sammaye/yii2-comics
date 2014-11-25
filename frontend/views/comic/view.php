@@ -107,7 +107,7 @@ if(
 </form>
 </div>
 <div class="comic-view-item">
-<a href="<?= Url::to($model->scrape_url . ($model->is_increment ? $comicStrip->inc_id : date($model->date_format, $comicStrip->date->sec))) ?>" rel="nofollow" target="_blank">
+<a href="<?= $comicStrip->getUrl() ?>" rel="nofollow" target="_blank">
 <img src="<?= Url::to(['comic-strip/render-image', 'id' => (String)$comicStrip->_id]) ?>" class="img-responsive comic-img"/>
 </a>
 </div>
