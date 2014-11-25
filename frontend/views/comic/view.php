@@ -6,14 +6,18 @@ use yii\widgets\ActiveForm;
 
 $this->title = 'View ' . $model->title . ' for ' . date('d-m-Y', $comicStrip->date->sec);
 
-$this->registerJs("
-$('#datepicker').datepicker({
-	dateFormat : 'dd-mm-yy',
-	changeMonth: true,
-	changeYear: true,
-	maxDate: '" . date('d-m-Y') . "'
-});
+if(!$comicStrip->comic->is_increment){
+	$this->registerJs("
+	$('#datepicker').datepicker({
+		dateFormat : 'dd-mm-yy',
+		changeMonth: true,
+		changeYear: true,
+		maxDate: '" . date('d-m-Y') . "'
+	});
+	");
+}
 
+$this->registerJs("
 $('#datepicker').on('change', function(e){
 	$(this).parents('form').submit();
 });
@@ -103,7 +107,7 @@ if(
 </form>
 </div>
 <div class="comic-view-item">
-<a href="<?= Url::to($model->scrape_url . date($model->date_format, $comicStrip->date->sec)) ?>" rel="nofollow" target="_blank">
+<a href="<?= Url::to($model->scrape_url . ($model->is_increment ? $comicStrip->inc_id : date($model->date_format, $comicStrip->date->sec))) ?>" rel="nofollow" target="_blank">
 <img src="<?= Url::to(['comic-strip/render-image', 'id' => (String)$comicStrip->_id]) ?>" class="img-responsive comic-img"/>
 </a>
 </div>

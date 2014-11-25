@@ -8,6 +8,7 @@ use yii\data\ActiveDataProvider;
 use common\components\Mongo;
 use common\models\Comic;
 use yii\helpers\Url;
+use yii\validators\UniqueValidator;
 
 class ComicStrip extends ActiveRecord
 {
@@ -29,13 +30,13 @@ class ComicStrip extends ActiveRecord
 
 	public function rules()
 	{
-		return [
+		$rules = [
 			[['comic_id', 'date'], 'required'],
 			['comic_id', 'common\components\MongoIdValidator'],
 			['url', 'string', 'max' => 250],
 			['date', 'common\components\MongoDateValidator', 'format' => 'php:d/m/Y'],
-			['date', 'unique', 'targetAttribute' => ['date', 'comic_id']],
-			['inc_id', 'integer'],
+			//['date', 'unique', 'targetAttribute' => ['date', 'comic_id']],
+			['inc_id', 'common\components\NumberValidator'],
 			[
 				[
 					'_id',
@@ -49,6 +50,7 @@ class ComicStrip extends ActiveRecord
 				'on' => 'search'
 			]
 		];
+		return $rules;
 	}
 	
 	public function attributes()
@@ -75,13 +77,33 @@ class ComicStrip extends ActiveRecord
 		return $this->hasOne('common\models\Comic', ['_id' => 'comic_id']);
 	}
 	
+	public function beforeSave($insert)
+	{
+		if($insert){
+			if($this->comic->is_increment){
+				$v = new UniqueValidator;
+				$v->targetAttribute = ['inc_id', 'comic_id'];
+				$v->validateAttribute($this, 'inc_id');
+			}else{
+				$v = new UniqueValidator;
+				$v->targetAttribute = ['date', 'comic_id'];
+				$v->validateAttribute($this, 'date');
+			}
+			
+			if(count($this->getErrors()) > 0){
+				return false;
+			}
+		}
+		return parent::beforeSave($insert);
+	}
+	
 	public function getNextUrl()
 	{
 		if($this->comic->is_increment){
 			return Url::to([
 				'comic/view',
 				'id' => (String)$this->comic_id,
-				'inc' => $this->inc_id + 1
+				'date' => $this->inc_id + 1
 			]);
 		}else{
 			return Url::to([
@@ -98,7 +120,7 @@ class ComicStrip extends ActiveRecord
 			return Url::to([
 				'comic/view',
 				'id' => (String)$this->comic_id,
-				'inc' => $this->inc_id - 1
+				'date' => $this->inc_id - 1
 			]);
 		}else{
 			return Url::to([
@@ -141,9 +163,7 @@ class ComicStrip extends ActiveRecord
 	{
 		if($this->isLastStrip === null){
 			if($this->comic->is_increment){
-				if(Mongo::date($this->date) == Mongo::date(new \MongoDate)){
-					$this->isLastStrip = true;
-				}elseif(($comicStrip = ComicStrip::find()->orderBy(['inc_id' => SORT_DESC])->one())){
+				if(($comicStrip = ComicStrip::find()->orderBy(['inc_id' => SORT_DESC])->one())){
 					if($this->inc_id != $comicStrip->inc_id){
 						$this->isLastStrip = false;
 					}else{

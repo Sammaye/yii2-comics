@@ -26,6 +26,7 @@ echo GridView::widget([
 			'attribute' => 'date',
 			'format' => 'date'
 		],
+		'inc_id',
 		[
 			'attribute' => 'updated_at',
 			'format' => 'date'

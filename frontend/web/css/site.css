@@ -250,6 +250,7 @@ a.desc:after {
 
 .comic-view-item{
 	text-align:center;
+	margin:5px;
 }
 
 .comic-view-item .comic-img{
