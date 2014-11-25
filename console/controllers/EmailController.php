@@ -89,14 +89,6 @@ class EmailController extends Controller
 		}
 	
 		if($comic->last_checked != $timeToday){
-			
-			if($comic->is_increment){
-				$lastStrip = ComicStrip::find()
-					->where(['comic_id' => $comic->_id])
-					->orderBy(['inc_id' => SORT_DESC])
-					->one();
-			}
-			
 			// try and scrape one
 			$strip = new ComicStrip();
 			$strip->date = new \MongoDate($timeToday);
@@ -104,6 +96,12 @@ class EmailController extends Controller
 			$strip->comic = $comic;
 			
 			if($comic->is_increment){
+				
+				$lastStrip = ComicStrip::find()
+					->where(['comic_id' => $comic->_id])
+					->orderBy(['inc_id' => SORT_DESC])
+					->one();
+				
 				$comic->inc_id = isset($lastStrip) ? $lastComic->inc_id + 1 : $comic->inc_at_create;
 			}
 			
