@@ -178,12 +178,22 @@ class ComicStrip extends ActiveRecord
 		
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_USERAGENT, 'Googlebot/2.1 (http://www.googlebot.com/bot.html)');
-		curl_setopt($ch, CURLOPT_URL, $this->comic->scrape_url . $date->format($this->comic->date_format));
+		
+		if($this->comic->is_increment){
+			curl_setopt($ch, CURLOPT_URL, $this->comic->scrape_url . $this->inc_id . '/');
+		}else{
+			curl_setopt($ch, CURLOPT_URL, $this->comic->scrape_url . $date->format($this->comic->date_format));
+		}
+
 		curl_setopt($ch, CURLOPT_HEADER, false);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		$body = curl_exec($ch);
 		$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		curl_close($ch);
+		
+		if(!$body){
+			return $url;
+		}
 		
 		$doc = new \DOMDocument();
 		libxml_use_internal_errors(true);
@@ -198,20 +208,19 @@ class ComicStrip extends ActiveRecord
 				$url = $element->getAttribute('src');
 			}
 		}
-		
+
 		if(
 			$url && 
 			($parts = parse_url($url)) && 
 			(
 				!isset($parts['scheme']) || 
-				!isset($part['host'])
+				!isset($parts['host'])
 			) && 
 			isset($parts['path'])
 		){
 			// The URL is relative as such add the homepage onto the beginning
 			$url = trim($this->comic->homepage, '/') . '/' . trim($parts['path'], '/'); 
 		}
-		
 		return $url;
 	}
 

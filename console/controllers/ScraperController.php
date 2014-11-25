@@ -114,8 +114,8 @@ class ScraperController extends Controller
 	private function get($ts, $comic_id = null)
 	{
 		if($comic_id){
-			if(ComicStrip::find()->where(['comic_id' => new \MongoId($comic_id), 'date' => new \MongoDate($ts)])->one()){
-				$this->log('Strip for ' . date('d/m/Y') . ' : ' . $comic->title . ' already exists');
+			if($strip = ComicStrip::find()->where(['comic_id' => new \MongoId($comic_id), 'date' => new \MongoDate($ts)])->one()){
+				$this->log('Strip for ' . date('d/m/Y') . ' : ' . $strip->comic->title . ' already exists');
 				$this->printLog();
 				$this->sendLog();
 				return 1;
@@ -123,8 +123,12 @@ class ScraperController extends Controller
 			
 			$strip = new ComicStrip();
 			$strip->date = new \MongoDate($ts);
-			$strip->comic = $comic;
 			$strip->comic_id = $comic->_id;
+			
+			if($strip->comic->is_increment){
+				
+			}
+			
 			$strip->populateRemoteImage();
 			if($strip->save()){
 				$this->log('Strip for ' . date('d/m/Y') . ' : ' . $comic->title . ' was saved successfully');

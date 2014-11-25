@@ -22,7 +22,7 @@ use yii\bootstrap\ActiveForm;
 <?= $form->field($model, 'dom_path') ?>
 <?= $form->field($model, 'is_increment')->checkbox() ?>
 <?= $form->field($model, 'inc_at_create') ?>
-<?= $form->field($model, 'date_of_inc') ?>
+<?= $form->field($model, 'date_of_inc')->textInput(['value' => $model->date_of_inc instanceof \MongoDate ? date('d/m/Y', $model->date_of_inc->sec) : null]) ?>
 <?= $form->field($model, 'day_step') ?>
 </div>
 </div>
