@@ -117,7 +117,7 @@ class ScraperController extends Controller
 			
 			$strip = new ComicStrip();
 			
-			if($comic->is_incremental){
+			if($comic->is_increment){
 				if($currentStrip = ComicStrip::find()->where(['comic_id' => $comic->_id])->orderBy(['inc_id' => SORT_DESC])->one()){
 					$strip->inc_id = $currentStrip->inc_id + 1;
 				}else{
@@ -137,18 +137,24 @@ class ScraperController extends Controller
 			$strip->comic_id = $comic->_id;
 			
 			if($strip->populateRemoteImage() && $strip->save()){
-				$this->log('Strip for ' . date('d/m/Y') . ($comic->is_incremental ? '-' . $strip->inc_id : '' ) 
+				$this->log('Strip for ' . date('d/m/Y') . ($comic->is_increment ? '-' . $strip->inc_id : '' ) 
 					. ' : ' . $comic->title . ' was saved successfully');
 				
 				$comic = $strip->comic;
-				$strip->comic->last_checked = $ts;
+				$comic->last_checked = $ts;
 				if(!$comic->save()){
+					
 					// Error
 					$this->log('Comic: ' . (String)$comic->_id . 'could not be saved');
 				}
 			}else{
-				$this->log('Strip for ' . date('d/m/Y') . ($comic->is_incremental ? '-' . $strip->inc_id : '' ) 
-					. ' : ' . $comic->title . ' did not save');
+				if($strip->getDoesPageExist()){
+					$this->log('Strip for ' . date('d/m/Y') . ($comic->is_increment ? '-' . $strip->inc_id : '' ) 
+						. ' : ' . $comic->title . ' did not save');
+				}else{
+					$this->log('Strip for ' . date('d/m/Y') . ($comic->is_increment ? '-' . $strip->inc_id : '' )
+						. ' : ' . $comic->title . ' does not exist');
+				}
 			}
 			
 			$this->printLog();
@@ -158,7 +164,7 @@ class ScraperController extends Controller
 				
 				$strip = new ComicStrip();
 				
-				if($comic->is_incremental){
+				if($comic->is_increment){
 					
 					if($currentStrip = ComicStrip::find()->where(['comic_id' => $comic->_id])->orderBy(['inc_id' => SORT_DESC])->one()){
 						$strip->inc_id = $currentStrip->inc_id + 1;
@@ -180,18 +186,23 @@ class ScraperController extends Controller
 				
 				if($strip->populateRemoteImage() && $strip->save()){
 					$this->log('Strip for ' . date('d/m/Y') . 
-						($comic->is_incremental ? '-' . $strip->inc_id : '' ) . ' : ' . $comic->title . ' was saved successfully');
+						($comic->is_increment ? '-' . $strip->inc_id : '' ) . ' : ' . $comic->title . ' was saved successfully');
 					
 					$comic = $strip->comic;
-					$strip->comic->last_checked = $ts;
+					$comic->last_checked = $ts;
 					if(!$comic->save()){
 						// Error
 						$this->log('Comic: ' . (String)$comic->_id . 'could not be saved');
 					}
 					
 				}else{
-					$this->log('Strip for ' . date('d/m/Y') . ($comic->is_incremental ? '-' . $strip->inc_id : '' ) 
-						. ' : ' . $comic->title . ' did not save');
+					if($strip->getDoesPageExist()){
+						$this->log('Strip for ' . date('d/m/Y') . ($comic->is_increment ? '-' . $strip->inc_id : '' ) 
+							. ' : ' . $comic->title . ' did not save');
+					}else{
+						$this->log('Strip for ' . date('d/m/Y') . ($comic->is_increment ? '-' . $strip->inc_id : '' )
+							. ' : ' . $comic->title . ' does not exist');
+					}
 				}
 			}
 			

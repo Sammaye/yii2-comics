@@ -194,6 +194,30 @@ class ComicStrip extends ActiveRecord
 		return $this->isLastStrip;
 	}
 	
+	public function getDoesPageExist()
+	{
+		$ch = curl_init();
+		
+		if($this->comic->is_increment){
+			curl_setopt($ch, CURLOPT_URL, $this->comic->scrape_url . $this->inc_id . '/');
+		}else{
+			curl_setopt($ch, CURLOPT_URL, $this->comic->scrape_url . $date->format($this->comic->date_format));
+		}
+		
+		curl_setopt($ch, CURLOPT_HEADER, true);
+		curl_setopt($ch, CURLOPT_NOBODY, true); // remove body
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		$head = curl_exec($ch);
+		$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		curl_close($ch);
+			
+		if($httpCode == 200){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
 	public function getRemoteImage()
 	{
 		$url = null;
