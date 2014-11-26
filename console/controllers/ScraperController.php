@@ -114,24 +114,31 @@ class ScraperController extends Controller
 	private function get($ts, $comic_id = null)
 	{
 		if($comic_id){
-			if($strip = ComicStrip::find()->where(['comic_id' => new \MongoId($comic_id), 'date' => new \MongoDate($ts)])->one()){
-				$this->log('Strip for ' . date('d/m/Y') . ' : ' . $strip->comic->title . ' already exists');
-				$this->printLog();
-				$this->sendLog();
-				return 1;
-			}
 			
 			$strip = new ComicStrip();
-			$strip->date = new \MongoDate($ts);
-			$strip->comic_id = $comic->_id;
 			
-			if($strip->comic->is_increment){
-				
+			if($comic->is_incremental){
+				if($currentStrip = ComicStrip::find()->where(['comic_id' => $comic->_id])->orderBy(['inc_id' => SORT_DESC])->one()){
+					$strip->inc_id = $currentStrip->inc_id + 1;
+				}else{
+					$strip->inc_id = $comic->inc_at_create;
+				}
+			}else{
+				if($strip = ComicStrip::find()->where(['comic_id' => new \MongoId($comic_id), 'date' => new \MongoDate($ts)])->one()){
+					$this->log('Strip for ' . date('d/m/Y') . ' : ' . $strip->comic->title . ' already exists');
+					$this->printLog();
+					$this->sendLog();
+					return 1;
+				}
 			}
 			
-			$strip->populateRemoteImage();
-			if($strip->save()){
-				$this->log('Strip for ' . date('d/m/Y') . ' : ' . $comic->title . ' was saved successfully');
+			$strip->date = new \MongoDate($ts);
+			$strip->comic = $comic;
+			$strip->comic_id = $comic->_id;
+			
+			if($strip->populateRemoteImage() && $strip->save()){
+				$this->log('Strip for ' . date('d/m/Y') . ($comic->is_incremental ? '-' . $strip->inc_id : '' ) 
+					. ' : ' . $comic->title . ' was saved successfully');
 				
 				$comic = $strip->comic;
 				$strip->comic->last_checked = $ts;
@@ -140,26 +147,40 @@ class ScraperController extends Controller
 					$this->log('Comic: ' . (String)$comic->_id . 'could not be saved');
 				}
 			}else{
-				$this->log('Strip for ' . date('d/m/Y') . ' : ' . $comic->title . ' did not save');
+				$this->log('Strip for ' . date('d/m/Y') . ($comic->is_incremental ? '-' . $strip->inc_id : '' ) 
+					. ' : ' . $comic->title . ' did not save');
 			}
 			
 			$this->printLog();
 			$this->sendLog();
 		}else{
 			foreach(Comic::find()->all() as $comic){
-				if(ComicStrip::find()->where(['comic_id' => $comic->_id, 'date' => new \MongoDate($ts)])->one()){
-					$this->log('Strip for ' . date('d/m/Y') . ' : ' . $comic->title . ' already exists');
-					// Don't drown us in crappy messages
-					continue;
-				}
 				
 				$strip = new ComicStrip();
+				
+				if($comic->is_incremental){
+					
+					if($currentStrip = ComicStrip::find()->where(['comic_id' => $comic->_id])->orderBy(['inc_id' => SORT_DESC])->one()){
+						$strip->inc_id = $currentStrip->inc_id + 1;
+					}else{
+						$strip->inc_id = $comic->inc_at_create;
+					}
+					
+				}else{
+					if(ComicStrip::find()->where(['comic_id' => $comic->_id, 'date' => new \MongoDate($ts)])->one()){
+						$this->log('Strip for ' . date('d/m/Y') . ' : ' . $comic->title . ' already exists');
+						// Don't drown us in crappy messages
+						continue;
+					}
+				}
+				
 				$strip->date = new \MongoDate($ts);
 				$strip->comic = $comic;
 				$strip->comic_id = $comic->_id;
-				$strip->populateRemoteImage();
-				if($strip->save()){
-					$this->log('Strip for ' . date('d/m/Y') . ' : ' . $comic->title . ' was saved successfully');
+				
+				if($strip->populateRemoteImage() && $strip->save()){
+					$this->log('Strip for ' . date('d/m/Y') . 
+						($comic->is_incremental ? '-' . $strip->inc_id : '' ) . ' : ' . $comic->title . ' was saved successfully');
 					
 					$comic = $strip->comic;
 					$strip->comic->last_checked = $ts;
@@ -169,7 +190,8 @@ class ScraperController extends Controller
 					}
 					
 				}else{
-					$this->log('Strip for ' . date('d/m/Y') . ' : ' . $comic->title . ' did not save');
+					$this->log('Strip for ' . date('d/m/Y') . ($comic->is_incremental ? '-' . $strip->inc_id : '' ) 
+						. ' : ' . $comic->title . ' did not save');
 				}
 			}
 			
