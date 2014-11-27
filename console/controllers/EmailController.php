@@ -17,8 +17,8 @@ class EmailController extends Controller
 	
 	public function beforeAction($action)
 	{
-		Yii::$app->getUrlManager()->setBaseUrl('http://frontend/');
-		Yii::$app->getUrlManager()->setHostInfo('http://frontend/');
+		Yii::$app->getUrlManager()->setBaseUrl('http://comics.sammaye.com/');
+		Yii::$app->getUrlManager()->setHostInfo('http://comics.sammaye.com/');
 		
 		return parent::beforeAction($action);
 	}
