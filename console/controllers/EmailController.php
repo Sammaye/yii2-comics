@@ -102,7 +102,7 @@ class EmailController extends Controller
 					->orderBy(['inc_id' => SORT_DESC])
 					->one();
 				
-				$comic->inc_id = isset($lastStrip) ? $lastComic->inc_id + 1 : $comic->inc_at_create;
+				$comic->inc_id = isset($lastStrip) ? $lastStrip->inc_id + 1 : $comic->inc_at_create;
 			}
 			
 			if(!$strip->populateRemoteImage() || !$strip->save()){
