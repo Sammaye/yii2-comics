@@ -140,6 +140,11 @@ class EmailController extends Controller
 					$this->getTodaysComic($comic);
 					
 					if($strip = ComicStrip::find()->where(['comic_id' => $comic->_id])->orderBy(['date' => SORT_DESC])->one()){
+						
+						if($strip->date->sec != $timeToday){
+							continue;
+						}
+						
 						$strip->comic = $comic;
 						$comics[] = $strip;
 					}
