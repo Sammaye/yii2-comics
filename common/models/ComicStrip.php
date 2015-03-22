@@ -278,6 +278,7 @@ class ComicStrip extends ActiveRecord
 		if(!$this->url){
 			$this->url = $this->getRemoteImage();
 		}
+		
 		if(($this->url) && ($binary = file_get_contents($this->url))){
 			$this->img = new \MongoBinData($binary);
 			return true;
