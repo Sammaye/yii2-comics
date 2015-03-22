@@ -1,3 +1,5 @@
+<?php $this->title = '#404 ZOMG Comic Not Found!'; ?>
+
 <div class="comic-view-not-found">
 <div class="alert alert-danger">
 Comic was not found on this site

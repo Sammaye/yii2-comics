@@ -4,6 +4,7 @@ use yii\helpers\Url;
 
 $this->params['comic_id'] = (String)$model->_id;
 
+$this->title = '#404 ZOMG strip Not Found!';
 ?>
 <div class="comic-view-strip-not-found">
 <div class="alert alert-danger">

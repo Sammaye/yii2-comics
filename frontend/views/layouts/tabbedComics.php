@@ -44,15 +44,21 @@ $('#requestComicForm').on('submit', function(e){
 	});
 });
 
-function format(row) {
-	row = $.parseJSON(row.text);
-	if (!row.author) return row.title; // optgroup
-	return row.title + '<span>By ' + row.author + '</span>';
-}
-
 $('#comicSelector').select2({
-	formatSelection: format,
-	formatResult: format
+	width: '100%',
+	templateSelection: function (selection) {
+		var o = $.parseJSON(selection.text);
+		return $('<span/>').html(o.title + '<span>By ' + o.author + '</span>');
+	},
+	templateResult: function (result) {
+		console.log(result);
+		try{
+			var o = $.parseJSON(result.text);
+			return $('<span/>').html(o.title + '<span>By ' + o.author + '</span>'); 
+		}catch(e){
+			return result.text;
+		}
+	},
 });
 
 $('#comicSelector').on('change', function(e){

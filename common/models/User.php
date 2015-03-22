@@ -179,6 +179,9 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function findIdentity($id)
     {
+    	if(!$id instanceof \MongoId){
+    		$id = new \MongoId($id);
+    	}
         return static::findOne($id);
     }
 
@@ -238,7 +241,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function getId()
     {
-        return $this->getPrimaryKey();
+        return (String)$this->getPrimaryKey();
     }
 
     /**
