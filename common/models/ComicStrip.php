@@ -250,12 +250,23 @@ class ComicStrip extends ActiveRecord
 		libxml_clear_errors();
 		
 		$el = new \DOMXPath($doc);
-		$elements = $el->query($this->comic->dom_path);
-
-		if(!is_null($elements)){
-			foreach($elements as $element){
-				$url = $element->getAttribute('src');
+		if(strpos($this->comic->dom_path, '||') !== false){
+			$paths = preg_split('#\|\|#', $this->comic->dom_path);
+		}else{
+			$paths = [$this->comic->dom_path];
+		}
+		
+		foreach($paths as $domPath){
+			$elements = $el->query($domPath);
+			if($elements){
+				foreach($elements as $element){
+					$url = $element->getAttribute('src');
+				}
 			}
+			if($url){
+				break;
+			}
+		
 		}
 
 		if(
