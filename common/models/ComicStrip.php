@@ -229,9 +229,9 @@ class ComicStrip extends ActiveRecord
 		curl_setopt($ch, CURLOPT_USERAGENT, 'Googlebot/2.1 (http://www.googlebot.com/bot.html)');
 		
 		if($this->comic->is_increment){
-			curl_setopt($ch, CURLOPT_URL, preg_replace('{$value}', $this->inc_id, $this->comic->scrape_url));
+			curl_setopt($ch, CURLOPT_URL, preg_replace('#\{\$value\}#', $this->inc_id, $this->comic->scrape_url));
 		}else{
-			curl_setopt($ch, CURLOPT_URL, preg_replace('{$value}', $date->format($this->comic->date_format), $this->comic->scrape_url));
+			curl_setopt($ch, CURLOPT_URL, preg_replace('#\{\$value\}#', $date->format($this->comic->date_format), $this->comic->scrape_url));
 		}
 
 		curl_setopt($ch, CURLOPT_HEADER, false);
