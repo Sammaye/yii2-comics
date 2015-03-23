@@ -59,21 +59,27 @@ class ComicController extends Controller
 			
 			$modelDate = new \MongoDate(mktime(0, 0, 0, date('m'), date('d'), date('Y')));
 			$date = (int)$date;
-			if(!$date){
-				$comicStrip = ComicStrip::find()->where(['comic_id' => $comic->_id])->orderby(['inc_id' => SORT_DESC])->one();
+			if(
+				!$date && 
+				$comicStrip = ComicStrip::find()->where(['comic_id' => $comic->_id])->orderby(['inc_id' => SORT_DESC])->one()
+			){
 				$date = $comicStrip->inc_id;
 			}elseif(
-				($comicStrip = ComicStrip::find()->where(['comic_id' => $comic->_id, 'inc_id' => $date])->one()) === null && 
-				$date
+				!$date || 
+				(
+					($comicStrip = ComicStrip::find()->where(['comic_id' => $comic->_id, 'inc_id' => $date])->one()) === null && 
+					$date
+				)
 			){
 				// then make a new strip
 				$comicStrip = new ComicStrip();
 				$comicStrip->date = $modelDate;
 				$comicStrip->comic_id = $comic->_id;
-				$comicStrip->inc_id = $date;
+				$comicStrip->inc_id = $date ?: $comic->inc_at_create;
 				if(!$comicStrip->populateRemoteImage() || !$comicStrip->save()){
 					return $this->render('comicStripNotFound', ['model' => $comic]);
 				}
+				$date = $comicStrip->inc_id;
 			}
 
 			if(
