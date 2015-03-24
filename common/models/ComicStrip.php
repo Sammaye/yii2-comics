@@ -229,9 +229,9 @@ class ComicStrip extends ActiveRecord
 		curl_setopt($ch, CURLOPT_USERAGENT, 'Googlebot/2.1 (http://www.googlebot.com/bot.html)');
 		
 		if($this->comic->is_increment){
-			curl_setopt($ch, CURLOPT_URL, $this->comic->scrape_url . $this->inc_id . '/');
+			curl_setopt($ch, CURLOPT_URL, preg_replace('#\{\$value\}#', $this->inc_id, $this->comic->scrape_url));
 		}else{
-			curl_setopt($ch, CURLOPT_URL, $this->comic->scrape_url . $date->format($this->comic->date_format));
+			curl_setopt($ch, CURLOPT_URL, preg_replace('#\{\$value\}#', $date->format($this->comic->date_format), $this->comic->scrape_url));
 		}
 
 		curl_setopt($ch, CURLOPT_HEADER, false);
@@ -250,12 +250,23 @@ class ComicStrip extends ActiveRecord
 		libxml_clear_errors();
 		
 		$el = new \DOMXPath($doc);
-		$elements = $el->query($this->comic->dom_path);
-
-		if(!is_null($elements)){
-			foreach($elements as $element){
-				$url = $element->getAttribute('src');
+		if(strpos($this->comic->dom_path, '||') !== false){
+			$paths = preg_split('#\|\|#', $this->comic->dom_path);
+		}else{
+			$paths = [$this->comic->dom_path];
+		}
+		
+		foreach($paths as $domPath){
+			$elements = $el->query($domPath);
+			if($elements){
+				foreach($elements as $element){
+					$url = $element->getAttribute('src');
+				}
 			}
+			if($url){
+				break;
+			}
+		
 		}
 
 		if(
