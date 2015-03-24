@@ -186,7 +186,7 @@ class SiteController extends Controller
     public function actionConfirmLogin()
     {
     	if (\Yii::$app->user->isGuest) {
-    		$this->goHome();
+    		return $this->goHome();
     	}
     	$model = new LoginForm();
     	if ($model->load($_POST) && $model->login()) {
