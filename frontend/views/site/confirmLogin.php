@@ -15,7 +15,7 @@ echo Alert::widget();
 <div class="row">
 <div class="site-login col-sm-15">
     <h1><?= Html::encode($this->title) ?></h1>
-    <p class="new-user-signup">Now to c!y? <a href="<?= Url::to(['site/signup']) ?>">You can register for an account by clicking here</a>.</p>
+    <p class="new-user-signup">New to c!y? <a href="<?= Url::to(['site/signup']) ?>">You can register for an account by clicking here</a>.</p>
 
     <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
     	<div class="login-form">
