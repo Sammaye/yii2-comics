@@ -270,6 +270,15 @@ class ComicStrip extends ActiveRecord
 		}
 
 		if(
+			$url &&
+			($parts = parse_url($url)) &&
+			!isset($parts['scheme']) && 
+			isset($parts['host'])
+		){
+			$url = 'http://' . trim($url, '//');
+		}
+		
+		if(
 			$url && 
 			($parts = parse_url($url)) && 
 			(
