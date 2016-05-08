@@ -25,7 +25,7 @@ class ComicController extends Controller
 					],
 					[
 						'allow' => true,
-						'actions' => ['index', 'view', 'request'],
+						'actions' => ['index', 'view', 'request', 'render-image'],
 						'roles' => ['?', '@']
 					]
 				],
@@ -39,119 +39,43 @@ class ComicController extends Controller
 		return $this->actionView();
 	}
 	
-	public function actionView($id = null, $date = null)
+	public function actionView($id = null, $index = null)
 	{
 		$this->layout = 'tabbedComics';
 		
 		$comic = null;
-		if(!$id){
-			$comic = Comic::find()->orderBy(['title' => SORT_ASC])->one();
-		}
+		$condition = ['live' => 1];
 		
+		if($id){
+			$condition['_id'] = new \MongoId($id);
+		}
 		if(
-			(!$comic) &&
-			(!($comic = Comic::find()->where(['_id' => new \MongoId($id)])->one()))
+			!(
+				$comic = Comic::find()
+					->where($condition)
+					->orderBy(['title' => SORT_ASC])
+					->one()
+			)
 		){
 			return $this->render('comicNotFound');
 		}
 		
-		if($comic->is_increment){
-			
-			$modelDate = new \MongoDate(mktime(0, 0, 0, date('m'), date('d'), date('Y')));
-			$date = (int)$date;
-			if(
-				!$date && 
-				$comicStrip = ComicStrip::find()->where(['comic_id' => $comic->_id])->orderby(['inc_id' => SORT_DESC])->one()
-			){
-				$date = $comicStrip->inc_id;
-			}elseif(
-				!$date || 
-				(
-					($comicStrip = ComicStrip::find()->where(['comic_id' => $comic->_id, 'inc_id' => $date])->one()) === null && 
-					$date
-				)
-			){
-				// then make a new strip
-				$comicStrip = new ComicStrip();
-				$comicStrip->date = $modelDate;
-				$comicStrip->comic_id = $comic->_id;
-				$comicStrip->inc_id = $date ?: $comic->inc_at_create;
-				if(!$comicStrip->populateRemoteImage() || !$comicStrip->save()){
-					return $this->render('comicStripNotFound', ['model' => $comic]);
-				}
-				$date = $comicStrip->inc_id;
-			}
-
-			if(
-				($beforeStrip = ComicStrip::find()->where(['comic_id' => $comic->_id, 'inc_id' => $date - 1])->one()) === null && 
-				($date - 1 > 0)
-			){
-				$beforeStrip = new ComicStrip();
-				$beforeStrip->comic_id = $comic->_id;
-				$beforeStrip->date = $modelDate;
-				$beforeStrip->inc_id = $date - 1;
-				if($beforeStrip->populateRemoteImage()){
-					$beforeStrip->save();
-				}
-			}
-			
-			if(
-				($afterStrip = ComicStrip::find()->where(['comic_id' => $comic->_id, 'inc_id' => $date + 1])->one()) === null &&
-				($date - 1 > 0)
-			){
-				$afterStrip = new ComicStrip();
-				$afterStrip->comic_id = $comic->_id;
-				$afterStrip->date = $modelDate;
-				$afterStrip->inc_id = $date + 1;
-				if($afterStrip->populateRemoteImage()){
-					$afterStrip->save();
-				}
-			}
-		}else{
-			if(!$date){
-				$date = date('d-m-Y');
-			}
-
-			if(
-				strtotime(date('d-m-Y 9:00:00')) > time() && 
-				strtotime($date) === mktime(0, 0, 0, date('m'), date('d'), date('Y'))
-			){
-				$date = date('d-m-Y', mktime(0, 0, 0, date('m'), date('d') -1, date('Y')));
-			}
-			
-			$comicStrip = null;
-			if(
-				$date && 
-				preg_match('/^(0[1-9]|[12][0-9]|3[01])[-](0[1-9]|1[012])[-](19|20)\d\d$/', $date) > 0 && 
-				($comicStrip = ComicStrip::find()->where(['comic_id' => $comic->_id, 'date' => new \MongoDate(strtotime($date))])->one())
-			){
-				// We found our strip
-			}else{
-				
-				$comicStrip = new ComicStrip();
-				$comicStrip->comic_id = $comic->_id;
-				$comicStrip->date = new \MongoDate(strtotime($date));
-				if(!$comicStrip->populateRemoteImage() || !$comicStrip->save()){
-					return $this->render('comicStripNotFound', ['model' => $comic]);
-				}
-			}
-			
-			if(
-				($oldDate = new \MongoDate(strtotime("-1 day", $comicStrip->date->sec))) && 
-				!($oldComicStrip = ComicStrip::find()->where(['comic_id' => $comic->_id, 'date' => $oldDate])->one())
-			){
-				$nextComicStrip = new ComicStrip();
-				$nextComicStrip->comic_id = $comic->_id;
-				$nextComicStrip->date = new \MongoDate(strtotime("-1 day", $comicStrip->date->sec));
-				if($nextComicStrip->populateRemoteImage()){
-					$nextComicStrip->save();
-				}
-			}
+		if(!$current = $comic->current($index)){
+			return $this->render('comicStripNotFound', ['model' => $comic]);
 		}
-		
-		$comicStrip->comic = $comic;
-		
-		return $this->render('view', ['model' => $comic, 'comicStrip' => $comicStrip, 'date' => $date]);
+		$current->comic = $comic;
+		$previous = $comic->previous($current->index);
+		$next = $comic->next($current->index);
+
+		return $this->render(
+			'view', 
+			[
+				'model' => $comic, 
+				'comicStrip' => $current, 
+				'previousStrip' => $previous,
+				'nextStrip' => $next,
+			]
+		);
 	}
 	
 	public function actionSubscribe()
@@ -227,5 +151,10 @@ class ComicController extends Controller
 		}else{
 			return json_encode(['success' => false, 'errors' => $model->getErrors()]);
 		}
+	}
+	
+	public function actionRenderImage($id)
+	{
+		return Comic::renderStripImage($id);
 	}
 }

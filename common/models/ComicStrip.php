@@ -7,14 +7,9 @@ use common\components\ActiveRecord;
 use yii\data\ActiveDataProvider;
 use common\components\Mongo;
 use common\models\Comic;
-use yii\helpers\Url;
-use yii\validators\UniqueValidator;
 
 class ComicStrip extends ActiveRecord
 {
-	public $isFirstStrip = null;
-	public $isLastStrip = null;
-	
 	/**
 	 * @inheritdoc
 	 */
@@ -31,28 +26,69 @@ class ComicStrip extends ActiveRecord
 	public function rules()
 	{
 		$rules = [
-			[['comic_id', 'date'], 'required'],
+			[['comic_id'], 'required'],
 			['comic_id', 'common\components\MongoIdValidator'],
 			['url', 'string', 'max' => 250],
-			['date', 'common\components\MongoDateValidator', 'format' => 'php:d/m/Y'],
-			//['date', 'unique', 'targetAttribute' => ['date', 'comic_id']],
-			['inc_id', 'common\components\NumberValidator'],
+			['skip', 'common\components\NumberValidator', 'min' => 0, 'max' => 1],
+
+			[
+				'index', 
+				'common\components\MongoDateValidator', 
+				'format' => 'php:d/m/Y',
+				'when' => function($model){
+					return $model->comic->type === Comic::TYPE_DATE;
+				},
+				'whenClient' => "function (attribute, value) {
+        			return $('#comic-type').val() == '" . Comic::TYPE_DATE . "';
+    			}"
+			],
+			[
+				'index', 
+				'integer',
+				'when' => function($model){
+					return $model->comic->type === Comic::TYPE_ID;
+				},
+				'whenClient' => "function (attribute, value) {
+        			return $('#comic-type').val() == '" . Comic::TYPE_ID . "';
+    			}"
+			],
+			[
+				'index', 
+				'filter', 
+				'filter' => function($value){
+					return (String)$value;
+				},
+				'when' => function($model){
+					return $model->comic->type === Comic::TYPE_ID;
+				},
+				'whenClient' => "function (attribute, value) {
+        			return $('#comic-type').val() == '" . Comic::TYPE_ID . "';
+    			}"
+			],
+			['index', 'unique', 'targetAttribute' => ['index', 'comic_id']],
+			
+			[
+				'date', 
+				'common\components\MongoDateValidator', 
+				'format' => 'php:d/m/Y'
+			],
+			
 			[
 				[
 					'_id',
 					'comic_id',
 					'url',
-					'date',
+					'index',
 					'updated_at',
 					'created_at'
 				],
 				'safe',
-				'on' => 'search'
-			]
+				'on' => ['search']
+			],
 		];
 		return $rules;
 	}
-	
+
 	public function attributes()
 	{
 		return [
@@ -60,10 +96,18 @@ class ComicStrip extends ActiveRecord
 			'comic_id',
 			'url',
 			'img',
+			'index',
+			'skip',
 			'date',
-			'inc_id',
 			'updated_at',
 			'created_at'
+		];
+	}
+	
+	public function attributeLabels()
+	{
+		return [
+			'skip' => 'Do not download this strip'
 		];
 	}
 	
@@ -75,235 +119,6 @@ class ComicStrip extends ActiveRecord
 	public function getComic()
 	{
 		return $this->hasOne('common\models\Comic', ['_id' => 'comic_id']);
-	}
-	
-	public function beforeSave($insert)
-	{
-		if($insert){
-			if($this->comic->is_increment){
-				$v = new UniqueValidator;
-				$v->targetAttribute = ['inc_id', 'comic_id'];
-				$v->validateAttribute($this, 'inc_id');
-			}else{
-				$v = new UniqueValidator;
-				$v->targetAttribute = ['date', 'comic_id'];
-				$v->validateAttribute($this, 'date');
-			}
-			
-			if(count($this->getErrors()) > 0){
-				return false;
-			}
-		}
-		return parent::beforeSave($insert);
-	}
-	
-	public function getUrl()
-	{
-		return Url::to($this->comic->scrape_url . ($this->comic->is_increment ? $this->inc_id : date($this->comic->date_format, $this->date->sec)));
-	}
-	
-	public function getNextUrl()
-	{
-		if($this->comic->is_increment){
-			return Url::to([
-				'comic/view',
-				'id' => (String)$this->comic_id,
-				'date' => $this->inc_id + 1
-			]);
-		}else{
-			return Url::to([
-				'comic/view',
-				'id' => (String)$this->comic_id,
-				'date' => date('d-m-Y', strtotime("+" . ($this->comic->day_step ?: 1) . " day", $this->date->sec))
-			]);
-		}
-	}
-	
-	public function getPreviousUrl()
-	{
-		if($this->comic->is_increment){
-			return Url::to([
-				'comic/view',
-				'id' => (String)$this->comic_id,
-				'date' => $this->inc_id - 1
-			]);
-		}else{
-			return Url::to([
-				'comic/view', 
-				'id' => (String)$this->comic_id, 
-				'date' => date('d-m-Y', strtotime("-" . ($this->comic->day_step ?: 1) . " day", $this->date->sec))
-			]);
-		}
-	}
-	
-	public function getIsFirstStrip()
-	{
-		if($this->isFirstStrip === null){
-			if($this->comic->is_increment){
-				if($comicStrip = ComicStrip::find()->orderBy(['inc_id' => SORT_ASC])->one()){
-					if($this->inc_id != $comicStrip->inc_id){
-						$this->isFirstStrip = false;
-					}else{
-						$this->isFirstStrip = true;
-					}
-				}else{
-					$this->isFirstStrip = true;
-				}
-			}else{
-				if($comicStrip = ComicStrip::find()->orderBy(['date' => SORT_ASC])->one()){
-					if(Mongo::date($this->date) != Mongo::date($comicStrip->date)){
-						$this->isFirstStrip = false;
-					}else{
-						$this->isFirstStrip = true;
-					}
-				}else{
-					$this->isFirstStrip = true;
-				}
-			}
-		}
-		return $this->isFirstStrip;
-	}
-	
-	public function getIsLastStrip()
-	{
-		if($this->isLastStrip === null){
-			if($this->comic->is_increment){
-				if(($comicStrip = ComicStrip::find()->orderBy(['inc_id' => SORT_DESC])->one())){
-					if($this->inc_id != $comicStrip->inc_id){
-						$this->isLastStrip = false;
-					}else{
-						$this->isLastStrip = true;
-					}
-				}else{
-					$this->isLastStrip = true;
-				}
-			}else{
-				if(Mongo::date($this->date) == Mongo::date(new \MongoDate)){
-					$this->isLastStrip = true;
-				}elseif(($comicStrip = ComicStrip::find()->orderBy(['date' => SORT_DESC])->one())){
-					if(Mongo::date($this->date) != Mongo::date($comicStrip->date)){
-						$this->isLastStrip = false;
-					}else{
-						$this->isLastStrip = true;
-					}
-				}else{
-					$this->isLastStrip = true;
-				}
-			}
-		}
-		return $this->isLastStrip;
-	}
-	
-	public function getDoesPageExist()
-	{
-		$ch = curl_init();
-		
-		if($this->comic->is_increment){
-			curl_setopt($ch, CURLOPT_URL, $this->comic->scrape_url . $this->inc_id . '/');
-		}else{
-			curl_setopt($ch, CURLOPT_URL, $this->comic->scrape_url . $date->format($this->comic->date_format));
-		}
-		
-		curl_setopt($ch, CURLOPT_HEADER, true);
-		curl_setopt($ch, CURLOPT_NOBODY, true); // remove body
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		$head = curl_exec($ch);
-		$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-		curl_close($ch);
-			
-		if($httpCode == 200){
-			return true;
-		}else{
-			return false;
-		}
-	}
-	
-	public function getRemoteImage()
-	{
-		$url = null;
-		
-		$date = new \DateTime();
-		$date->setDate(date('Y', $this->date->sec), date('m', $this->date->sec), date('d', $this->date->sec));
-		
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_USERAGENT, 'Googlebot/2.1 (http://www.googlebot.com/bot.html)');
-		
-		if($this->comic->is_increment){
-			curl_setopt($ch, CURLOPT_URL, preg_replace('#\{\$value\}#', $this->inc_id, $this->comic->scrape_url));
-		}else{
-			curl_setopt($ch, CURLOPT_URL, preg_replace('#\{\$value\}#', $date->format($this->comic->date_format), $this->comic->scrape_url));
-		}
-
-		curl_setopt($ch, CURLOPT_HEADER, false);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		$body = curl_exec($ch);
-		$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-		curl_close($ch);
-		
-		if(!$body){
-			return $url;
-		}
-		
-		$doc = new \DOMDocument();
-		libxml_use_internal_errors(true);
-		$doc->loadHtml($body);
-		libxml_clear_errors();
-		
-		$el = new \DOMXPath($doc);
-		if(strpos($this->comic->dom_path, '||') !== false){
-			$paths = preg_split('#\|\|#', $this->comic->dom_path);
-		}else{
-			$paths = [$this->comic->dom_path];
-		}
-		
-		foreach($paths as $domPath){
-			$elements = $el->query($domPath);
-			if($elements){
-				foreach($elements as $element){
-					$url = $element->getAttribute('src');
-				}
-			}
-			if($url){
-				break;
-			}
-		
-		}
-
-		if(
-			$url &&
-			($parts = parse_url($url)) &&
-			!isset($parts['scheme']) && 
-			isset($parts['host'])
-		){
-			$url = 'http://' . trim($url, '//');
-		}
-		
-		if(
-			$url && 
-			($parts = parse_url($url)) && 
-			(
-				!isset($parts['scheme']) || 
-				!isset($parts['host'])
-			) && 
-			isset($parts['path'])
-		){
-			// The URL is relative as such add the homepage onto the beginning
-			$url = trim($this->comic->homepage, '/') . '/' . trim($parts['path'], '/'); 
-		}
-		return $url;
-	}
-
-	public function populateRemoteImage()
-	{
-		if(!$this->url){
-			$this->url = $this->getRemoteImage();
-		}
-		
-		if(($this->url) && ($binary = file_get_contents($this->url))){
-			$this->img = new \MongoBinData($binary);
-			return true;
-		}
-		return false;
 	}
 	
 	public function search($comic_id)
@@ -320,13 +135,34 @@ class ComicStrip extends ActiveRecord
 			'_id' => $this->_id ? new \MongoId($this->_id) : null,
 			'comic_id' => $comic_id,
 			'url' => $this->url ? new \MongoRegex("/$this->url/") : null,
-			'date' => $this->date ? new \MongoDate($this->date) : null,
-			'created_at' => $this->created_at,
-			'updated_at' => $this->updated_at
 		]);
-	
+		
+		if($this->comic->type === Comic::TYPE_DATE){
+			$query->filterWhere([
+				'index' => 
+					$this->index 
+					? new \MongoDate(strtotime($this->index)) 
+					: null
+			]);
+		}elseif($this->comic->type === Comic::TYPE_ID){
+			$query->filterWhere([
+				'index' => $this->index ? $this->index : null
+			]);
+		}
+		
+		$query->filterWhere([
+			'created_at' => 
+				$this->created_at 
+				? new \MongoDate(strtotime($this->crated_at)) 
+				: null,
+			'updated_at' => 
+				$this->updated_at 
+				? new \MongoDate(strtotime($this->updated_at)) 
+				: null
+		]);
 		return new ActiveDataProvider([
-			'query' => $query
+			'query' => $query,
+			'sort'=> ['defaultOrder' => ['index' => SORT_DESC]]
 		]);
 	}
 }

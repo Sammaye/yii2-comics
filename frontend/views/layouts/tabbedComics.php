@@ -46,9 +46,14 @@ $('#requestComicForm').on('submit', function(e){
 
 $('#comicSelector').select2({
 	width: '100%',
+	placeholder: 'Select a Comic',
 	templateSelection: function (selection) {
-		var o = $.parseJSON(selection.text);
-		return $('<span/>').html(o.title + '<span>By ' + o.author + '</span>');
+		try{
+			var o = $.parseJSON(selection.text);
+			return $('<span/>').html(o.title + '<span>By ' + o.author + '</span>');
+		}catch(e){
+			return selection.text;
+		}
 	},
 	templateResult: function (result) {
 		console.log(result);
@@ -70,8 +75,14 @@ $('#comicSelector').on('change', function(e){
 $this->beginContent('@app/views/layouts/main.php'); ?>
 
 <?php 
-$comics = [];
-foreach(Comic::find()->orderBy(['title' => SORT_ASC])->all() as $comic){
+$comics = ['' => ''];
+foreach(
+	Comic::find()
+		->where(['live' => 1])
+		->orderBy(['title' => SORT_ASC])
+		->all() 
+	as $comic
+){
 	//if($this->params['comic_id'] !== (String)$comic['_id']){
 		$comics[(String)$comic->_id] = json_encode(['title' => $comic->title, 'author' => $comic->author]);
 	//}

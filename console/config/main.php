@@ -19,6 +19,12 @@ return [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning'],
                 ],
+                [
+					'class' => 'common\components\ConsoleTarget',
+					'levels' => ['error', 'warning', 'info', 'trace'],
+					'categories' => ['application'],
+					'displayDate' => true,
+                ]
             ],
         ],
     ],

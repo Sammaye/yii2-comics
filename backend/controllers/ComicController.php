@@ -38,18 +38,44 @@ class ComicController extends Controller
 	
 	public function actionCreate()
 	{
-		$model = new Comic;
+		$record = [];
+		if(isset($_POST['type_change'])){
+			$values = json_decode($_POST['type_change']);
+			foreach($values as $k => $v){
+				$name = preg_replace('#Comic\[#', '', rtrim($v->name, ']'));
+				$record[$name] = $v->value;
+			}
+		}
+		$model = Comic::instantiate($record);
+		Comic::populateRecord($model, $record);
+		$model->setOldAttributes(null);
+
 		if($model->load($_POST)){
 			if($model->save()){
 				return Yii::$app->getResponse()->redirect(['comic/update', 'id' => (string)$model->_id]);
 			}
 		}
+		
 		return $this->render('create', ['model' => $model]);
 	}
 
 	public function actionUpdate($id)
 	{
 		if($model = Comic::find()->where(['_id' => new \MongoId($id)])->one()){
+			
+			$record = [];
+			if(isset($_POST['type_change'])){
+				$values = json_decode($_POST['type_change']);
+				foreach($values as $k => $v){
+					$name = preg_replace('#Comic\[#', '', rtrim($v->name, ']'));
+					$record[$name] = $v->value;
+				}
+			}
+			if($record){
+				$model = Comic::instantiate($record);
+				Comic::populateRecord($model, $record);
+				//$model->setOldAttributes(null);
+			}
 			
 			if($model->load($_POST)){
 				if($model->save()){

@@ -3,10 +3,10 @@
 use yii\helpers\Url;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use common\models\Comic;
 
-$this->title = 'View ' . $model->title . ' for ' . date('d-m-Y', $comicStrip->date->sec);
-
-if(!$comicStrip->comic->is_increment){
+if($model->type === Comic::TYPE_DATE){
+	$this->title = 'View ' . $model->title . ' for ' . date('d-m-Y', $comicStrip->index->sec);
 	$this->registerJs("
 	$('#datepicker').datepicker({
 		dateFormat : 'dd-mm-yy',
@@ -15,6 +15,8 @@ if(!$comicStrip->comic->is_increment){
 		maxDate: '" . date('d-m-Y') . "'
 	});
 	");
+}else{
+	$this->title = 'View ' . $model->title . ' for ' . $comicStrip->index;
 }
 
 $this->registerJs("
@@ -92,22 +94,37 @@ if(
 <div class="comic-date-picker">
 <form method="get" action="<?= Url::to(['comic/view', 'id' => (String)$model->_id]) ?>">
 <div>
-	<?php if($comicStrip->getIsFirstStrip()){ ?>
+<?php if($previousStrip){ ?>
+  <a href="<?= $model->indexUrl($previousStrip->index) ?>" class="btn btn-lg btn-default">&laquo;</a>
+<?php }else{ ?>
   <a href="#" disabled="disabled" class="btn btn-lg btn-default">&laquo;</a>
-	<?php }else{ ?>
-  <a href="<?= $comicStrip->getPreviousUrl() ?>" class="btn btn-lg btn-default">&laquo;</a>
-	<?php } ?>
-  <input type="text" class="form-control input-lg" name="date" id="datepicker" value="<?= $date ?>" />
-	<?php if($comicStrip->getIsLastStrip()){ ?>
+<?php } ?>
+
+<input type="text" class="form-control input-lg" name="index" id="datepicker" 
+value="<?= $model->type === Comic::TYPE_DATE ? date('d-m-Y', $comicStrip->index->sec) : $comicStrip->index ?>" />
+
+<?php if($nextStrip){ ?>
+  <a href="<?= $model->indexUrl($nextStrip->index) ?>" class="btn btn-lg btn-default">&raquo;</a>
+<?php }else{ ?>
   <a href="#" disabled="disabled" class="btn btn-lg btn-default">&raquo;</a>
-	<?php }else{ ?>
-  <a href="<?= $comicStrip->getNextUrl() ?>" class="btn btn-lg btn-default">&raquo;</a>
-	<?php } ?>
+<?php } ?>
 </div>
 </form>
 </div>
 <div class="comic-view-item">
-<a href="<?= $comicStrip->getUrl() ?>" rel="nofollow" target="_blank">
-<img src="<?= Url::to(['comic-strip/render-image', 'id' => (String)$comicStrip->_id]) ?>" class="img-responsive comic-img"/>
+<?php if($comicStrip->skip){ ?>
+<div class="strip-not-archived">
+<a href="<?= $comicStrip->url ?>" target="_blank" rel="nofollow">This strip is not compatible with c!y but you can click here to view it on their site</a>
+</div>
+<?php }elseif(is_array($comicStrip->img)){ 
+?><a href="<?= $model->scrapeUrl($comicStrip->index) ?>" rel="nofollow" target="_blank"><?php 
+	foreach($comicStrip->img as $k => $img){ ?>
+	<img src="<?= Url::to(['comic/render-image', 'id' => (String)$comicStrip->_id . '_' . $k]) ?>" class="img-responsive comic-img"/>
+	<?php } 
+?></a><?php 
+}else{ ?>
+<a href="<?= $model->scrapeUrl($comicStrip->index) ?>" rel="nofollow" target="_blank">
+<img src="<?= Url::to(['comic/render-image', 'id' => (String)$comicStrip->_id]) ?>" class="img-responsive comic-img"/>
 </a>
+<?php } ?>
 </div>

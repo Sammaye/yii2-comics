@@ -253,6 +253,12 @@ a.desc:after {
 	margin:5px;
 }
 
+.comic-view-item .strip-not-archived{
+	border:5px dashed #eee; 
+	padding:10px 0; 
+	margin:10px 0;
+}
+
 .comic-view-item .comic-img{
 	margin:auto;
 }
@@ -472,4 +478,8 @@ a.desc:after {
 
 .comic-view-strip-not-found{
 	padding:20px;
+}
+
+.comic-view-strip-not-found .comic-date-picker{
+	margin-bottom:20px;
 }

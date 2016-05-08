@@ -9,16 +9,27 @@ use yii\bootstrap\ActiveForm;
 <?= $form->errorSummary($model) ?>
 <?= Html::activeHiddenInput($model, 'comic_id') ?>
 <?= $form->field($model, 'url') ?>
-<?php 
-if($model->comic->is_increment){
-	echo $form->field($model, 'inc_id'); 
-}
-echo $form->field($model, 'date')->textInput(['value' => $model->date instanceof \MongoDate ? date('d/m/Y', $model->date->sec) : null]);
-?>
-<?php if(!$model->getIsNewRecord()){ ?>
-	<div>
-	<img src="<?= Url::to(['comic-strip/render-image', 'id' => (String)$model->_id]) ?>"/>
-	</div>
+<?= $form->field($model, 'index')->textInput([
+	'value' => 
+		$model->index instanceof \MongoDate 
+		? date('d/m/Y', $model->index->sec) 
+		: $model->index
+]) ?>
+<?= $form->field($model, 'date')->textInput([
+	'value' => 
+		$model->date instanceof \MongoDate 
+		? date('d/m/Y', $model->date->sec) 
+		: $model->date
+]) ?>
+<?= $form->field($model, 'skip')->checkbox() ?>
+<?php if(!$model->getIsNewRecord()){
+	if(is_array($model->img)){
+		foreach($model->img as $k => $v){ ?>
+		<div><img src="<?= Url::to(['comic-strip/render-image', 'id' => (String)$model->_id . '_' . $k]) ?>"/></div>
+		<?php }
+	}else{ ?>
+	<div><img src="<?= Url::to(['comic-strip/render-image', 'id' => (String)$model->_id]) ?>"/></div>
+	<?php } ?>
 <?php } ?>
 <div class="toolbar comic-strip-form-end">
 <?= Html::submitButton($model->getIsNewRecord() ? 'Create Comic Strip' : 'Update Comic Strip', ['class' => 'btn btn-success']) ?>

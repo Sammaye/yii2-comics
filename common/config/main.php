@@ -1,9 +1,44 @@
 <?php
+
+$params = array_merge(
+    require(__DIR__ . '/params.php'),
+    require(__DIR__ . '/params-local.php')
+);
+
 return [
-	'timeZone' => 'Europe/London',
+	'timeZone' => 'UTC',
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
     'extensions' => require(__DIR__ . '/../../vendor/yiisoft/extensions.php'),
     'components' => [
+        'log' => [
+			'traceLevel' => 3,
+			'targets' => [
+				[
+					'class' => 'yii\log\FileTarget',
+					'levels' => ['error', 'warning'],
+				],
+				[
+					'class' => 'yii\log\EmailTarget',
+					'levels' => ['error'],
+					'except' => ['yii\web\HttpException:404'],
+					'message' => [
+						'from' => [$params['errorEmail'] => 'Cly Errors'],
+						'to' => [$params['adminEmail']],
+						'subject' => 'c!y Website Error',
+					],
+				],
+				[
+                    'class' => 'yii\log\EmailTarget',
+                    'levels' => ['warning'],
+                    'categories' => ['application'],
+                    'message' => [
+						'from' => [$params['errorEmail'] => 'Cly Errors'],
+						'to' => [$params['adminEmail']],
+						'subject' => 'c!y Website Warning',
+                    ],
+                ],
+	        ],
+        ],
     	'user' => [
 			'class' => 'common\components\User',
 			'identityClass' => 'common\models\User',

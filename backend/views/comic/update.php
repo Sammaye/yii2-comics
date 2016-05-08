@@ -3,19 +3,24 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use common\models\ComicStrip;
+use common\models\Comic;
 use yii\helpers\Url;
 
 $this->title = 'Update ' . $model->title;
 
 ?>
-<h1 class="form-head">Update Comic</h1>
+<h1 class="form-head">Update <?= $model->title ?></h1>
 <?= $this->render('_form', ['model' => $model]) ?>
-<h2 class="comic-update-strip-head">Strips for this comic</h2>
+<hr/>
+<h4>Comic Strips</h4>
 <div class="admin-toolbar">
 <?= Html::a('Add Strip', ['comic-strip/create', 'comic_id' => (String)$model->_id], ['class' => 'btn btn-primary']) ?>
 </div>
 <?php 
-$comicStrip = new ComicStrip;
+
+$comicStrip = new ComicStrip(['scenario' => 'search']);
+$comicStrip->comic = $model;
+
 echo GridView::widget([
 	'dataProvider' => $comicStrip->search($model->_id),
 	'filterModel' => $comicStrip,
@@ -23,10 +28,16 @@ echo GridView::widget([
 		'_id',
 		'url',
 		[
-			'attribute' => 'date',
-			'format' => 'date'
+			'attribute' => 'index',
+			'format' => 'raw',
+			'value' => function ($model, $key, $index, $column){
+				if($model->comic->type === Comic::TYPE_DATE){
+					return Yii::$app->getFormatter()->format($model->index, 'date');
+				}elseif($model->comic->type === Comic::TYPE_ID){
+					return Yii::$app->getFormatter()->format($model->index, 'text');
+				}
+			}
 		],
-		'inc_id',
 		[
 			'attribute' => 'updated_at',
 			'format' => 'date'

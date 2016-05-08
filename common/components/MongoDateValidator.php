@@ -7,6 +7,8 @@ use yii\validators\DateValidator;
 
 class MongoDateValidator extends DateValidator
 {
+	public $timeZone = 'UTC';
+	
 	public $useMongoDate = true;
 	
 	public function validateAttribute($object, $attribute)
