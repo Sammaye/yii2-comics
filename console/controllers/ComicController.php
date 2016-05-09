@@ -148,8 +148,9 @@ class ComicController extends Controller
 			return self::EXIT_CODE_ERROR;
 		}
 		
+		$strip = $comic->current();
 		$index = $comic->next(
-			$comic->current_index, 
+			$strip, 
 			true
 		)->index;
 		

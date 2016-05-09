@@ -501,9 +501,9 @@ class Comic extends ActiveRecord
 		return preg_replace('#\{\$value\}#', $index, $this->scrape_url);
 	}
 	
-	public function previous($index, array $data = [])
+	public function previous(ComicStrip $cStrip, array $data = [])
     {
-        $index = $this->index($index);
+        $index = $this->index($cStrip->index);
 
         if($this->type === self::TYPE_DATE){
 	        $strip = $this->getStrip(new \MongoDate(
@@ -528,9 +528,9 @@ class Comic extends ActiveRecord
         return $strip;
     }
     
-    public function next($index, $ignoreCurrent = false, array $data = [])
+    public function next(ComicStrip $cStrip, $ignoreCurrent = false, array $data = [])
     {
-        $index = $this->index($index);
+        $index = $this->index($cStrip->index);
         
         $nextIndex = null;
         if($this->type === self::TYPE_DATE){
@@ -622,7 +622,7 @@ class Comic extends ActiveRecord
 		if(
 			(
 				$strip = $this->next(
-					$strip->index, 
+					$strip, 
 					true, 
 					['date' => new \MongoDate($timeToday)]
 				)

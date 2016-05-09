@@ -32,7 +32,7 @@ class ComicStrip extends ActiveRecord
 			['skip', 'common\components\NumberValidator', 'min' => 0, 'max' => 1],
 
 			[
-				'index', 
+				['index', 'next', 'previous'], 
 				'common\components\MongoDateValidator', 
 				'format' => 'php:d/m/Y',
 				'when' => function($model){
@@ -43,7 +43,7 @@ class ComicStrip extends ActiveRecord
     			}"
 			],
 			[
-				'index', 
+				['index', 'next', 'previous'], 
 				'integer',
 				'when' => function($model){
 					return $model->comic->type === Comic::TYPE_ID;
@@ -53,7 +53,7 @@ class ComicStrip extends ActiveRecord
     			}"
 			],
 			[
-				'index', 
+				['index', 'next', 'previous'], 
 				'filter', 
 				'filter' => function($value){
 					return (String)$value;
@@ -99,6 +99,8 @@ class ComicStrip extends ActiveRecord
 			'index',
 			'skip',
 			'date',
+			'next',
+			'previous',
 			'updated_at',
 			'created_at'
 		];

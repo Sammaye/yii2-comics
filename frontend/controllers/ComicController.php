@@ -64,8 +64,8 @@ class ComicController extends Controller
 			return $this->render('comicStripNotFound', ['model' => $comic]);
 		}
 		$current->comic = $comic;
-		$previous = $comic->previous($current->index);
-		$next = $comic->next($current->index);
+		$previous = $comic->previous($current);
+		$next = $comic->next($current);
 
 		return $this->render(
 			'view', 

@@ -22,6 +22,18 @@ use yii\bootstrap\ActiveForm;
 		: $model->date
 ]) ?>
 <?= $form->field($model, 'skip')->checkbox() ?>
+<?= $form->field($model, 'next')->textInput([
+	'value' => 
+		$model->next instanceof \MongoDate 
+		? date('d/m/Y', $model->next->sec) 
+		: $model->next
+]) ?>
+<?= $form->field($model, 'previous')->textInput([
+	'value' => 
+		$model->previous instanceof \MongoDate 
+		? date('d/m/Y', $model->previous->sec) 
+		: $model->previous
+]) ?>
 <?php if(!$model->getIsNewRecord()){
 	if(is_array($model->img)){
 		foreach($model->img as $k => $v){ ?>
