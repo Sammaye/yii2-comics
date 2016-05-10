@@ -59,7 +59,7 @@ class ComicController extends Controller
 		){
 			return $this->render('comicNotFound');
 		}
-		
+
 		if(!$current = $comic->current($index)){
 			return $this->render('comicStripNotFound', ['model' => $comic]);
 		}

@@ -285,13 +285,13 @@ class Comic extends ActiveRecord
 	public static function instantiate($row)
 	{
 		if(
-			!isset($row['adapter']) || 
-			!array_key_exists($row['adapter'], static::getScrapers())
+			!isset($row['scraper']) || 
+			!array_key_exists($row['scraper'], static::getScrapers())
 		){
 			return new static;
 		}
 		
-		$className = '\common\scrapers\\' . $row['adapter'];
+		$className = '\common\scrapers\\' . $row['scraper'];
 		if(!class_exists($className)){
 			// OMG Another Error
 			throw new InvalidConfigException(
@@ -573,7 +573,7 @@ class Comic extends ActiveRecord
     
     public function current($index = null, $ignoreCurrent = false, array $data = [])
     {
-        $index = $this->index($index);
+        $index = $this->index($index ?: $this->current_index);
 		if(!$ignoreCurrent && $this->isIndexOutOfRange($index)){
 			return null;
 		}
@@ -666,7 +666,10 @@ class Comic extends ActiveRecord
 	public function populateRemoteImage(&$model, $url = null)
 	{
 		if(!$model->url){
-			$model->url = $this->getRemoteImage($url ?: $this->scrapeUrl($model->index));
+			$model->url = $this->getRemoteImage(
+				$url ?: 
+				$this->scrapeUrl($model->index)
+			);
 		}
 
 		if(($model->url) && ($binary = file_get_contents($model->url))){
