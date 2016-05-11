@@ -141,6 +141,7 @@ class Comic extends ActiveRecord
 			
 			[
 				[
+					'first_index',
 					'last_index'
 				],
 				'required',
@@ -445,6 +446,8 @@ class Comic extends ActiveRecord
 			){
 				$this->current_index = $index;
 			}
+		}else{
+			$this->current_index = $index;
 		}
 		
 		if($save){
@@ -599,9 +602,28 @@ class Comic extends ActiveRecord
      */
     public function scrapeStrip()
     {
-    	$timeToday = mktime(0, 0, 0, date('m'), date('d'), date('Y'));
+		$timeToday = mktime(0, 0, 0, date('m'), date('d'), date('Y'));
     	
-    	$strip = $this->current();
+		$strip = $this->current();
+		$archiveRotated = false;
+		
+		if(!$this->active){
+			// Detect if index is at least position
+			// If it is then cycle
+			if(
+				$this->type === self::TYPE_DATE && 
+				$strip->index->sec == $this->last_index->sec
+			){
+				$strip = $this->getStrip($this->first_index);
+				$archiveRotated = true;
+			}elseif(
+				$this->type === self::TYPE_ID && 
+				$strip->index == $this->last_index
+			){
+				$strip = $this->getStrip($this->first_index);
+				$archiveRotated = true;
+			}
+		}
 		
 		if(!$strip){
 			Yii::warning(
@@ -616,30 +638,32 @@ class Comic extends ActiveRecord
 			$strip->date instanceof \MongoDate && 
 			$strip->date->sec === $timeToday
 		){
-			return $strip;
-		}
-		
-		if(
-			(
-				$strip = $this->next(
-					$strip, 
-					true, 
-					['date' => new \MongoDate($timeToday)]
-				)
-			) === null
-		){
-			/*
-			Yii::warning(
-				'Could not get strip for ' . $comic->title 
-				. '(' . (String)$comic->_id . ') by the index ' 
-				. $index
-			);
-			*/
-			return null;
+			//return $strip;
+		}elseif(!$archiveRotated){
+			if(
+				(
+					$strip = $this->next(
+						$strip, 
+						true, 
+						$this->active 
+							? ['date' => new \MongoDate($timeToday)] 
+							: []
+					)
+				) === null
+			){
+				/*
+				Yii::warning(
+					'Could not get strip for ' . $comic->title 
+					. '(' . (String)$comic->_id . ') by the index ' 
+					. $index
+				);
+				*/
+				return null;
+			}
 		}
 
 		$this->updateIndex($strip->index, false);
-		$this->last_checked = new \MongoDate($tiemToday);
+		$this->last_checked = new \MongoDate($timeToday);
 		if(!$this->save(['last_checked', 'current_index'])){
 			Yii::warning(
 				'Could not save last_checked and current_index for ' 

@@ -105,12 +105,21 @@ class ComicController extends Controller
 						->where(['_id' => $sub['comic_id'], 'live' => 1])
 						->one()
 				){
+					if($comic->active){
+						$condition = [
+							'comic_id' => $comic->_id, 
+							'date' => ['$gt' => new \MongoDate($timeAgo)]
+						];
+					}else{
+						$condition = [
+							'comic_id' => $comic->_id, 
+							'index' => $comic->current_index
+						];
+					}
+					
 					if(
 						$strip = ComicStrip::find()
-							->where([
-								'comic_id' => $comic->_id, 
-								'date' => ['$gt' => new \MongoDate($timeAgo)]
-							])
+							->where($condition)
 							->orderBy(['date' => SORT_DESC])
 							->one()
 					){
