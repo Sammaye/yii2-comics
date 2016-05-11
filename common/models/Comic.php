@@ -696,8 +696,15 @@ class Comic extends ActiveRecord
 			);
 		}
 
-		if(($model->url) && ($binary = file_get_contents($model->url))){
-			$model->img = new \MongoBinData($binary);
+		try{
+			if(($model->url) && ($binary = file_get_contents($model->url))){
+				$model->img = new \MongoBinData($binary);
+				return true;
+			}
+		}catch(\Exception $e){
+			// the file probably had a problem beyond our control
+			// As such define this as a skip strip since I cannot store it
+			$model->skip = 1;
 			return true;
 		}
 		return false;
