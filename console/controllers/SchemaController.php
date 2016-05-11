@@ -8,7 +8,7 @@ use common\models\ComicStrip;
 use common\models\Comic;
 use common\models\User;
 use yii\helpers\Url;
-use yii\mongodb\Query;
+use common\components\Query;
 
 class SchemaController extends Controller
 {
@@ -31,11 +31,11 @@ class SchemaController extends Controller
             }
             
             foreach($model->attributes() as $k => $v){
-                if(array_key_exists($k, $comic)){
-                    $model = $comic[$k];
+                if(array_key_exists($v, $comic)){
+                    $model->$v = $comic[$v];
                 }
             }
-            
+
             if(!$model->validate()){
                 Yii::warning(
                     'Could not validate ' 
