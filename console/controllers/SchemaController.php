@@ -21,13 +21,14 @@ class SchemaController extends Controller
             $model = new Comic;
             $model->live = 1;
             $model->active = 1;
-            $model->current_index = '11/05/2016';
             $model->index_format = $comic['date_format'];
             $model->index_step = $comic['day_step'];
             
             if($comic['is_increment']){
+                $model->current_index = 1;
                 $model->type = Comic::TYPE_ID;
             }else{
+                $model->current_index = '11/05/2016';
                 $model->type = Comic::TYPE_DATE;
             }
             
@@ -44,17 +45,17 @@ class SchemaController extends Controller
                     . ' (' . (String)$model->_id . ') because: ' 
                     . var_export($model->getErrors(), true)
                 );
-            }
-            
-            Comic::deleteAll(['_id' => $model->_id]);
-            $model->setIsNewRecord(true);
-            
-            if(!$model->save()){
-                Yii::warning(
-                    'Could not save ' 
-                    . $model->title 
-                    . ' (' . (String)$model->_id . ')'
-                );
+            }else{
+                Comic::deleteAll(['_id' => $model->_id]);
+                $model->setIsNewRecord(true);
+                
+                if(!$model->save()){
+                    Yii::warning(
+                        'Could not save ' 
+                        . $model->title 
+                        . ' (' . (String)$model->_id . ')'
+                    );
+                }
             }
             Yii::getLogger()->flush(true);
         }
