@@ -21,6 +21,7 @@ class SchemaController extends Controller
             $model = new Comic;
             $model->live = 1;
             $model->active = 1;
+            $model->current_index = '11/05/2016';
             $model->index_format = $comic['date_format'];
             $model->index_step = $comic['day_step'];
             
