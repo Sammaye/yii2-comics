@@ -46,6 +46,12 @@ class CommitStrip extends Comic
                 // If we have a next now then let's get that
                 $strip = $this->downloadStrip($cStrip->next, $data);
                 return $strip;
+            }else{
+                Yii::warning(
+                    $model->title . '(' 
+                    . (String)$this->_id . ') could not find next from ' 
+                    . $this->scrapeUrl($cStrip->index)
+                );
             }
         }
         
@@ -93,13 +99,16 @@ class CommitStrip extends Comic
 		
 		$existModel = ComicStrip::find()->where(['comic_id' => $this->_id, 'index' => $index])->one();
 		
-		if($next && $existModel){
+		if($existModel){
 		    // If the document existed as we updated it then just return a findOne of it
-		    $existModel->next = $next;
-		    if(!$existModel->save(['next'])){
-		        return null;
+		    if($next){
+    		    $existModel->next = $next;
+    		    if($existModel->save(['next'])){
+    		        return $existModel;
+    		    }
+		    }else{
+		        return $existModel;
 		    }
-		    return $existModel;
 		}elseif(!$existModel){
     		$model = new ComicStrip();
     		$model->comic_id = $this->_id;
@@ -114,11 +123,11 @@ class CommitStrip extends Comic
     		    $imgs[$k] = new \MongoBinData(file_get_contents($url));
     		}
     		$model->img = $imgs;
-    		if(!$model->save()){
-    			return null;
+    		if($model->save()){
+    			return $model;
     		}
-    		return $model;
 		}
+		return null;
     }
     
     public function nextLink($stripDom)
