@@ -91,13 +91,16 @@ class CommitStrip extends Comic
             $previous = $this->previousLink($comicDocs[count($comicDocs) - 1]);
         }
 		
-		if(
-            $next && 
-            ComicStrip::updateAll(['next' => $next], ['comic_id' => $this->_id, 'index' => $index])
-        ){
+		$existModel = ComicStrip::find()->where(['comic_id' => $this->_id, 'index' => $index])->one();
+		
+		if($next && $existModel){
 		    // If the document existed as we updated it then just return a findOne of it
-		    return ComicStrip::find()->where(['comic_id' => $this->_id, 'index' => $index])->one();
-		}else{
+		    $existModel->next = $next;
+		    if(!$existModel->save(['next'])){
+		        return null;
+		    }
+		    return $existModel;
+		}elseif(!$existModel){
     		$model = new ComicStrip();
     		$model->comic_id = $this->_id;
     		$model->index = $index;
