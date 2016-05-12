@@ -46,7 +46,9 @@ class CommitStrip extends Comic
                 // If we have a next now then let's get that
                 $strip = $this->downloadStrip($cStrip->next, $data);
                 return $strip;
-            }else{
+            }elseif($ignoreCurrent){
+                // $ignoreCurrent will normally be from admin 
+                // functions such as the scraper
                 Yii::warning(
                     $this->title . '(' 
                     . (String)$this->_id . ') could not find next from ' 
