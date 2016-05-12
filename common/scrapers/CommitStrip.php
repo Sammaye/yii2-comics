@@ -48,7 +48,7 @@ class CommitStrip extends Comic
                 return $strip;
             }else{
                 Yii::warning(
-                    $model->title . '(' 
+                    $this->title . '(' 
                     . (String)$this->_id . ') could not find next from ' 
                     . $this->scrapeUrl($cStrip->index)
                 );
