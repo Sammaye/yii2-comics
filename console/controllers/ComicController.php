@@ -63,7 +63,7 @@ class ComicController extends Controller
 		];
 		
 		if($freq){
-			if($freq === 'day' || $freq === 'week' || $freq === 'month'){
+			if($freq === 'daily' || $freq === 'weekly' || $freq === 'monthly'){
 				$condition['email_frequency'] = $freq;
 			}else{
 				Yii::error('Frequency must be either daily, weekly, or monthly');
