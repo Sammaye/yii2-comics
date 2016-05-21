@@ -5,6 +5,8 @@ namespace common\components;
 use Yii;
 use yii\validators\DateValidator;
 
+use MongoDB\BSON\UTCDateTime;
+
 class MongoDateValidator extends DateValidator
 {
 	public $timeZone = 'UTC';
@@ -26,7 +28,7 @@ class MongoDateValidator extends DateValidator
 	
 	protected function parseDateValue($value)
 	{
-		if($value instanceof \MongoDate){
+		if($value instanceof UTCDateTime){
 			return $value;
 		}
 		
@@ -37,7 +39,7 @@ class MongoDateValidator extends DateValidator
 		}
 		
 		if($this->useMongoDate){
-			return new \MongoDate($ts);
+			return new UTCDateTime($ts*1000);
 		}else{
 			return $ts;
 		}

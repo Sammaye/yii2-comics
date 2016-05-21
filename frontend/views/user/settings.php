@@ -13,8 +13,8 @@ $this->registerJs("
 	});
 		
 	$(document).on('click', '.btn-unsubscribe', function(e){
-		e.preventDefault();
-		$(this).parents('.sortable-subscription').remove();
+    e.preventDefault();
+    $(this).parents('.sortable-subscription').remove();
 	});
 
 	$( '#sortable' ).sortable();

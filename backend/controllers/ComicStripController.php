@@ -9,6 +9,7 @@ use yii\web\NotFoundHttpException;
 use common\models\Comic;
 use common\models\ComicStrip;
 use yii\imagine\Image;
+use MongoDB\BSON\ObjectID;
 
 class ComicStripController extends Controller
 {
@@ -33,7 +34,7 @@ class ComicStripController extends Controller
 		
 		if(
 			($comic_id = Yii::$app->getRequest()->get('comic_id')) && 
-			($comic_id = new \MongoId($comic_id))
+			($comic_id = new ObjectID($comic_id))
 		){
 			$model->comic_id = $comic_id;
 		}
@@ -63,7 +64,7 @@ class ComicStripController extends Controller
 
 	public function actionUpdate($id)
 	{
-		if($model = ComicStrip::find()->where(['_id' => new \MongoId($id)])->one()){
+		if($model = ComicStrip::find()->where(['_id' => new ObjectID($id)])->one()){
 			
 			if($model->load($_POST) && $model->save()){
 				return Yii::$app->getResponse()->redirect(['comic/update', 'id' => $model->comic_id]);
@@ -77,7 +78,7 @@ class ComicStripController extends Controller
 	public function actionDelete($id)
 	{
 		if(
-			($model = ComicStrip::find()->where(['_id' => new \MongoId($id)])->one()) && 
+			($model = ComicStrip::find()->where(['_id' => new ObjectID($id)])->one()) && 
 			$model->delete()
 		){
 			Yii::$app->getSession()->setFlash('success', 'That strip was deleted');
@@ -89,7 +90,7 @@ class ComicStripController extends Controller
 	
 	public function actionRefreshImage($id)
 	{
-		if($model = ComicStrip::find()->where(['_id' => new \MongoId($id)])->one()){
+		if($model = ComicStrip::find()->where(['_id' => new ObjectID($id)])->one()){
 			$model->url = null;
 			$model->img = null;
 			if($model->comic->populateRemoteImage($model)){

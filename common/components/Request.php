@@ -20,7 +20,7 @@ class Request extends \yii\web\Request
 	 */
 	public $sslRoutes = [];
 
-	public function validateCsrfToken()
+	public function validateCsrfToken($token = null)
 	{
 		if(
 			$this->enableCsrfValidation &&
@@ -28,6 +28,6 @@ class Request extends \yii\web\Request
 		){
 			return true;
 		}
-		return parent::validateCsrfToken();
+		return parent::validateCsrfToken($token);
 	}
 }

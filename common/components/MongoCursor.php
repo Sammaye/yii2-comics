@@ -2,6 +2,8 @@
 
 namespace common\components;
 
+use IteratorIterator;
+
 use yii\base\Object;
 
 class MongoCursor extends Object implements \Iterator
@@ -15,7 +17,10 @@ class MongoCursor extends Object implements \Iterator
 
 	public function init()
 	{
-		$this->cursor = $this->query->buildCursor();
+		$cursor = $this->query->buildCursor();
+		$it = new IteratorIterator($cursor);
+		$it->rewind();
+		$this->cursor = $it;
 		parent::init();
 	}
 	

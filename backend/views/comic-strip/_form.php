@@ -4,6 +4,8 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\bootstrap\ActiveForm;
 
+use MongoDB\BSON\UTCDateTime;
+
 ?>
 <?php $form = ActiveForm::begin(['enableClientValidation' => false]) ?>
 <?= $form->errorSummary($model) ?>
@@ -11,27 +13,27 @@ use yii\bootstrap\ActiveForm;
 <?= $form->field($model, 'url') ?>
 <?= $form->field($model, 'index')->textInput([
 	'value' => 
-		$model->index instanceof \MongoDate 
-		? date('d/m/Y', $model->index->sec) 
+		$model->index instanceof UTCDateTime 
+		? $model->index->toDateTime()->format('d/m/Y')
 		: $model->index
 ]) ?>
 <?= $form->field($model, 'date')->textInput([
 	'value' => 
-		$model->date instanceof \MongoDate 
-		? date('d/m/Y', $model->date->sec) 
+		$model->date instanceof UTCDateTime 
+		? $model->date->toDateTime()->format('d/m/Y') 
 		: $model->date
 ]) ?>
 <?= $form->field($model, 'skip')->checkbox() ?>
 <?= $form->field($model, 'next')->textInput([
 	'value' => 
-		$model->next instanceof \MongoDate 
-		? date('d/m/Y', $model->next->sec) 
+		$model->next instanceof UTCDateTime 
+		? $model->next->toDateTime()->format('d/m/Y')
 		: $model->next
 ]) ?>
 <?= $form->field($model, 'previous')->textInput([
 	'value' => 
-		$model->previous instanceof \MongoDate 
-		? date('d/m/Y', $model->previous->sec) 
+		$model->previous instanceof UTCDateTime 
+		? $model->previous->toDateTime()->format('d/m/Y')
 		: $model->previous
 ]) ?>
 <?php if(!$model->getIsNewRecord()){

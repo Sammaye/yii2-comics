@@ -4,6 +4,7 @@ namespace common\components;
 
 use Yii;
 use yii\validators\Validator;
+use MongoDB\BSON\ObjectID;
 
 class MongoIdValidator extends Validator
 {
@@ -32,12 +33,12 @@ class MongoIdValidator extends Validator
 	
 	protected function parseIdValue($value)
 	{
-		if($value instanceof \MongoId){
+		if($value instanceof ObjectID){
 			return $value;
 		}
 		$id = null;
 		try{
-			$id = new \MongoId($value);
+			$id = new ObjectID($value);
 		}catch(\Exception $e){
 			return false;
 		}

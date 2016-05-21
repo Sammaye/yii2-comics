@@ -3,6 +3,8 @@
 use yii\helpers\Url;
 use common\models\Comic;
 
+use MongoDB\BSON\UTCDateTime;
+
 Yii::$app->response->setStatusCode(404);
 
 $this->params['comic_id'] = (String)$model->_id;
@@ -20,8 +22,8 @@ $this->title = '#404 ZOMG strip Not Found!';
 value="<?php
 if(Yii::$app->request->get('index')){
     $value = $model->index($value);
-    if($value instanceof \MongoDate){
-        echo date('d-m-Y', $value->sec);
+    if($value instanceof UTCDateTime){
+        echo date('d-m-Y', $value->toDateTime()->getTimestamp());
     }else{
         echo $value;
     }

@@ -8,6 +8,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use common\models\Comic;
 use common\models\ComicStrip;
+use MongoDB\BSON\ObjectID;
 
 class ComicController extends Controller
 {
@@ -61,7 +62,7 @@ class ComicController extends Controller
 
 	public function actionUpdate($id)
 	{
-		if($model = Comic::find()->where(['_id' => new \MongoId($id)])->one()){
+		if($model = Comic::find()->where(['_id' => new ObjectID($id)])->one()){
 			
 			$record = [];
 			if(isset($_POST['type_change'])){
@@ -93,7 +94,7 @@ class ComicController extends Controller
 	public function actionDelete($id)
 	{
 		if(
-			($model = Comic::find()->where(['_id' => new \MongoId($id)])->one()) && 
+			($model = Comic::find()->where(['_id' => new ObjectID($id)])->one()) && 
 			($model->delete())
 		){
 			ComicStrip::deleteAll(['comic_id' => $model->_id]);

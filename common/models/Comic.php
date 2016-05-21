@@ -17,6 +17,10 @@ use common\models\ComicStrip;
 use yii\imagine\Image;
 use common\components\MongoDateValidator;
 
+use MongoDB\BSON\UTCDateTime;
+use MongoDB\BSON\ObjectID;
+use MongoDB\BSON\Regex;
+
 class Comic extends ActiveRecord
 {
 	const TYPE_DATE = 0;
@@ -43,7 +47,7 @@ class Comic extends ActiveRecord
 		return [
 			'timestamp' => [
 				'class' => 'yii\behaviors\TimestampBehavior',
-				'value' => function($e){ return new \MongoDate(); }
+				'value' => function($e){ return new UTCDateTime(time()*1000); }
 			],
 		];
 	}
@@ -229,7 +233,7 @@ class Comic extends ActiveRecord
 		$value = $this->$attribute;
 		if(
 			$this->type === self::TYPE_DATE && 
-			$this->current_index->sec > $this->last_index->sec
+			$this->current_index->toDateTime()->getTimestamp() > $this->last_index->toDateTime()->getTimestamp()
 		){
 			$this->addError(
 				$attribute, 
@@ -358,7 +362,7 @@ class Comic extends ActiveRecord
 	{
 		if($this->current_index != null){
 			if($this->type === self::TYPE_DATE){
-				return date('d/m/Y', $this->current_index->sec);
+				return $this->current_index->toDateTime()->format('d/m/Y');
 			}elseif($this->type === self::TYPE_ID){
 				return (String)$this->current_index;
 			}
@@ -370,7 +374,7 @@ class Comic extends ActiveRecord
 	{
 		if($this->last_index != null){
 			if($this->type === self::TYPE_DATE){
-				return date('d/m/Y', $this->last_index->sec);
+				return $this->last_index->toDateTime()->format('d/m/Y');
 			}elseif($this->type === self::TYPE_ID){
 				return (String)$this->last_index;
 			}
@@ -382,7 +386,7 @@ class Comic extends ActiveRecord
 	{
 		if($this->first_index != null){
 			if($this->type === self::TYPE_DATE){
-				return date('d/m/Y', $this->first_index->sec);
+				return $this->first_index->toDateTime()->format('d/m/Y');
 			}elseif($this->type === self::TYPE_ID){
 				return (String)$this->first_index;
 			}
@@ -395,14 +399,14 @@ class Comic extends ActiveRecord
         $index = $index ?: $this->current_index;
         if(
 			$this->type === self::TYPE_DATE && 
-			!$index instanceof \MongoDate
+			!$index instanceof UTCDateTime
         ){
 			if(
 				(
 					new MongoDateValidator(['format' => 'php:d-m-Y'])
 				)->validate($index)
 			){
-				$index = new \MongoDate(strtotime($index));
+				$index = new UTCDateTime(strtotime($index)*1000);
 			}else{
 				throw new InvalidParamException('The index ' . $index . ' is not a valid date');
 			}
@@ -420,7 +424,7 @@ class Comic extends ActiveRecord
 			return Url::to([
 				'comic/view',
 				'id' => (String)$this->_id,
-				'index' => date('d-m-Y', $index->sec)
+				'index' => $index->toDateTime()->format('d-m-Y')
 			], $protocol);
 		}elseif($this->type === self::TYPE_ID){
 			return Url::to([
@@ -437,7 +441,7 @@ class Comic extends ActiveRecord
 		if($this->active){
 			if(
 				$this->type === self::TYPE_DATE && 
-				$index->sec > $this->current_index->sec
+				$index->toDateTime()->getTimestamp() > $this->current_index->toDateTime()->getTimestamp()
 			){
 				$this->current_index = $index;
 			}elseif(
@@ -460,7 +464,7 @@ class Comic extends ActiveRecord
 		if($this->active){
 			if(
 				$this->type === self::TYPE_DATE && 
-				$index->sec > $this->current_index->sec
+				$index->toDateTime()->getTimestamp() > $this->current_index->toDateTime()->getTimestamp()
 			){
 				return true;
 			}elseif(
@@ -472,7 +476,7 @@ class Comic extends ActiveRecord
 		}else{
 			if(
 				$this->type === self::TYPE_DATE && 
-				$index->sec > $this->last_index->sec
+				$index->toDateTime()->getTimestamp() > $this->last_index->toDateTime()->getTimestamp()
 			){
 				return true;
 			}elseif(
@@ -491,9 +495,9 @@ class Comic extends ActiveRecord
 			case self::TYPE_DATE:
 				$date = new \DateTime();
 				$date->setDate(
-					date('Y', $index->sec),
-					date('m', $index->sec),
-					date('d', $index->sec)
+					date('Y', $index->toDateTime()->getTimestamp()),
+					date('m', $index->toDateTime()->getTimestamp()),
+					date('d', $index->toDateTime()->getTimestamp())
 				);
 				$index = $date->format($this->index_format);
 				break;
@@ -509,8 +513,8 @@ class Comic extends ActiveRecord
         $index = $this->index($cStrip->index);
 
         if($this->type === self::TYPE_DATE){
-	        $strip = $this->getStrip(new \MongoDate(
-	            strtotime("-" . ($this->index_step ?: '1 day'), $index->sec)
+	        $strip = $this->getStrip(new UTCDateTime(
+	            strtotime("-" . ($this->index_step ?: '1 day'), $index->toDateTime()->getTimestamp())*1000
 	        ));
         }elseif($this->type === self::TYPE_ID){
         	$indexStep = $this->index_step ?: 1;
@@ -537,8 +541,8 @@ class Comic extends ActiveRecord
         
         $nextIndex = null;
         if($this->type === self::TYPE_DATE){
-	        $nextIndex = new \MongoDate(
-	            strtotime("+" . ($this->index_step ?: '1 day'), $index->sec)
+	        $nextIndex = new UTCDateTime(
+	            strtotime("+" . ($this->index_step ?: '1 day'), $index->toDateTime()->getTimestamp())*1000
 	        );
         }elseif($this->type === self::TYPE_ID){
 			$nextIndex = $index + ($this->index_step ?: 1);
@@ -612,7 +616,7 @@ class Comic extends ActiveRecord
 			// If it is then cycle
 			if(
 				$this->type === self::TYPE_DATE && 
-				$strip->index->sec == $this->last_index->sec
+				$strip->index->toDateTime()->getTimestamp() == $this->last_index->toDateTime()->getTimestamp()
 			){
 				$strip = $this->getStrip($this->first_index);
 				$archiveRotated = true;
@@ -635,8 +639,8 @@ class Comic extends ActiveRecord
 		}
 		
 		if(
-			$strip->date instanceof \MongoDate && 
-			$strip->date->sec === $timeToday
+			$strip->date instanceof UTCDateTime && 
+			$strip->date->toDateTime()->getTimestamp() === $timeToday
 		){
 			//return $strip;
 		}elseif(!$archiveRotated){
@@ -646,7 +650,7 @@ class Comic extends ActiveRecord
 						$strip, 
 						true, 
 						$this->active 
-							? ['date' => new \MongoDate($timeToday)] 
+							? ['date' => new UTCDateTime($timeToday*1000)] 
 							: []
 					)
 				) === null
@@ -663,7 +667,7 @@ class Comic extends ActiveRecord
 		}
 
 		$this->updateIndex($strip->index, false);
-		$this->last_checked = new \MongoDate($timeToday);
+		$this->last_checked = new UTCDateTime($timeToday*1000);
 		if(!$this->save(['last_checked', 'current_index'])){
 			Yii::warning(
 				'Could not save last_checked and current_index for ' 
@@ -698,7 +702,7 @@ class Comic extends ActiveRecord
 
 		try{
 			if(($model->url) && ($binary = file_get_contents($model->url))){
-				$model->img = new \MongoBinData($binary);
+				$model->img = new \MongoDB\BSON\Binary($binary, \MongoDB\BSON\Binary::TYPE_GENERIC);
 				return true;
 			}
 		}catch(\Exception $e){
@@ -803,11 +807,11 @@ class Comic extends ActiveRecord
 			$index = $parts[1];
 		}
 		
-		if($model = ComicStrip::find()->where(['_id' => new \MongoId($id)])->one()){
+		if($model = ComicStrip::find()->where(['_id' => new ObjectID($id)])->one()){
 			if(is_array($model->img)){
-				$image = Image::getImagine()->load($model->img[$index]->{'bin'});
+				$image = Image::getImagine()->load($model->img[$index]->getData());
 			}else{
-				$image = Image::getImagine()->load($model->img->{'bin'});
+				$image = Image::getImagine()->load($model->img->getData());
 			}
 			return $image->show('png');
 		}
@@ -843,11 +847,11 @@ class Comic extends ActiveRecord
 		
 		$query = static::find();
 		$query->filterWhere([
-			'_id' => $this->_id ? new \MongoId($this->_id) : null,
-			'title' => $this->title ? new \MongoRegex("/$this->title/") : null,
-			'slug' => $this->slug ? new \MongoRegex("/$this->slug/") : null,
-			'description' => $this->description ? new \MongoRegex("/$this->description/") : null,
-			'abstract' => $this->abstract ? new \MongoRegex("/$this->abstract/") : null,
+			'_id' => $this->_id ? new ObjectID($this->_id) : null,
+			'title' => $this->title ? new Regex($this->title) : null,
+			'slug' => $this->slug ? new Regex($this->slug) : null,
+			'description' => $this->description ? new Regex($this->description) : null,
+			'abstract' => $this->abstract ? new Regex($this->abstract) : null,
 			'created_at' => $this->created_at,
 			'updated_at' => $this->updated_at
 		]);

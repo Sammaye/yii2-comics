@@ -8,6 +8,10 @@ use yii\data\ActiveDataProvider;
 use common\components\Mongo;
 use common\models\Comic;
 
+use MongoDB\BSON\UTCDateTime;
+use MongoDB\BSON\ObjectID;
+use MongoDB\BSON\Regex;
+
 class ComicStrip extends ActiveRecord
 {
 	/**
@@ -18,7 +22,7 @@ class ComicStrip extends ActiveRecord
 		return [
 			'timestamp' => [
 				'class' => 'yii\behaviors\TimestampBehavior',
-				'value' => function($e){ return new \MongoDate(); }
+				'value' => function($e){ return new UTCDateTime(time()*1000); }
 			],
 		];
 	}
@@ -134,16 +138,16 @@ class ComicStrip extends ActiveRecord
 
 		$query = static::find();
 		$query->filterWhere([
-			'_id' => $this->_id ? new \MongoId($this->_id) : null,
+			'_id' => $this->_id ? new ObjectID($this->_id) : null,
 			'comic_id' => $comic_id,
-			'url' => $this->url ? new \MongoRegex("/$this->url/") : null,
+			'url' => $this->url ? new Regex($this->url) : null,
 		]);
 		
 		if($this->comic->type === Comic::TYPE_DATE){
 			$query->filterWhere([
 				'index' => 
 					$this->index 
-					? new \MongoDate(strtotime($this->index)) 
+					? new UTCDateTime(strtotime($this->index)*1000) 
 					: null
 			]);
 		}elseif($this->comic->type === Comic::TYPE_ID){
@@ -155,11 +159,11 @@ class ComicStrip extends ActiveRecord
 		$query->filterWhere([
 			'created_at' => 
 				$this->created_at 
-				? new \MongoDate(strtotime($this->crated_at)) 
+				? new UTCDateTime(strtotime($this->crated_at)*1000) 
 				: null,
 			'updated_at' => 
 				$this->updated_at 
-				? new \MongoDate(strtotime($this->updated_at)) 
+				? new UTCDateTime(strtotime($this->updated_at)*1000) 
 				: null
 		]);
 		return new ActiveDataProvider([

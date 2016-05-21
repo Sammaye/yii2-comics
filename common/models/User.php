@@ -8,6 +8,10 @@ use yii\base\Security;
 use yii\web\IdentityInterface;
 use yii\data\ActiveDataProvider;
 
+use MongoDB\BSON\UTCDateTime;
+use MongoDB\BSON\ObjectID;
+use MongoDB\BSON\Regex;
+
 /**
  * User model
  *
@@ -47,7 +51,7 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             'timestamp' => [
                 'class' => 'yii\behaviors\TimestampBehavior',
-                'value' => function($e){ return new \MongoDate(); }
+                'value' => function($e){ return new UTCDateTime(time()*1000); }
             ],
         ];
     }
@@ -179,8 +183,8 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function findIdentity($id)
     {
-    	if(!$id instanceof \MongoId){
-    		$id = new \MongoId($id);
+    	if(!$id instanceof ObjectID){
+    		$id = new ObjectID($id);
     	}
         return static::findOne($id);
     }
@@ -327,7 +331,7 @@ class User extends ActiveRecord implements IdentityInterface
     
     public function isSubscribed($comic_id)
     {
-    	if($comic_id instanceof \MongoId){
+    	if($comic_id instanceof ObjectID){
     		$comic_id = (String)$comic_id;
     	}
     	
@@ -354,9 +358,9 @@ class User extends ActiveRecord implements IdentityInterface
     
     	$query = static::find();
     	$query->filterWhere([
-    		'_id' => $this->_id ? new \MongoId($this->_id) : null,
-    		'username' => $this->username ? new \MongoRegex("/$this->username/") : null,
-    		'email' => $this->email ? new \MongoRegex("/$this->email/") : null,
+    		'_id' => $this->_id ? new ObjectID($this->_id) : null,
+    		'username' => $this->username ? new Regex($this->username) : null,
+    		'email' => $this->email ? new Regex($this->email) : null,
     		'role' => $this->role,
     		'status' => $this->status,
     		'created_at' => $this->created_at,

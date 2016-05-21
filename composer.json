@@ -16,7 +16,6 @@
 		"yiisoft/yii2": "~2.0.0@stable",
 		"yiisoft/yii2-bootstrap": "~2.0.0@stable",
 		"yiisoft/yii2-swiftmailer": "~2.0.0@stable",
-		"yiisoft/yii2-mongodb": "~2.0.0@stable",
 		"yiisoft/yii2-jui": "~2.0.0@stable",
 		"yiisoft/yii2-imagine": "~2.0.0@stable",
 		"yiisoft/yii2-authclient": "~2.0.0@stable",
@@ -26,7 +25,9 @@
 		"aws/aws-sdk-php": "^3.0@stable",
 		"ofat/yii2-yashop-ses": "*",
 		"facebook/php-sdk-v4": "^5.0@stable",
-		"guzzlehttp/guzzle": "^6.0@stable"
+		"guzzlehttp/guzzle": "^6.0@stable",
+		"sammaye/yii2-mongodb": "*",
+		"mongodb/mongodb": "^1.0.0"
 	},
 	"require-dev": {
 		"yiisoft/yii2-codeception": "*",

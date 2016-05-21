@@ -9,6 +9,9 @@ use common\models\Comic;
 use common\models\User;
 use yii\helpers\Url;
 
+use MongoDB\BSON\UTCDateTime;
+use MongoDB\BSON\ObjectID;
+
 class ComicController extends Controller
 {
 	public function beforeAction($action)
@@ -22,13 +25,13 @@ class ComicController extends Controller
 	public function actionScrape($comic_id = null)
 	{
 		if($comic_id){
-			$comic_id = $comic_id instanceof \MongoId 
+			$comic_id = $comic_id instanceof ObjectID 
 				? $comic_id 
-				: new \MongoId($comic_id);
+				: new ObjectID($comic_id);
 			
 			if(
 				$comic = Comic::find()
-					->where(['_id' => new \MongoId(), 'live' => 1])
+					->where(['_id' => $comic_id, 'live' => 1])
 					->one()
 			){
 				$comic->scrapeStrip();
@@ -57,7 +60,7 @@ class ComicController extends Controller
 		$condition = [
 			'$or' => 
 			[
-				['last_feed_sent' => ['$lt' =>  new \MongoDate($timeToday)]], 
+				['last_feed_sent' => ['$lt' =>  new UTCDateTime($timeToday*1000)]], 
 				['last_feed_sent' => null]
 			]
 		];
@@ -78,12 +81,12 @@ class ComicController extends Controller
 			as $user
 		){
 			if(
-				$user->last_feed_sent instanceof \MongoDate && 
-				$user->last_feed_sent->sec === $timeToday
+				$user->last_feed_sent instanceof UTCDateTime && 
+				$user->last_feed_sent->toDateTime()->getTimestamp() === $timeToday
 			){
 				continue;
 			}
-			$user->last_feed_sent = new \MongoDate($timeToday);
+			$user->last_feed_sent = new UTCDateTime($timeToday*1000);
 			
 			$strips = [];
 			
@@ -95,8 +98,8 @@ class ComicController extends Controller
 				$timeAgo = strtotime('1 day ago', $timeToday);
 			}
 			
-			if(!is_array($user->comics)){
-				continue;
+			if(!$user->comics instanceof \ArrayObject){
+				return false;
 			}
 			
 			foreach($user->comics as $sub){
@@ -108,7 +111,7 @@ class ComicController extends Controller
 					if($comic->active){
 						$condition = [
 							'comic_id' => $comic->_id, 
-							'date' => ['$gt' => new \MongoDate($timeAgo)]
+							'date' => ['$gt' => new UTCDateTime($timeAgo*1000)]
 						];
 					}else{
 						$condition = [
@@ -149,7 +152,7 @@ class ComicController extends Controller
 		if(
 			!(
 				$comic = Comic::find()
-					->where(['_id' => new \MongoId($comic_id)])
+					->where(['_id' => new ObjectID($comic_id)])
 					->one()
 			)
 		){
@@ -167,7 +170,7 @@ class ComicController extends Controller
 			if($comic->indexExist($index)){
 				Yii::info('Index ' . (
 					$comic->type === self::TYPE_DATE 
-					? date('d-m-Y', $index->sec) 
+					? date('d-m-Y', $index->toDateTime()->getTimestamp()) 
 					: $index
 				) . ' now exists');
 				return self::EXIT_CODE_NORMAL;

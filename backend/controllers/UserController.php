@@ -8,6 +8,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use common\models\User;
 use common\models\SignupForm;
+use MongoDB\BSON\ObjectID;
 
 class UserController extends Controller
 {
@@ -49,7 +50,7 @@ class UserController extends Controller
 
 	public function actionUpdate($id)
 	{
-		if($model = User::find()->where(['_id' => new \MongoId($id)])->one()){
+		if($model = User::find()->where(['_id' => new ObjectID($id)])->one()){
 			
 			if($model->load($_POST)){
 				if($model->save()){
@@ -66,7 +67,7 @@ class UserController extends Controller
 	
 	public function actionToggleLogin($id)
 	{
-		if($model = User::find()->where(['_id' => new \MongoId($id)])->one()){
+		if($model = User::find()->where(['_id' => new ObjectID($id)])->one()){
 			if($model->status > 0){
 				$model->status = 0;
 			}else{
@@ -88,7 +89,7 @@ class UserController extends Controller
 	public function actionDelete($id)
 	{
 		if(
-			($model = User::find()->where(['_id' => new \MongoId($id)])->one()) && 
+			($model = User::find()->where(['_id' => new ObjectID($id)])->one()) && 
 			($model->delete())
 		){
 			

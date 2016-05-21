@@ -8,6 +8,9 @@ use common\models\ComicStrip;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 
+use MongoDB\BSON\UTCDateTime;
+use MongoDB\BSON\Binary;
+
 class CommitStrip extends Comic
 {
     public function previous(ComicStrip $cStrip, array $data = [])
@@ -32,7 +35,7 @@ class CommitStrip extends Comic
     {
         if(
             !$ignoreCurrent && 
-            $cStrip->index->sec >= $this->current_index->sec
+            $cStrip->index->toDateTime()->getTimestamp() >= $this->current_index->toDateTime()->getTimestamp()
         ){
             return null;
         }
@@ -61,7 +64,7 @@ class CommitStrip extends Comic
         return null;
     }
     
-    public function downloadStrip($index, $data)
+    public function downloadStrip($index, array $data = [])
     {
         $dayDoc = $this->xPath($this->scrapeUrl($index));
 
@@ -122,7 +125,7 @@ class CommitStrip extends Comic
     			$model->$k = $v;
     		}
     		foreach($imgs as $k => $url){
-    		    $imgs[$k] = new \MongoBinData(file_get_contents($url));
+    		    $imgs[$k] = new Binary(file_get_contents($url), Binary::TYPE_GENERIC);
     		}
     		$model->img = $imgs;
     		if($model->save()){
@@ -162,8 +165,8 @@ class CommitStrip extends Comic
                     return null;
                 }
 
-                $date = new \MongoDate(
-                    mktime(0, 0, 0, $matches[2][0], $matches[3][0], $matches[1][0])
+                $date = new UTCDateTime(
+                    mktime(0, 0, 0, $matches[2][0], $matches[3][0], $matches[1][0])*1000
                 );
                 return $date;
 			}

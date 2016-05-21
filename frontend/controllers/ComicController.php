@@ -10,6 +10,9 @@ use common\models\ComicStrip;
 use common\models\User;
 use common\models\RequestComicForm;
 
+use MongoDB\BSON\UTCDateTime;
+use MongoDB\BSON\ObjectID;
+
 class ComicController extends Controller
 {
 	public function behaviors()
@@ -47,7 +50,7 @@ class ComicController extends Controller
 		$condition = ['live' => 1];
 		
 		if($id){
-			$condition['_id'] = new \MongoId($id);
+			$condition['_id'] = new ObjectID($id);
 		}
 		if(
 			!(
@@ -82,14 +85,14 @@ class ComicController extends Controller
 	{
 		if(
 			($comic_id = Yii::$app->getRequest()->get('comic_id')) && 
-			($model = Comic::find()->where(['_id' => new \MongoId($comic_id)])->one())
+			($model = Comic::find()->where(['_id' => new ObjectID($comic_id)])->one())
 		){
 			$user = Yii::$app->user->identity;
 			if(User::updateAll(
 				[
 					'$push' => [
 						'comics' => [
-							'date' => new \MongoDate(),
+							'date' => new UTCDateTime(time()*1000),
 							'comic_id' => $model->_id
 						]
 					]
@@ -113,7 +116,7 @@ class ComicController extends Controller
 	{
 		if(
 			($comic_id = Yii::$app->getRequest()->get('comic_id')) &&
-			($model = Comic::find()->where(['_id' => new \MongoId($comic_id)])->one())
+			($model = Comic::find()->where(['_id' => new ObjectID($comic_id)])->one())
 		){
 			$user = Yii::$app->user->identity;
 			if(User::updateAll(

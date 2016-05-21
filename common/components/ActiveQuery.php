@@ -3,6 +3,8 @@
 namespace common\components;
 
 use Yii;
+use yii\mongodb\ActiveQuery as BaseActiveQuery;
+use common\components\Query;
 use common\components\MongoCursor;
 
 class ActiveQuery extends \yii\mongodb\ActiveQuery

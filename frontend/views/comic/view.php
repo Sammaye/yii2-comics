@@ -6,7 +6,7 @@ use yii\widgets\ActiveForm;
 use common\models\Comic;
 
 if($model->type === Comic::TYPE_DATE){
-	$this->title = 'View ' . $model->title . ' for ' . date('d-m-Y', $comicStrip->index->sec);
+	$this->title = 'View ' . $model->title . ' for ' . $comicStrip->index->toDateTime()->format('d-m-Y');
 	$this->registerJs("
 	$('#datepicker').datepicker({
 		dateFormat : 'dd-mm-yy',
@@ -101,7 +101,7 @@ if(
 <?php } ?>
 
 <input type="text" class="form-control input-lg" name="index" id="datepicker" 
-value="<?= $model->type === Comic::TYPE_DATE ? date('d-m-Y', $comicStrip->index->sec) : $comicStrip->index ?>" />
+value="<?= $model->type === Comic::TYPE_DATE ? $comicStrip->index->toDateTime()->format('d-m-Y') : $comicStrip->index ?>" />
 
 <?php if($nextStrip){ ?>
   <a href="<?= $model->indexUrl($nextStrip->index) ?>" class="btn btn-lg btn-default">&raquo;</a>
