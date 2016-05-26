@@ -46,6 +46,7 @@ class ComicStrip extends ActiveRecord
         			return $('#comic-type').val() == '" . Comic::TYPE_DATE . "';
     			}"
 			],
+			/*
 			[
 				['index', 'next', 'previous'], 
 				'integer',
@@ -56,6 +57,7 @@ class ComicStrip extends ActiveRecord
         			return $('#comic-type').val() == '" . Comic::TYPE_ID . "';
     			}"
 			],
+			*/
 			[
 				['index', 'next', 'previous'], 
 				'filter', 

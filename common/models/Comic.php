@@ -95,6 +95,7 @@ class Comic extends ActiveRecord
 			],
 
 			//['index_format', 'default', '#^\d+$#'],
+			/*
 			[
 				['current_index', 'first_index', 'last_index'], 
 				'integer',
@@ -105,6 +106,7 @@ class Comic extends ActiveRecord
         			return $('#comic-type').val() == '" . self::TYPE_ID . "';
     			}"
 			],
+			*/
 			[
 				['current_index', 'first_index', 'last_index'], 
 				'filter', 
