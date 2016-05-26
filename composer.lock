@@ -1134,12 +1134,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sammaye/yii2-mongodb.git",
-                "reference": "b3d2fcb2383141ba0e4a1f97b9373d472a06fd84"
+                "reference": "1c4b866633467025c32a03872fb1cfa46d66e2da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sammaye/yii2-mongodb/zipball/b3d2fcb2383141ba0e4a1f97b9373d472a06fd84",
-                "reference": "b3d2fcb2383141ba0e4a1f97b9373d472a06fd84",
+                "url": "https://api.github.com/repos/Sammaye/yii2-mongodb/zipball/1c4b866633467025c32a03872fb1cfa46d66e2da",
+                "reference": "1c4b866633467025c32a03872fb1cfa46d66e2da",
                 "shasum": ""
             },
             "require": {
@@ -1174,7 +1174,7 @@
                 "mongodb",
                 "yii2"
             ],
-            "time": "2016-05-25 12:42:11"
+            "time": "2016-05-26 17:07:18"
         },
         {
             "name": "swiftmailer/swiftmailer",
