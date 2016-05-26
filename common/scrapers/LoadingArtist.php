@@ -66,6 +66,7 @@ class LoadingArtist extends Comic
     
     public function downloadStrip($index, array $data = [])
     {
+        $url = null;
         $dayDoc = $this->xPath($this->scrapeUrl($index));
 
 		if(strpos($this->dom_path, '||') !== false){
@@ -86,7 +87,7 @@ class LoadingArtist extends Comic
 			}
 		}
 
-        if(!isset($url)){
+        if(!$url){
             Yii::warning(
                 'Could get comic but not image for ' 
                 . $this->scrapeUrl($index)
