@@ -98,7 +98,7 @@ class ComicController extends Controller
 				$timeAgo = strtotime('1 day ago', $timeToday);
 			}
 			
-			if(!$user->comics instanceof \ArrayObject){
+			if(!is_array($user->comics)){
 				return false;
 			}
 			
