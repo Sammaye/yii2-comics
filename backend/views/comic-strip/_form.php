@@ -37,13 +37,15 @@ use MongoDB\BSON\UTCDateTime;
 		: $model->previous
 ]) ?>
 <?php if(!$model->getIsNewRecord()){
-	if(is_array($model->img)){
-		foreach($model->img as $k => $v){ ?>
-		<div><img src="<?= Url::to(['comic-strip/render-image', 'id' => (String)$model->_id . '_' . $k]) ?>"/></div>
-		<?php }
-	}else{ ?>
-	<div><img src="<?= Url::to(['comic-strip/render-image', 'id' => (String)$model->_id]) ?>"/></div>
-	<?php } ?>
+	if(!$model->skip){
+		if(is_array($model->img)){
+			foreach($model->img as $k => $v){ ?>
+			<div><img src="<?= Url::to(['comic-strip/render-image', 'id' => (String)$model->_id . '_' . $k]) ?>"/></div>
+			<?php }
+		}else{ ?>
+		<div><img src="<?= Url::to(['comic-strip/render-image', 'id' => (String)$model->_id]) ?>"/></div>
+		<?php } 
+	} ?>
 <?php } ?>
 <div class="toolbar comic-strip-form-end">
 <?= Html::submitButton($model->getIsNewRecord() ? 'Create Comic Strip' : 'Update Comic Strip', ['class' => 'btn btn-success']) ?>
