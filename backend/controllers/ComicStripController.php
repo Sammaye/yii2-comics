@@ -43,9 +43,9 @@ class ComicStripController extends Controller
 			if($model->validate()){
 				// This currently done without care as to its outcome
 				if(!$model->skip){
-					$model->comic->populateRemoteImage($model);
-					if(count($model->comic->getScraperErrors()) > 0){
-						foreach($model->comic->getScraperErrors() as $error){
+					$model->comic->populateStrip($model);
+					if(count($model->comic->getScrapeErrors()) > 0){
+						foreach($model->comic->getScrapeErrors() as $error){
 							$model->addError('url', $error);
 						}
 					}
@@ -88,17 +88,17 @@ class ComicStripController extends Controller
 		return Yii::$app->getResponse()->redirect(['comic/update', 'id' => (String)$model->comic_id]);
 	}
 	
-	public function actionRefreshImage($id)
+	public function actionRefreshScrape($id)
 	{
 		if($model = ComicStrip::find()->where(['_id' => new ObjectID($id)])->one()){
 			$model->url = null;
 			$model->img = null;
-			if($model->comic->populateRemoteImage($model)){
-				Yii::$app->getSession()->setFlash('success', 'The image for this strip was refreshed');
+			if($model->comic->populateStrip($model) && $model->save()){
+				Yii::$app->getSession()->setFlash('success', 'The scrape information for this strip was refreshed');
 				return Yii::$app->getResponse()->redirect(['comic-strip/update', 'id' => $id]);
 			}
 		}
-		Yii::$app->getSession()->setFlash('error', 'The image for this strip was not refreshed');
+		Yii::$app->getSession()->setFlash('error', 'The scrape information for this strip was not refreshed');
 		return Yii::$app->getResponse()->redirect(['comic-strip/update', 'id' => $id]);		
 	}
 	

@@ -66,8 +66,41 @@ class LoadingArtist extends Comic
     
     public function downloadStrip($index, array $data = [])
     {
+		$model = ComicStrip::find()->where(['comic_id' => $this->_id, 'index' => $index])->one();
+		
+		if($model){
+		    // If the document existed as we updated it then just return a findOne of it
+		    if($next){
+    		    $model->next = $next;
+    		    if(
+    		        $this->populateStrip($model) && 
+    		        $model->save(['next'])
+                ){
+    		        return $model;
+    		    }
+		    }else{
+		        return $model;
+		    }
+		}elseif(!$model){
+    		$model = new ComicStrip();
+    		$model->comic_id = $this->_id;
+    		$model->index = $index;
+
+    		foreach($data as $k => $v){
+    			$model->$k = $v;
+    		}
+
+    		if($this->populateStrip($model) && $model->save()){
+    			return $model;
+    		}
+		}
+		return null;
+    }
+    
+    public function populateStrip(&$model, $url = null)
+    {
         $url = null;
-        $dayDoc = $this->xPath($this->scrapeUrl($index));
+        $dayDoc = $this->xPath($this->scrapeUrl($model->index));
 
 		if(strpos($this->dom_path, '||') !== false){
 			$paths = preg_split('#\|\|#', $this->dom_path);
@@ -88,43 +121,22 @@ class LoadingArtist extends Comic
 		}
 
         if(!$url){
-            Yii::warning(
+            $this->addScrapeError(
                 'Could get comic but not image for ' 
-                . $this->scrapeUrl($index)
+                . $this->scrapeUrl($model->index)
             );
-            return null;
+            return false;
         }
 
         $next = $this->nextLink($dayDoc);
         $previous = $this->previousLink($dayDoc);
-		$existModel = ComicStrip::find()->where(['comic_id' => $this->_id, 'index' => $index])->one();
-		
-		if($existModel){
-		    // If the document existed as we updated it then just return a findOne of it
-		    if($next){
-    		    $existModel->next = $next;
-    		    if($existModel->save(['next'])){
-    		        return $existModel;
-    		    }
-		    }else{
-		        return $existModel;
-		    }
-		}elseif(!$existModel){
-    		$model = new ComicStrip();
-    		$model->comic_id = $this->_id;
-    		$model->index = $index;
-    		$model->url = $url;
-    		$model->next = $next;
-    		$model->previous = $previous;
-    		foreach($data as $k => $v){
-    			$model->$k = $v;
-    		}
-    		$model->img = new Binary(file_get_contents($url), Binary::TYPE_GENERIC);
-    		if($model->save()){
-    			return $model;
-    		}
-		}
-		return null;
+        
+        $model->url = $url;
+        $model->next = $next;
+        $model->previous = $previous;
+
+        $model->img = new Binary(file_get_contents($url), Binary::TYPE_GENERIC);
+        return true;
     }
     
     public function nextLink($stripDom)

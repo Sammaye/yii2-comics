@@ -20,6 +20,7 @@ use common\components\MongoDateValidator;
 use MongoDB\BSON\UTCDateTime;
 use MongoDB\BSON\ObjectID;
 use MongoDB\BSON\Regex;
+use MongoDB\BSON\Binary;
 
 class Comic extends ActiveRecord
 {
@@ -27,7 +28,7 @@ class Comic extends ActiveRecord
 	const TYPE_ID = 2;
 
 	private static $_scrapers;
-	private $_scraperErrors;
+	private $_scrapeErrors;
 	
 	public function formName()
 	{
@@ -687,24 +688,69 @@ class Comic extends ActiveRecord
 		foreach($data as $k => $v){
 			$strip->$k = $v;
 		}
-		if(!$this->populateRemoteImage($strip) || !$strip->save()){
+		if(!$this->populateStrip($strip) || !$strip->save()){
 			return null;
 		}
 		return $strip; 
 	}
 	
-	public function populateRemoteImage(&$model, $url = null)
+	public function populateStrip(&$model, $url = null)
 	{
+		$imgUrl = null;
+		
 		if(!$model->url){
-			$model->url = $this->getRemoteImage(
-				$url ?: 
-				$this->scrapeUrl($model->index)
-			);
+			$doc = $this->xPath($url ?: $this->scrapeUrl($model->index));
+			if(strpos($this->dom_path, '||') !== false){
+				$paths = preg_split('#\|\|#', $this->dom_path);
+			}else{
+				$paths = [$this->dom_path];
+			}
+			
+			foreach($paths as $domPath){
+				$elements = $doc->query($domPath);
+				if($elements){
+					foreach($elements as $element){
+						$imgUrl = $element->getAttribute('src');
+					}
+				}
+				if($imgUrl){
+					break;
+				}
+			}
+	
+			if(!$imgUrl){
+				$this->addScrapeError(
+					(String)$this->_id . ' could not find img with a src for ' 
+					. $scrapeUrl
+				);
+				return false;
+			}
+			
+			$parts = parse_url($imgUrl);
+
+			if($parts){
+				if(
+					!isset($parts['scheme']) && 
+					isset($parts['host'])
+				){
+					$imgUrl = 'http://' . trim($imgUrl, '//');
+				}elseif(
+					(
+						!isset($parts['scheme']) || 
+						!isset($parts['host'])
+					) && 	
+					isset($parts['path'])
+				){
+					// The URL is relative as such add the homepage onto the beginning
+					$imgUrl = trim($this->homepage, '/') . '/' . trim($parts['path'], '/'); 
+				}
+			}
+			$model->url = $imgUrl;
 		}
 
 		try{
 			if(($model->url) && ($binary = file_get_contents($model->url))){
-				$model->img = new \MongoDB\BSON\Binary($binary, \MongoDB\BSON\Binary::TYPE_GENERIC);
+				$model->img = new Binary($binary, Binary::TYPE_GENERIC);
 				return true;
 			}
 		}catch(\Exception $e){
@@ -715,92 +761,7 @@ class Comic extends ActiveRecord
 		}
 		return false;
 	}
-	
-	public function getRemoteImage($scrapeUrl)
-	{
-		$url = null;
-		$this->_scraperErrors = [];
-		
-		try{
-			$res = (new Client)->request(
-				'GET', 
-				$scrapeUrl, 
-				[
-					'headers' => [
-						'User-Agent' => 'Googlebot/2.1 (http://www.googlebot.com/bot.html)'
-					]
-				]
-			);
-		}catch(ClientException $e){
-			// Log the exception
-			$message = (String)$this->_id . ' returned ' . 
-				$e->getResponse()->getStatusCode()  
-				. ' for ' . $scrapeUrl;
-			$this->_scraperErrors[] = $message;
-			Yii::warning($message);
-			return $url;
-		}
 
-		$doc = new \DOMDocument();
-		libxml_use_internal_errors(true);
-		$doc->loadHtml($res->getBody());
-		libxml_clear_errors();
-		
-		$el = new \DOMXPath($doc);
-		if(strpos($this->dom_path, '||') !== false){
-			$paths = preg_split('#\|\|#', $this->dom_path);
-		}else{
-			$paths = [$this->dom_path];
-		}
-		
-		foreach($paths as $domPath){
-			$elements = $el->query($domPath);
-			if($elements){
-				foreach($elements as $element){
-					$url = $element->getAttribute('src');
-				}
-			}
-			if($url){
-				break;
-			}
-		}
-
-		if(!$url){
-			$message = (String)$this->_id . ' could not find img with a src for ' 
-				. $scrapeUrl;
-			$this->_scraperErrors[] = $message;
-			Yii::warning($message);
-		}
-
-		if(
-			$url &&
-			($parts = parse_url($url)) &&
-			!isset($parts['scheme']) && 
-			isset($parts['host'])
-		){
-			$url = 'http://' . trim($url, '//');
-		}
-		
-		if(
-			$url && 
-			($parts = parse_url($url)) && 
-			(
-				!isset($parts['scheme']) || 
-				!isset($parts['host'])
-			) && 
-			isset($parts['path'])
-		){
-			// The URL is relative as such add the homepage onto the beginning
-			$url = trim($this->homepage, '/') . '/' . trim($parts['path'], '/'); 
-		}
-		return $url;
-	}
-	
-	public function getScraperErrors()
-	{
-		return $this->_scraperErrors;
-	}
-	
 	public static function renderStripImage($id)
 	{
 		if(($pos = strpos($id, '_')) !== false){
@@ -861,5 +822,54 @@ class Comic extends ActiveRecord
 		return new ActiveDataProvider([
 			'query' => $query
 		]);
+	}
+	
+    public function xPath($url, $ignoreErrors = false)
+    {
+        try{
+			$res = (new Client)->request(
+				'GET', 
+				$url, 
+				[
+					'headers' => [
+						'User-Agent' => 'Googlebot/2.1 (http://www.googlebot.com/bot.html)'
+					]
+				]
+			);
+		}catch(ClientException $e){
+			// Log the exception
+			$this->addScrapeError(
+				(String)$this->_id . ' returned ' . 
+				$e->getResponse()->getStatusCode()  
+				. ' for ' . $scrapeUrl,
+				$ignoreErrors
+			);
+			return null;
+		}
+		
+		$doc = new \DOMDocument();
+		libxml_use_internal_errors(true);
+		$doc->loadHtml($res->getBody());
+		libxml_clear_errors();
+		$el = new \DOMXPath($doc);
+		return $el;
+    }
+    
+	public function addScrapeError($message, $ignore = false)
+	{
+		if(!$ignore){
+			$this->_scrapeErrors[] = $message;
+			Yii::warning($message);	
+		}
+	}
+	
+	public function getScrapeErrors()
+	{
+		return $this->_scrapeErrors;
+	}
+	
+	public function clearScrapeErrors()
+	{
+		$this->_scrapeErrors = [];
 	}
 }

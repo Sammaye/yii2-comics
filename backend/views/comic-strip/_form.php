@@ -51,7 +51,7 @@ use MongoDB\BSON\UTCDateTime;
 <?= Html::submitButton($model->getIsNewRecord() ? 'Create Comic Strip' : 'Update Comic Strip', ['class' => 'btn btn-success']) ?>
 <?php
 if(!$model->getIsNewRecord()){ 
-	echo Html::a('Refresh Image', ['comic-strip/refresh-image', 'id' => (string)$model->_id], ['class' => 'btn btn-default']);
+	echo Html::a('Refresh Scrape', ['comic-strip/refresh-scrape', 'id' => (string)$model->_id], ['class' => 'btn btn-default']);
 } 
 ?>
 </div>

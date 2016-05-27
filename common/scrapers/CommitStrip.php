@@ -66,7 +66,39 @@ class CommitStrip extends Comic
     
     public function downloadStrip($index, array $data = [])
     {
-        $dayDoc = $this->xPath($this->scrapeUrl($index));
+		$model = ComicStrip::find()->where(['comic_id' => $this->_id, 'index' => $index])->one();
+		
+        if($model){
+            // If the document existed as we updated it then just return a findOne of it
+            if($next){
+                if(
+                    $this->populateStrip($model) && 
+                    $model->save(['next'])
+                ){
+    		        return $model;
+    		    }
+		    }else{
+		        return $model;
+		    }
+		}elseif(!$model){
+    		$model = new ComicStrip();
+    		$model->comic_id = $this->_id;
+    		$model->index = $index;
+
+    		foreach($data as $k => $v){
+    			$model->$k = $v;
+    		}
+
+    		if($this->populateStrip($model) && $model->save()){
+    			return $model;
+    		}
+		}
+		return null;
+    }
+    
+    public function populateStrip(&$model, $url = null)
+    {
+        $dayDoc = $this->xPath($this->scrapeUrl($model->index));
 
 		$elements = $dayDoc->query(
             "//div[@id='content']/div[@class='excerpts']/div[@class='excerpt']/section/a"
@@ -101,38 +133,17 @@ class CommitStrip extends Comic
             $next = $this->nextLink($comicDocs[0]);
             $previous = $this->previousLink($comicDocs[count($comicDocs) - 1]);
         }
-		
-		$existModel = ComicStrip::find()->where(['comic_id' => $this->_id, 'index' => $index])->one();
-		
-		if($existModel){
-		    // If the document existed as we updated it then just return a findOne of it
-		    if($next){
-    		    $existModel->next = $next;
-    		    if($existModel->save(['next'])){
-    		        return $existModel;
-    		    }
-		    }else{
-		        return $existModel;
-		    }
-		}elseif(!$existModel){
-    		$model = new ComicStrip();
-    		$model->comic_id = $this->_id;
-    		$model->index = $index;
-    		$model->url = $this->scrapeUrl($index);
-    		$model->next = $next;
-    		$model->previous = $previous;
-    		foreach($data as $k => $v){
-    			$model->$k = $v;
-    		}
-    		foreach($imgs as $k => $url){
-    		    $imgs[$k] = new Binary(file_get_contents($url), Binary::TYPE_GENERIC);
-    		}
-    		$model->img = $imgs;
-    		if($model->save()){
-    			return $model;
-    		}
-		}
-		return null;
+        
+        $model->url = $this->scrapeUrl($model->index);
+        $model->next = $next;
+        $model->previous = $previous;
+
+        foreach($imgs as $k => $url){
+            $imgs[$k] = new Binary(file_get_contents($url), Binary::TYPE_GENERIC);
+        }
+        $model->img = $imgs;
+        
+        return true;
     }
     
     public function nextLink($stripDom)
@@ -171,36 +182,5 @@ class CommitStrip extends Comic
                 return $date;
 			}
 		}
-    }
-    
-    public function xPath($url, $ignoreErrors = false)
-    {
-        try{
-			$res = (new Client)->request(
-				'GET', 
-				$url, 
-				[
-					'headers' => [
-						'User-Agent' => 'Googlebot/2.1 (http://www.googlebot.com/bot.html)'
-					]
-				]
-			);
-		}catch(ClientException $e){
-			// Log the exception
-			if(!$ignoreErrors){
-                $message = (String)$this->_id . ' returned ' . 
-                    $e->getResponse()->getStatusCode()  
-                    . ' for ' . $url;
-                Yii::warning($message);
-			}
-			return null;
-		}
-		
-		$doc = new \DOMDocument();
-		libxml_use_internal_errors(true);
-		$doc->loadHtml($res->getBody());
-		libxml_clear_errors();
-		$el = new \DOMXPath($doc);
-		return $el;
     }
 }
