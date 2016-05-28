@@ -70,17 +70,12 @@ class LoadingArtist extends Comic
 		
 		if($model){
 		    // If the document existed as we updated it then just return a findOne of it
-		    if($next){
-    		    $model->next = $next;
-    		    if(
-    		        $this->populateStrip($model) && 
-    		        $model->save(['next'])
-                ){
-    		        return $model;
-    		    }
-		    }else{
-		        return $model;
-		    }
+            if(
+                $this->populateStrip($model) && 
+                $model->save(['next'])
+            ){
+                return $model;
+            }
 		}elseif(!$model){
     		$model = new ComicStrip();
     		$model->comic_id = $this->_id;
