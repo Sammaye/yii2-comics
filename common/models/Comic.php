@@ -723,7 +723,7 @@ class Comic extends ActiveRecord
 			if(!$imgUrl){
 				$this->addScrapeError(
 					(String)$this->_id . ' could not find img with a src for ' 
-					. $scrapeUrl
+					. $this->scrapeUrl($model->index)
 				);
 				return false;
 			}
