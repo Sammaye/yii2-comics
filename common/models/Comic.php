@@ -706,15 +706,17 @@ class Comic extends ActiveRecord
 				$paths = [$this->dom_path];
 			}
 			
-			foreach($paths as $domPath){
-				$elements = $doc->query($domPath);
-				if($elements){
-					foreach($elements as $element){
-						$imgUrl = $element->getAttribute('src');
+			if($doc){
+				foreach($paths as $domPath){
+					$elements = $doc->query($domPath);
+					if($elements){
+						foreach($elements as $element){
+							$imgUrl = $element->getAttribute('src');
+						}
 					}
-				}
-				if($imgUrl){
-					break;
+					if($imgUrl){
+						break;
+					}
 				}
 			}
 	
