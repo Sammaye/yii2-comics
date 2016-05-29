@@ -841,7 +841,7 @@ class Comic extends ActiveRecord
 			$this->addScrapeError(
 				(String)$this->_id . ' returned ' . 
 				$e->getResponse()->getStatusCode()  
-				. ' for ' . $scrapeUrl,
+				. ' for ' . $url,
 				$ignoreErrors
 			);
 			return null;
