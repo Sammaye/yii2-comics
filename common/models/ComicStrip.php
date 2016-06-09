@@ -161,7 +161,7 @@ class ComicStrip extends ActiveRecord
 		$query->filterWhere([
 			'created_at' => 
 				$this->created_at 
-				? new UTCDateTime(strtotime($this->crated_at)*1000) 
+				? new UTCDateTime(strtotime($this->created_at)*1000) 
 				: null,
 			'updated_at' => 
 				$this->updated_at 
