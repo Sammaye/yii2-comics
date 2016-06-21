@@ -13,6 +13,14 @@ use MongoDB\BSON\Binary;
 
 class LoadingArtist extends Comic
 {
+	public function updateIndex($index, $save = true)
+	{
+		$this->current_index = $index;
+		if($save){
+			$this->save(['current_index']);
+		}
+	}
+    
     public function previous(ComicStrip $cStrip, array $data = [])
     {
         if($cStrip->previous){
