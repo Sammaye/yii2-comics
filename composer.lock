@@ -477,12 +477,12 @@
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/francoispluchino/composer-asset-plugin.git",
+                "url": "https://github.com/fxpio/composer-asset-plugin.git",
                 "reference": "f10cfad0e9748aeb50c7e8befd4ee0011d6a2ba0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/francoispluchino/composer-asset-plugin/zipball/f10cfad0e9748aeb50c7e8befd4ee0011d6a2ba0",
+                "url": "https://api.github.com/repos/fxpio/composer-asset-plugin/zipball/f10cfad0e9748aeb50c7e8befd4ee0011d6a2ba0",
                 "reference": "f10cfad0e9748aeb50c7e8befd4ee0011d6a2ba0",
                 "shasum": ""
             },
@@ -1134,12 +1134,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sammaye/yii2-mongodb.git",
-                "reference": "1c4b866633467025c32a03872fb1cfa46d66e2da"
+                "reference": "2e4a25f88becf275d8a55b711fdf85f4e70fa8f8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sammaye/yii2-mongodb/zipball/1c4b866633467025c32a03872fb1cfa46d66e2da",
-                "reference": "1c4b866633467025c32a03872fb1cfa46d66e2da",
+                "url": "https://api.github.com/repos/Sammaye/yii2-mongodb/zipball/2e4a25f88becf275d8a55b711fdf85f4e70fa8f8",
+                "reference": "2e4a25f88becf275d8a55b711fdf85f4e70fa8f8",
                 "shasum": ""
             },
             "require": {
@@ -1174,7 +1174,7 @@
                 "mongodb",
                 "yii2"
             ],
-            "time": "2016-05-26 17:07:18"
+            "time": "2016-05-29 19:15:34"
         },
         {
             "name": "swiftmailer/swiftmailer",
