@@ -6,8 +6,10 @@ $params = array_merge(
     require(__DIR__ . '/params-local.php')
 );
 
+$commonConfig = require(__DIR__ . '/../../common/config/main.php');
+
 return [
-    'id' => 'app-frontend',
+    'id' => 'cly-frontend',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
@@ -17,33 +19,16 @@ return [
     		'name' => 'sess_cookie'
     	],
         'user' => [
-            'enableTier2' => true,
-            'tier2Timeout' => 3600 /* 10 mins */
+            'identityClass' => 'common\models\User',
+            'enableAutoLogin' => true,
         ],
         'request' => [
-        	'class' => 'common\components\Request',
-        	'enableCsrfValidation' => true,
-        	'csrfRoutes' => [
-		        'site/login',
-		        'site/signup',
-		        'site/request-password-reset',
-		        'site/reset-password',
-		        'site/confirm-login'
-        	],
         	'cookieValidationKey' => $params['request.cookieValidationKey']
-        ],
-        'log' => [
-            'traceLevel' => YII_DEBUG ? 3 : 0,
-            'targets' => [
-                [
-                    'class' => 'yii\log\FileTarget',
-                    'levels' => ['error', 'warning'],
-                ],
-            ],
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
+        'urlManager' => $commonConfig['components']['frontendUrlManager'],
     ],
     'params' => $params,
 ];

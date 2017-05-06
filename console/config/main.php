@@ -6,8 +6,10 @@ $params = array_merge(
     require(__DIR__ . '/params-local.php')
 );
 
+$commonConfig = require(__DIR__ . '/../../common/config/main.php');
+
 return [
-    'id' => 'app-console',
+    'id' => 'cly-console',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'console\controllers',
@@ -16,10 +18,6 @@ return [
         'log' => [
             'targets' => [
                 [
-                    'class' => 'yii\log\FileTarget',
-                    'levels' => ['error', 'warning'],
-                ],
-                [
 					'class' => 'common\components\ConsoleTarget',
 					'levels' => ['error', 'warning', 'info', 'trace'],
 					'categories' => ['application'],
@@ -27,6 +25,7 @@ return [
                 ]
             ],
         ],
+        'urlManager' => $commonConfig['components']['frontendUrlManager'],
     ],
     'params' => $params,
 ];

@@ -6,6 +6,7 @@ $params = array_merge(
 );
 
 return [
+    'name' => 'cly',
 	'timeZone' => 'UTC',
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
     'extensions' => require(__DIR__ . '/../../vendor/yiisoft/extensions.php'),
@@ -39,15 +40,11 @@ return [
                 ],
 	        ],
         ],
-    	'user' => [
-			'class' => 'common\components\User',
-			'identityClass' => 'common\models\User',
-			'enableAutoLogin' => true,
-		],
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
         'mailer' => [
+            'class' => 'common\components\ses\Mailer',
 	        'viewPath' => '@common/mails',
         ],
         'assetManager' => [
@@ -65,21 +62,31 @@ return [
 	        ],
         ],
         'authManager' => [
-	        'class' => 'common\components\PhpManager',
-	        'defaultRoles' => ['guest', 'tier2User'],
-	        'ruleFile' => '@common/rbac/rules.php',
-	        'itemFile' => '@common/rbac/items.php'
+	        'class' => 'yii\mongodb\rbac\MongoDbManager',
+	        'defaultRoles' => ['guest'],
         ],
-        'urlManager' => [
+        'frontendUrlManager' => [
+            'enablePrettyUrl' => true,
+            'showScriptName' => false,
+            'cache' => null,
+            'baseUrl' => '/',
+            'rules' => [
+                'comic/<id:[\d\w]{24,}>/<date:.[^/]*>'=>'comic/view',
+
+                '<controller:[\w-]+>/<id:[\d\w]{24,}>'=>'<controller>/view',
+                '<controller:[\w-]+>/<action:[\w-]+>/<id:[\d\w]{24,}>'=>'<controller>/<action>',
+                '<controller:[\w-]+>/<action:[\w-]+>'=>'<controller>/<action>',
+            ]
+        ],
+        'backendUrlManager' => [
 	        'enablePrettyUrl' => true,
 	        'showScriptName' => false,
 	        'cache' => null,
+            'baseUrl' => '/system',
 	        'rules' => [
 		        '<controller:[\w-]+>/<id:[\d\w]{24,}>'=>'<controller>/view',
 		        '<controller:[\w-]+>/<action:[\w-]+>/<id:[\d\w]{24,}>'=>'<controller>/<action>',
 		        '<controller:[\w-]+>/<action:[\w-]+>'=>'<controller>/<action>',
-		        'comic/<id:[\d\w]{24,}>/<date:.[^/]*>'=>'comic/view',
-		        // your rules go here
 	        ]
         ],
         'formatter' => ['class' => 'common\components\Formatter'],
@@ -90,13 +97,11 @@ return [
 	        'clients' => [
 	        	'google' => [
 	        		'class' => 'yii\authclient\clients\GoogleOAuth',
-	        		'clientId' => '',
-	        		'clientSecret' => ''
+                    'viewOptions' => ['popupWidth' => 900, 'popupHeight' => 700],
         		],
         		'facebook' => [
         			'class' => 'yii\authclient\clients\Facebook',
-        			'clientId' => '',
-        			'clientSecret' => '',
+                    'viewOptions' => ['popupWidth' => 900, 'popupHeight' => 700],
         		],
         	],
         ]

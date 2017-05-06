@@ -22,6 +22,23 @@ class ActiveRecord extends MongoActiveRecord
 			}
 		}
 	}
+
+    private $_formName;
+
+    public function formName()
+    {
+        if($this->_formName){
+            return $this->_formName;
+        }
+
+        $reflector = new ReflectionClass($this);
+        return $reflector->getShortName();
+    }
+
+    public function setFormName($formName)
+    {
+        $this->_formName = $formName;
+    }
 	
 	public static function find()
 	{

@@ -41,7 +41,7 @@ class Mailer extends BaseMailer
     /**
      * @var string message default class name.
      */
-    public $messageClass = 'yashop\ses\Message';
+    public $messageClass = 'common\components\ses\Message';
 
     /**
      * @var string Amazon ses api access key

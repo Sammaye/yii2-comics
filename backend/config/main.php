@@ -6,28 +6,28 @@ $params = array_merge(
     require(__DIR__ . '/params-local.php')
 );
 
+$commonConfig = require(__DIR__ . '/../../common/config/main.php');
+
 return [
-    'id' => 'app-backend',
+    'id' => 'cly-backend',
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
     'bootstrap' => ['log'],
     'modules' => [],
     'components' => [
+        'user' => [
+            'identityClass' => 'common\models\User',
+            'enableAutoLogin' => true,
+        ],
     	'session' => [
     		'cookieParams' => [],
     		'name' => 'sess_cookie'
     	],
         'request' => [
-        	'class' => 'common\components\Request',
-        	'enableCsrfValidation' => true,
-        	'csrfRoutes' => [
-		        'site/login',
-		        'site/signup',
-		        'site/request-password-reset',
-		        'site/reset-password'
-        	],
+            'baseUrl' => '/system',
         	'cookieValidationKey' => $params['request.cookieValidationKey']
         ],
+        'urlManager' => $commonConfig['components']['backendUrlManager'],
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
