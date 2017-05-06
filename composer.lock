@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "5cb018aefa7d0cf0dcdaa9caf730e5d5",
+    "content-hash": "8fe3c37da62eb104644bada5e4f182ab",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1253,6 +1253,57 @@
             "time": "2017-04-29 15:36:12"
         },
         {
+            "name": "yii2tech/embedded",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/yii2tech/embedded.git",
+                "reference": "7f101ab761d39e8463e7290c103676dae5234c3d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/yii2tech/embedded/zipball/7f101ab761d39e8463e7290c103676dae5234c3d",
+                "reference": "7f101ab761d39e8463e7290c103676dae5234c3d",
+                "shasum": ""
+            },
+            "require": {
+                "yiisoft/yii2": "*"
+            },
+            "type": "yii2-extension",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "yii2tech\\embedded\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Paul Klimov",
+                    "email": "klimov.paul@gmail.com"
+                }
+            ],
+            "description": "Provides support for embedded (nested) models in Yii2",
+            "keywords": [
+                "elastic",
+                "elasticsearch",
+                "embed",
+                "embedded",
+                "mongo",
+                "mongodb",
+                "nested",
+                "yii2"
+            ],
+            "time": "2016-10-17 14:17:57"
+        },
+        {
             "name": "yiisoft/yii2",
             "version": "2.0.11.2",
             "source": {
@@ -1774,7 +1825,7 @@
                 "faker",
                 "fixtures"
             ],
-            "time": "2017-05-02T09:16:26+00:00"
+            "time": "2017-05-02 09:16:26"
         },
         {
             "name": "phpspec/php-diff",
@@ -1812,7 +1863,7 @@
                 }
             ],
             "description": "A comprehensive library for generating differences between two hashable objects (strings or arrays).",
-            "time": "2016-04-07T12:29:16+00:00"
+            "time": "2016-04-07 12:29:16"
         },
         {
             "name": "yiisoft/yii2-codeception",
@@ -1858,7 +1909,7 @@
                 "yii2"
             ],
             "abandoned": "codeception/codeception",
-            "time": "2016-10-20T13:07:49+00:00"
+            "time": "2016-10-20 13:07:49"
         },
         {
             "name": "yiisoft/yii2-debug",
@@ -1905,7 +1956,7 @@
                 "debugger",
                 "yii2"
             ],
-            "time": "2017-05-01T14:19:34+00:00"
+            "time": "2017-05-01 14:19:34"
         },
         {
             "name": "yiisoft/yii2-faker",
@@ -1952,7 +2003,7 @@
                 "faker",
                 "yii2"
             ],
-            "time": "2017-04-19T15:05:37+00:00"
+            "time": "2017-04-19 15:05:37"
         },
         {
             "name": "yiisoft/yii2-gii",
@@ -2005,7 +2056,7 @@
                 "gii",
                 "yii2"
             ],
-            "time": "2017-04-30T18:55:46+00:00"
+            "time": "2017-04-30 18:55:46"
         }
     ],
     "aliases": [],
@@ -2021,7 +2072,8 @@
         "bower-asset/jquery-ui": 0,
         "aws/aws-sdk-php": 0,
         "facebook/php-sdk-v4": 0,
-        "guzzlehttp/guzzle": 0
+        "guzzlehttp/guzzle": 0,
+        "yii2tech/embedded": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
