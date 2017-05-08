@@ -30,49 +30,49 @@ SummariseAsset::register($this);
         <![endif]-->
     </head>
     <body>
-    <?php $this->beginBody() ?>
-    <?= $content ?>
+        <?php $this->beginBody() ?>
+        <?= $content ?>
 
-    <div class="modal fade" id="ajaxErrorModal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    <h4 class="modal-title">
-                        <?= Yii::t('app', 'OMGZ!!! there was an error!!!1') ?>
-                    </h4>
-                </div>
-                <div class="modal-body">
-                    <p class="text-danger error-message"></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">
-                        <?= Yii::t('app', 'Dayum, okay!') ?>
-                    </button>
+        <div class="modal fade" id="ajaxErrorModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title">
+                            <?= Yii::t('app', 'OMGZ!!! there was an error!!!1') ?>
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <p class="text-danger error-message"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">
+                            <?= Yii::t('app', 'Dayum, okay!') ?>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <?php $this->endBody() ?>
+        <?php $this->endBody() ?>
 
-    <script>
-        (function (i, s, o, g, r, a, m) {
-            i['GoogleAnalyticsObject'] = r;
-            i[r] = i[r] || function () {
-                    (i[r].q = i[r].q || []).push(arguments)
-                }, i[r].l = 1 * new Date();
-            a = s.createElement(o),
-                m = s.getElementsByTagName(o)[0];
-            a.async = 1;
-            a.src = g;
-            m.parentNode.insertBefore(a, m)
-        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
-        ga('create', 'UA-56876004-1', 'auto');
-        ga('send', 'pageview');
-    </script>
+        <script>
+            (function (i, s, o, g, r, a, m) {
+                i['GoogleAnalyticsObject'] = r;
+                i[r] = i[r] || function () {
+                        (i[r].q = i[r].q || []).push(arguments)
+                    }, i[r].l = 1 * new Date();
+                a = s.createElement(o),
+                    m = s.getElementsByTagName(o)[0];
+                a.async = 1;
+                a.src = g;
+                m.parentNode.insertBefore(a, m)
+            })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+            ga('create', 'UA-56876004-1', 'auto');
+            ga('send', 'pageview');
+        </script>
     </body>
     </html>
 <?php $this->endPage() ?>

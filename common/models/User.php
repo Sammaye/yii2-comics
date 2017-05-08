@@ -19,10 +19,15 @@ class User extends ActiveRecord implements IdentityInterface
     const STATUS_ACTIVE = 10;
 
     const SCENARIO_SEARCH = 'search';
+    const SCENARIO_ADMIN = 'admin';
+
+    public $role;
 
     public $oldPassword;
     public $newPassword;
     public $confirmPassword;
+
+    public $adminSetPassword;
 
     public function behaviors()
     {
@@ -118,6 +123,10 @@ class User extends ActiveRecord implements IdentityInterface
                 return false;
             }],
 
+            ['adminSetPassword', 'filter', 'filter' => 'trim'],
+            ['adminSetPassword', 'string', 'min' => 6],
+            ['adminSetPassword', 'required', 'on' => [self::SCENARIO_ADMIN]],
+
             [
                 [
                     '_id',
@@ -140,7 +149,6 @@ class User extends ActiveRecord implements IdentityInterface
             'password_reset_token',
             'email',
             'auth_key',
-            'role',
             'status',
             'comics',
             'email_frequency',
@@ -168,6 +176,12 @@ class User extends ActiveRecord implements IdentityInterface
     {
         if ($this->newPassword) {
             $this->setPassword($this->newPassword);
+        }
+        if (
+            $this->status === self::STATUS_DELETED &&
+            !$this->deleted_at instanceof UTCDateTime
+        ) {
+            $this->deleted_at = new UTCDateTime(time() * 1000);
         }
         return parent::beforeSave($insert);
     }

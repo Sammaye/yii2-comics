@@ -7,21 +7,12 @@ use Yii;
 
 class SignupForm extends Model
 {
-    const SCENARIO_ADMIN = 'admin';
-
     public $username;
     public $email;
     public $password;
-    public $role;
 
     public function rules()
     {
-        $rolesResult = Yii::$app->authManager->getRoles();
-        $roles = [];
-        foreach($rolesResult as $v) {
-            $roles[] = $v->name;
-        }
-
         return [
             ['username', 'filter', 'filter' => 'trim'],
             ['username', 'required'],
@@ -45,9 +36,6 @@ class SignupForm extends Model
             
             ['password', 'required'],
             ['password', 'string', 'min' => 6],
-
-            ['role', 'required', 'on' => self::SCENARIO_ADMIN],
-            ['role', 'in', 'range' => $roles, 'on' => self::SCENARIO_ADMIN]
         ];
     }
 

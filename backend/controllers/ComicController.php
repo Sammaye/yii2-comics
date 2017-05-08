@@ -32,7 +32,7 @@ class ComicController extends Controller
 		return $this->render(
 			'index', 
 			[
-				'model' => new Comic(['scenario' => 'search'])
+				'model' => new Comic(['scenario' => Comic::SCENARIO_SEARCH])
 			]
 		);
 	}

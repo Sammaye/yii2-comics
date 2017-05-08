@@ -9,7 +9,7 @@ use yii\helpers\Html;
  * @var Exception $exception
  */
 
-$this->title = $name;
+$this->title = Yii::t('app', $name);
 ?>
 <div class="site-error">
 
@@ -20,10 +20,10 @@ $this->title = $name;
     </div>
 
     <p>
-        The above error occurred while the Web server was processing your request.
+        <?= Yii::t('app', 'The above error occurred while the Web server was processing your request') ?>
     </p>
     <p>
-        Please contact us if you think this is a server error. Thank you.
+        <?= Yii::t('app', 'Please contact us if you think this is a server error. Thank you') ?>
     </p>
 
 </div>

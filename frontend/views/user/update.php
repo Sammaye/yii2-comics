@@ -21,7 +21,7 @@ $this->registerJs("
 ?>
 <div class="user-settings">
     <h2><?= Yii::t('app', 'Subscriptions') ?></h2>
-    <?php $form = ActiveForm::begin(['id' => 'user-update']) ?>
+    <?php $form = ActiveForm::begin(['id' => 'user-update', 'enableClientValidation' => false]) ?>
 
     <?= $form->errorSummary($model) ?>
     <div class="row">
@@ -81,6 +81,7 @@ $this->registerJs("
             <h2>Password</h2>
             <?= $form->field($model, 'oldPassword')->passwordInput() ?>
             <?= $form->field($model, 'newPassword')->passwordInput() ?>
+            <?= $form->field($model, 'confirmPassword')->passwordInput() ?>
             <?= Html::submitButton(
                 Yii::t(
                     'app',
