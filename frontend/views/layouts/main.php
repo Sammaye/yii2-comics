@@ -2,34 +2,48 @@
 use yii\helpers\Html;
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
-use yii\widgets\Breadcrumbs;
-use frontend\assets\AppAsset;
 use common\widgets\Alert;
 
 $this->beginContent('@app/views/layouts/base.php') ?>
     <div class="wrap<?= isset($this->params['wrapClass']) ? ' ' . $this->params['wrapClass'] : '' ?>">
         <?php
             NavBar::begin([
-                'brandLabel' => 'c!y',
+                'brandLabel' => Yii::t('app', 'c!y'),
                 'brandUrl' => Yii::$app->homeUrl,
                 'options' => [
                     'class' => 'navbar navbar-fixed-top',
                 ],
             ]);
             $menuItems = [
-            	['label' => 'View Comics', 'url' => ['/comic']],
-                ['label' => 'Help', 'url' => ['/site/help']],
+            	['label' =>
+                    Yii::t('app', 'View Comics'),
+                    'url' => ['/comic']
+                ],
+                ['label' =>
+                    Yii::t('app', 'Help'),
+                    'url' => ['/site/help']
+                ],
             ];
             if (Yii::$app->user->isGuest) {
-                $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];
-                $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];
+                $menuItems[] = [
+                    'label' => Yii::t('app', 'Signup'),
+                    'url' => ['/site/signup']
+                ];
+                $menuItems[] = [
+                    'label' => Yii::t('app', 'Login'),
+                    'url' => ['/site/login']
+                ];
             } else {
             	$menuItems[] = [
-					'label' => 'Settings',
-					'url' => ['user/settings']
+					'label' => Yii::t('app', 'Settings'),
+					'url' => ['user/update']
             	];
                 $menuItems[] = [
-                    'label' => 'Logout (' . Yii::$app->user->identity->username . ')',
+                    'label' => Yii::t(
+                        'app',
+                        'Logout ({username})',
+                        ['username' => Yii::$app->user->identity->username]
+                    ),
                     'url' => ['/site/logout'],
                     'linkOptions' => ['data-method' => 'post']
                 ];
@@ -41,13 +55,13 @@ $this->beginContent('@app/views/layouts/base.php') ?>
             NavBar::end();
         ?>
 
-        <?php if(isset($this->params['excludeContainer']) && $this->params['excludeContainer'] === true){ ?>
-        <?= $content ?>
-        <?php }else{ ?>
-        <div class="container">
-        <?= Alert::widget() ?>
-        <?= $content ?>
-        </div>
+        <?php if (isset($this->params['excludeContainer']) && $this->params['excludeContainer'] === true) { ?>
+            <?= $content ?>
+        <?php } else { ?>
+            <div class="container">
+                <?= Alert::widget() ?>
+                <?= $content ?>
+            </div>
         <?php } ?>
     </div>
 <?php $this->endContent() ?>

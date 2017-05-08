@@ -1,8 +1,10 @@
 <?php
+
 namespace common\models;
 
 use Yii;
 use yii\base\Model;
+use common\models\User;
 
 /**
  * Login form
@@ -39,7 +41,13 @@ class LoginForm extends Model
         if (!$this->hasErrors()) {
             $user = $this->getUser();
             if (!$user || !$user->validatePassword($this->password)) {
-                $this->addError('password', 'Incorrect username or password.');
+                $this->addError('password', Yii::t('app', 'Incorrect username or password'));
+            } elseif ($user->status === User::STATUS_BANNED) {
+                $this->addError('password', Yii::t('app', 'You are banned'));
+            } elseif ($user->status === User::STATUS_DELETED) {
+                $user->deleted_at = null;
+                $user->status = User::STATUS_ACTIVE;
+                $user->save(false, ['deleted_at', 'status']);
             }
         }
     }
@@ -51,14 +59,11 @@ class LoginForm extends Model
      */
     public function login($runValidation = true)
     {
-    	if($runValidation && !$this->validate()){
-    		return false;
-    	}
+        if ($runValidation && !$this->validate()) {
+            return false;
+        }
 
         $response = Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600 * 24 * 30 : 0);
-        if($response){
-        	Yii::$app->session->set('tier2Timeout', time() + Yii::$app->user->tier2Timeout);
-        }
         return $response;
     }
 

@@ -3,7 +3,7 @@
 namespace common\components;
 
 use Yii;
-use yii\mongodb\ActiveRecord as BaseActiveRecord;
+use yii2tech\embedded\mongodb\ActiveRecord as BaseActiveRecord;
 
 class ActiveRecord extends BaseActiveRecord
 {

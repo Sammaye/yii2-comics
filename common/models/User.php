@@ -1,10 +1,10 @@
 <?php
+
 namespace common\models;
 
 use Yii;
 use yii\base\NotSupportedException;
 use common\components\ActiveRecord;
-use yii\base\Security;
 use yii\web\IdentityInterface;
 use yii\data\ActiveDataProvider;
 
@@ -12,186 +12,184 @@ use MongoDB\BSON\UTCDateTime;
 use MongoDB\BSON\ObjectID;
 use MongoDB\BSON\Regex;
 
-/**
- * User model
- *
- * @property integer $id
- * @property string $username
- * @property string $password_hash
- * @property string $password_reset_token
- * @property string $email
- * @property string $auth_key
- * @property integer $role
- * @property integer $status
- * @property integer $created_at
- * @property integer $updated_at
- * @property string $password write-only password
- */
 class User extends ActiveRecord implements IdentityInterface
 {
     const STATUS_DELETED = 0;
+    const STATUS_BANNED = 5;
     const STATUS_ACTIVE = 10;
 
-	const ROLE_USER = 'user';
-	const ROLE_AFFILIATE = 'affiliate';
-	const ROLE_STAFF = 'staff';
-	const ROLE_ADMIN = 'admin';
-	const ROLE_GOD = 'god';
-	
-	public $newPassword;
-	public $oldPassword;
-	
-	public $adminSetPassword;
+    const SCENARIO_SEARCH = 'search';
 
-    /**
-     * @inheritdoc
-     */
+    public $oldPassword;
+    public $newPassword;
+    public $confirmPassword;
+
     public function behaviors()
     {
         return [
             'timestamp' => [
                 'class' => 'yii\behaviors\TimestampBehavior',
-                'value' => function($e){ return new UTCDateTime(time()*1000); }
+                'value' => function ($e) {
+                    return new UTCDateTime(time() * 1000);
+                }
             ],
         ];
     }
 
-    /**
-      * @inheritdoc
-      */
-     public function rules()
-     {
-         return [
-             ['username', 'string', 'min' => 3, 'max' => 20],
-             ['username', 'unique'],
-             
-             ['email', 'email'],
-             ['email', 'unique'],
-         
-             ['status', 'default', 'value' => self::STATUS_ACTIVE],
-             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
+    public function rules()
+    {
+        return [
 
-             ['role', 'default', 'value' => self::ROLE_USER],
-             ['role', 'in', 'range' => [self::ROLE_USER, self::ROLE_STAFF, self::ROLE_AFFILIATE, self::ROLE_ADMIN, self::ROLE_GOD]],
-             
-             ['oldPassword', 'string', 'max' => 20, 'min' => 7],
-             ['oldPassword', 'validateOldPassword'],
-             
-             ['newPassword', 'string', 'max' => 20, 'min' => 7],
-             ['newPassword', 'validateNewPassword'],
-             
-             ['adminSetPassword', 'string', 'max' => 20, 'min' => 7],
-             
-             ['email_frequency', 'in', 'range' => array_keys($this->emailFrequencies())],
-             
-             [
-             	[
-             		'_id',
-					'username',
-					'email',
-					'role',
-					'status',
-					'updated_at',
-					'created_at'
-				],
-             	'safe',
-             	'on' => 'search'
-       		]
-         ];
-     }
-     
-     public function attributes()
-     {
-     	return [
-     		'_id',
-			'username',
-			'password_hash',
-			'password_reset_token',
-			'email',
-			'auth_key',
-			'role',
-			'status',
-			'created_at',
-			'updated_at',
-			'comics',
-			'email_frequency',
-			'facebook_id',
-			'google_id',
-			'facebook_token',
-			'last_feed_sent',
-			'testArray',
-     	];
-     }
-     
-     public function attributeLabels()
-     {
-     	return [
-			'adminSetPassword' => 'Password'
-     	];
-     }
-     
-     public function subdocuments()
-     {
-     	return [
-			'testArray'
-     	];
-     }
-     
-     public function emailFrequencies()
-     {
-     	return [
-     		'daily' => 'Daily', 
-     		'weekly' => 'Weekly', 
-     		'monthly' => 'Monthly', 
-     		'paused' => 'Paused'
-		];
-     }
-     
-     public function validateOldPassword($attribute, $params)
-     {
-     	if(strlen(trim($this->oldPassword)) > 0){
-     		if(strlen(trim($this->newPassword)) <= 0){
-     			$this->addError($attribute, 'If you wish to change your password you must fill in both the old and new password fields');
-     		}
-     		if(!$this->validatePassword($this->oldPassword)){
-     			$this->addError($attribute, 'The old password does not match what we have on record for you');
-     		}
-     	}
-     }
-     
-     public function validateNewPassword($attribute, $params)
-     {
-     	if(strlen(trim($this->oldPassword)) <= 0 && strlen(trim($this->newPassword)) > 0){
-     		$this->addError($attribute, 'You must confirm your current password by entering it into the old password field provided');
-     	}
-     }
-     
-     public function beforeSave($insert)
-     {
-     	if($this->adminSetPassword){
-     		$this->newPassword = $this->adminSetPassword;
-     	}
-     	
-     	if($this->newPassword){
-     		$this->setPassword($this->newPassword);
-     	}
-     	return parent::beforeSave($insert);
-     }
+            ['status', 'required'],
+            ['status', 'default', 'value' => self::STATUS_ACTIVE],
+            ['status', 'in', 'range' => [
+                self::STATUS_DELETED,
+                self::STATUS_BANNED,
+                self::STATUS_ACTIVE
+            ]],
 
-    /**
-     * @inheritdoc
-     */
+            ['username', 'required'],
+            ['username', 'string', 'min' => 3, 'max' => 20],
+            ['username', 'unique'],
+
+            ['email', 'required'],
+            ['email', 'email'],
+            ['email', 'unique'],
+
+            [
+                'email_frequency',
+                'in',
+                'range' => array_keys($this->emailFrequencies())
+            ],
+
+            [
+                [
+                    'oldPassword',
+                    'newPassword',
+                    'confirmPassword'
+                ],
+                'filter',
+                'filter' => 'trim'
+            ],
+            [
+                [
+                    'oldPassword',
+                    'newPassword',
+                    'confirmPassword'
+                ],
+                'string',
+                'min' => 6
+            ],
+            ['oldPassword', function ($attribute, $params, $validator) {
+                if (
+                    !\Yii::$app->security->validatePassword(
+                        $this->$attribute,
+                        $this->password_hash
+                    )
+                ) {
+                    $this->addError(
+                        $attribute,
+                        Yii::t(
+                            'app',
+                            "The password entered does not match the old password"
+                        )
+                    );
+                    return false;
+                }
+                return true;
+            }],
+            [
+                [
+                    'newPassword',
+                    'confirmPassword'
+                ],
+                'required', 'when' => function ($model) {
+                    return strlen(trim($this->oldPassword)) > 0;
+                }
+            ],
+            ['confirmPassword', function ($attribute, $params, $validator) {
+                if ($this->newPassword !== $this->$attribute) {
+                    $this->addError(
+                        $attribute,
+                        Yii::t('app', "You must confirm your new password")
+                    );
+                    return false;
+                }
+                return false;
+            }],
+
+            [
+                [
+                    '_id',
+                    'username',
+                    'email',
+                    'status',
+                ],
+                'safe',
+                'on' => self::SCENARIO_SEARCH
+            ]
+        ];
+    }
+
+    public function attributes()
+    {
+        return [
+            '_id',
+            'username',
+            'password_hash',
+            'password_reset_token',
+            'email',
+            'auth_key',
+            'role',
+            'status',
+            'comics',
+            'email_frequency',
+            'facebook_id',
+            'google_id',
+            'facebook_token',
+            'last_feed_sent',
+            'created_at',
+            'updated_at',
+            'deleted_at',
+        ];
+    }
+
+    public function emailFrequencies()
+    {
+        return [
+            'daily' => Yii::t('app', 'Daily'),
+            'weekly' => Yii::t('app','Weekly'),
+            'monthly' => Yii::t('app', 'Monthly'),
+            'paused' => Yii::t('app', 'Paused')
+        ];
+    }
+
+    public function beforeSave($insert)
+    {
+        if ($this->newPassword) {
+            $this->setPassword($this->newPassword);
+        }
+        return parent::beforeSave($insert);
+    }
+
+    public function queueForDelete()
+    {
+        $this->status = self::STATUS_DELETED;
+        $this->deleted_at = new UTCDateTime(time()*1000);
+        if($this->save(false)){
+            return true;
+        }
+        return false;
+    }
+
     public static function findIdentity($id)
     {
-    	if(!$id instanceof ObjectID){
-    		$id = new ObjectID($id);
-    	}
+        if (!$id instanceof ObjectID) {
+            $id = new ObjectID($id);
+        }
         return static::findOne($id);
     }
 
-    /**
-     * @inheritdoc
-     */
     public static function findIdentityByAccessToken($token, $type = null)
     {
         throw new NotSupportedException('"findIdentityByAccessToken" is not implemented.');
@@ -200,65 +198,58 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * Finds user by username
      *
-     * @param  string      $username
+     * @param  string $username
      * @return static|null
      */
     public static function findByUsername($email)
     {
         return static::findOne(['email' => $email, 'status' => self::STATUS_ACTIVE]);
     }
-	
-	/**
-	 * Finds user by password reset token
-	 *
-	 * @param string $token password reset token
-	 * @return static null
-	 */
-	public static function findByPasswordResetToken($token) {
-		if (! static::isPasswordResetTokenValid($token)) {
-			return null;
-		}
-		return static::findOne([ 
-			'password_reset_token' => $token,
-			'status' => self::STATUS_ACTIVE 
-		]);
-	}
-	
-	/**
-	 * Finds out if password reset token is valid
-	 *
-	 * @param string $token password reset token
-	 * @return boolean
-	 */
-	public static function isPasswordResetTokenValid($token) {
-		if (empty($token)){
-			return false;
-		}
-		$expire = Yii::$app->params['user.passwordResetTokenExpire'];
-		$parts = explode( '_', $token );
-		$timestamp = (int)end($parts);
-		return $timestamp + $expire >= time();
-	}
 
     /**
-     * @inheritdoc
+     * Finds user by password reset token
+     *
+     * @param string $token password reset token
+     * @return static null
      */
+    public static function findByPasswordResetToken($token)
+    {
+        if (!static::isPasswordResetTokenValid($token)) {
+            return null;
+        }
+        return static::findOne([
+            'password_reset_token' => $token,
+            'status' => self::STATUS_ACTIVE
+        ]);
+    }
+
+    /**
+     * Finds out if password reset token is valid
+     *
+     * @param string $token password reset token
+     * @return boolean
+     */
+    public static function isPasswordResetTokenValid($token)
+    {
+        if (empty($token)) {
+            return false;
+        }
+        $expire = Yii::$app->params['user.passwordResetTokenExpire'];
+        $parts = explode('_', $token);
+        $timestamp = (int)end($parts);
+        return $timestamp + $expire >= time();
+    }
+
     public function getId()
     {
         return (String)$this->getPrimaryKey();
     }
 
-    /**
-     * @inheritdoc
-     */
     public function getAuthKey()
     {
         return $this->auth_key;
     }
 
-    /**
-     * @inheritdoc
-     */
     public function validateAuthKey($authKey)
     {
         return $this->getAuthKey() === $authKey;
@@ -267,7 +258,7 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * Validates password
      *
-     * @param  string  $password password to validate
+     * @param  string $password password to validate
      * @return boolean if password provided is valid for current user
      */
     public function validatePassword($password)
@@ -308,67 +299,105 @@ class User extends ActiveRecord implements IdentityInterface
     {
         $this->password_reset_token = null;
     }
-    
-    public function setSubscriptions($subs)
+
+    public function setRole($role = null)
     {
-    	$currentSubs = is_array($this->comics) ? $this->comics : [];
-    	if(count($currentSubs) <= 0){
-    		// Cannot resolve nuttin
-    		return true;
-    	}
-    	$newSubs = [];
-    	foreach($currentSubs as $k => $sub){
-    		foreach($subs as $sk => $subKey){
-    			if($subKey === (String)$sub['comic_id']){
-    				$newSubs[$sk] = $sub;
-    			}
-    		}
-    	}
-    	ksort($newSubs);
-    	$this->comics = $newSubs;
-    	return true;
+        if (
+            $role &&
+            ($roleItem = Yii::$app->authManager->getRole($role))
+        ) {
+            Yii::$app->authManager->revokeAll($this->id);
+            Yii::$app->authManager->assign($roleItem, $this->id);
+        }
     }
-    
-    public function isSubscribed($comic_id)
+
+    public function addComic($id)
     {
-    	if($comic_id instanceof ObjectID){
-    		$comic_id = (String)$comic_id;
-    	}
-    	
-    	if(!is_array($this->comics)){
-    		return false;
-    	}
-    	
-    	foreach($this->comics as $comic){
-    		if((String)$comic['comic_id'] === $comic_id){
-    			return true;
-    		}
-    	}
-    	return false;
+        $comics = is_array($this->comics) ? $this->comics : [];
+        foreach($comics as $comic){
+            if((String)$comic['comic_id'] === (String)$id){
+                return true;
+            }
+        }
+
+        $comics[] = [
+            'date' => new UTCDateTime(time()*1000),
+            '_id' => $id instanceof ObjectID ? $id : new ObjectID($id)
+        ];
+        $this->comics = $comics;
+
+        return $this->update(false, ['comics']);
     }
-    
+
+    public function removeComic($id)
+    {
+        $comics = is_array($this->comics) ? $this->comics : [];
+        foreach($comics as $k => $comic){
+            if((String)$comic['comic_id'] === (String)$id){
+                unset($comics[$k]);
+            }
+        }
+        $this->comics = $comics;
+        return $this->update(false, ['comics']);
+    }
+
+    public function modifyComics($subs)
+    {
+        $currentSubs = is_array($this->comics) ? $this->comics : [];
+        if (count($currentSubs) <= 0) {
+            // Cannot resolve nuttin
+            return true;
+        }
+        $newSubs = [];
+        foreach ($currentSubs as $k => $sub) {
+            foreach ($subs as $sk => $subKey) {
+                if ($subKey === (String)$sub['comic_id']) {
+                    $newSubs[$sk] = $sub;
+                }
+            }
+        }
+        ksort($newSubs);
+        $this->comics = $newSubs;
+        return true;
+    }
+
+    public function hasComic($id)
+    {
+        if ($id instanceof ObjectID) {
+            $id = (String)$id;
+        }
+
+        if (!is_array($this->comics)) {
+            return false;
+        }
+
+        foreach ($this->comics as $comic) {
+            if ((String)$comic['comic_id'] === $id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function search()
     {
-    	foreach($this->attributes() as $field){
-    		$this->$field = null;
-    	}
-    	if($get = Yii::$app->getRequest()->get('Comic')){
-    		$this->attributes = $get;
-    	}
-    
-    	$query = static::find();
-    	$query->filterWhere([
-    		'_id' => $this->_id ? new ObjectID($this->_id) : null,
-    		'username' => $this->username ? new Regex($this->username) : null,
-    		'email' => $this->email ? new Regex($this->email) : null,
-    		'role' => $this->role,
-    		'status' => $this->status,
-    		'created_at' => $this->created_at,
-    		'updated_at' => $this->updated_at
-    	]);
-    
-    	return new ActiveDataProvider([
-    		'query' => $query
-    	]);
+        foreach ($this->attributes() as $field) {
+            $this->$field = null;
+        }
+        if ($get = Yii::$app->getRequest()->get($this->formName())) {
+            $this->attributes = $get;
+        }
+
+        $query = static::find();
+        $query->filterWhere([
+            '_id' => $this->_id ? new ObjectID($this->_id) : null,
+            'username' => $this->username ? new Regex($this->username) : null,
+            'email' => $this->email ? new Regex($this->email) : null,
+            'status' => $this->status,
+        ]);
+
+        return new ActiveDataProvider([
+            'query' => $query
+        ]);
     }
 }

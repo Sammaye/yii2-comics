@@ -30,7 +30,7 @@ class DebugModule extends BaseDebugModule
 	public function getBasePath()
 	{
 		if ($this->_basePath === null) {
-			$class = new \ReflectionClass(new yii\debug\Module('debug'));
+			$class = new \ReflectionClass(new BaseDebugModule('debug'));
 			$this->_basePath = dirname($class->getFileName());
 		}
 	

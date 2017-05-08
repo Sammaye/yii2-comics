@@ -4,7 +4,7 @@
  * @license http://www.yiiframework.com/license/
  */
 
-namespace pahanini\log;
+namespace common\components;
 
 use Yii;
 use yii\helpers\Console;

@@ -21,16 +21,16 @@ class LoadingArtist extends Comic
 		}
 	}
     
-    public function previous(ComicStrip $cStrip, array $data = [])
+    public function previous(ComicStrip $strip, array $data = [])
     {
-        if($cStrip->previous){
-            return $this->getStrip($cStrip->previous, $data);
+        if($strip->previous){
+            return $this->getStrip($strip->previous, $data);
         }else{
             // Try and redownload and see if there is a previous now
-            $cStrip = $this->downloadStrip($cStrip->index, $data);
-            if($cStrip->previous){
+            $strip = $this->downloadStrip($strip->index, $data);
+            if($strip->previous){
                 // If we have a previous now then let's get that
-                $strip = $this->downloadStrip($cStrip->previous, $data);
+                $strip = $this->downloadStrip($strip->previous, $data);
                 return $strip;
             }
         }
@@ -39,31 +39,37 @@ class LoadingArtist extends Comic
         return null;
     }
     
-    public function next(ComicStrip $cStrip, $ignoreCurrent = false, array $data = [])
+    public function next(ComicStrip $strip, $ignoreCurrent = false, array $data = [])
     {
         if(
             !$ignoreCurrent && 
-            $cStrip->index >= $this->current_index
+            $strip->index >= $this->current_index
         ){
             return null;
         }
         
-        if($cStrip->next){
-            return $this->getStrip($cStrip->next, $data);
+        if($strip->next){
+            return $this->getStrip($strip->next, $data);
         }else{
             // Try and redownload and see if there is a next now
-            $cStrip = $this->downloadStrip($cStrip->index, $data);
-            if($cStrip->next){
+            $strip = $this->downloadStrip($strip->index, $data);
+            if($strip->next){
                 // If we have a next now then let's get that
-                $strip = $this->downloadStrip($cStrip->next, $data);
+                $strip = $this->downloadStrip($strip->next, $data);
                 return $strip;
             }elseif($ignoreCurrent){
                 // $ignoreCurrent will normally be from admin 
                 // functions such as the scraper
                 Yii::warning(
-                    $this->title . '(' 
-                    . (String)$this->_id . ') could not find next from ' 
-                    . $this->scrapeUrl($cStrip->index)
+                    Yii::t(
+                        'app',
+                        '{title} ({id}) could not find next from {url}',
+                        [
+                            'title' => $this->title,
+                            'id' => (String)$this->_id,
+                            'url' => $this->scrapeUrl($strip->index)
+                        ]
+                    )
                 );
             }
         }
@@ -199,10 +205,17 @@ class LoadingArtist extends Comic
 		}catch(ClientException $e){
 			// Log the exception
 			if(!$ignoreErrors){
-                $message = (String)$this->_id . ' returned ' . 
-                    $e->getResponse()->getStatusCode()  
-                    . ' for ' . $url;
-                Yii::warning($message);
+                Yii::warning(
+                    Yii::t(
+                        'app',
+                        '{id} returned {message} for {url}',
+                        [
+                            'id' => (String)$this->_id,
+                            'message' => $e->getResponse()->getStatusCode(),
+                            'url' => $url
+                        ]
+                    )
+                );
 			}
 			return null;
 		}

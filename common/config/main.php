@@ -66,6 +66,7 @@ return [
 	        'defaultRoles' => ['guest'],
         ],
         'frontendUrlManager' => [
+            'class' => 'yii\web\UrlManager',
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'cache' => null,
@@ -79,6 +80,7 @@ return [
             ]
         ],
         'backendUrlManager' => [
+            'class' => 'yii\web\UrlManager',
 	        'enablePrettyUrl' => true,
 	        'showScriptName' => false,
 	        'cache' => null,

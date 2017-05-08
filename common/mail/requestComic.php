@@ -7,11 +7,15 @@ use yii\helpers\Html;
  */
 ?>
 
-<p>Hello,</p>
-<p>Someone wants a comic adding to the c!y website.</p>
-<p>Name: <?= $model->name ?></p>
-<p>URL: <?= $model->url ?></p>
+<p><?= Yii::t('app', 'Hello,') ?></p>
+<p><?= Yii::t('app', 'Someone wants a comic adding to the c!y website.') ?></p>
+<p><?= Yii::t('app', 'Name: {name}', ['name' => $model->name]) ?></p>
+<p><?= Yii::t('app', 'URL: {url}', ['url' => $model->url]) ?></p>
 <p></p>
-<p>If they entered an email to be contacted by or were logged in it is: <?= $model->email ?></p>
-<p></p>
-<p>Love, c!y</p>
+<p><?=
+    Yii::t(
+        'app',
+        'If they entered an email to be contacted by or were logged in it is: {email}',
+        ['email' => $model->email]
+    )
+?></p>

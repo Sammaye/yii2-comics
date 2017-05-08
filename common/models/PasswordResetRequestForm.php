@@ -1,8 +1,10 @@
 <?php
+
 namespace common\models;
 
-use common\models\User;
+use Yii;
 use yii\base\Model;
+use common\models\User;
 
 /**
  * Password reset request form
@@ -11,19 +13,18 @@ class PasswordResetRequestForm extends Model
 {
     public $email;
 
-    /**
-     * @inheritdoc
-     */
     public function rules()
     {
         return [
             ['email', 'filter', 'filter' => 'trim'],
             ['email', 'required'],
             ['email', 'email'],
-            ['email', 'exist',
-                'targetClass' => '\common\models\User',
+            [
+                'email',
+                'exist',
+                'targetClass' => User::class,
                 'filter' => ['status' => User::STATUS_ACTIVE],
-                'message' => 'There is no user with such email.'
+                'message' => Yii::t('app', 'There is no user with such email')
             ],
         ];
     }
@@ -42,15 +43,21 @@ class PasswordResetRequestForm extends Model
         ]);
 
         if ($user) {
-        	if (!User::isPasswordResetTokenValid($user->password_reset_token)) {
-        		$user->generatePasswordResetToken();
-        	}
-        	
+            if (!User::isPasswordResetTokenValid($user->password_reset_token)) {
+                $user->generatePasswordResetToken();
+            }
+
             if ($user->save()) {
-                return \Yii::$app->mailer->compose('passwordResetToken', ['user' => $user])
-                    ->setFrom([\Yii::$app->params['supportEmail'] => 'Sam Millman'])
+                return Yii::$app->mailer->compose('passwordResetToken', ['user' => $user])
+                    ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->params['supportName']])
                     ->setTo($this->email)
-                    ->setSubject('Password reset for ' . \Yii::$app->name)
+                    ->setSubject(
+                        Yii::t(
+                            'app',
+                            'Password reset for {name}',
+                            ['name' => \Yii::$app->name]
+                        )
+                    )
                     ->send();
             }
         }

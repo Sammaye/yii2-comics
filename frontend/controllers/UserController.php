@@ -8,47 +8,58 @@ use yii\filters\AccessControl;
 
 class UserController extends Controller
 {
-	public function behaviors()
-	{
-		return [
-			'access' => [
-				'class' => AccessControl::className(),
-				'rules' => [
-					[
-						'allow' => true,
-						'roles' => ['tier2User'],
-					],
-				],
-			],
-		];
-	}
-	
-	public function actionSettings()
-	{
-		$model = Yii::$app->user->identity;
-		
-		if(
-			$model->load($_POST) && 
-			$model->setSubscriptions(Yii::$app->getRequest()->post('subscriptions')) && 
-			$model->save()
-		){
-			Yii::$app->getSession()->setFlash('success', 'Your changes have been saved.');
-			return Yii::$app->getResponse()->redirect(['user/settings']);
-		}
-		return $this->render('settings', ['model' => $model]);
-	}
-	
-	public function actionDelete()
-	{
-		if(
-			($model = Yii::$app->getUser()->identity) &&
-			($model->delete())
-		){
-			Yii::$app->getSession()->setFlash('success', 'You have been deleted.');
-			return Yii::$app->getResponse()->redirect(['site/index']);
-		}
-		Yii::$app->getSession()->setFlash('error', 'You could not be deleted for some rason. I am unsure why. 
-		You can visit our help section for assistance.');
-		return Yii::$app->getResponse()->redirect(['user/settings']);
-	}
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    public function actionUpdate()
+    {
+        $model = Yii::$app->user->identity;
+
+        if (
+            $model->load($_POST) &&
+            $model->modifyComics(Yii::$app->getRequest()->post('Comics')) &&
+            $model->save()
+        ) {
+            Yii::$app->getSession()->setFlash(
+                'success',
+                Yii::t(
+                    'app',
+                    'Your changes have been saved.'
+                )
+            );
+            return $this->redirect(['update']);
+        }
+        return $this->render('update', ['model' => $model]);
+    }
+
+    public function actionDelete()
+    {
+        $model = Yii::$app->user->identity;
+        if ($model->queueForDelete()) {
+            Yii::$app->user->logout();
+            Yii::$app->session->setFlash(
+                'success',
+                Yii::t('app', 'Your account has been deleted')
+            );
+            return $this->redirect(['site/login']);
+        }
+
+        Yii::$app->session->setFlash(
+            'error',
+            Yii::t('app', 'Could not delete your account')
+        );
+        return $this->redirect(['update']);
+    }
 }

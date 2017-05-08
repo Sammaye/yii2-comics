@@ -5,159 +5,202 @@ namespace frontend\controllers;
 use Yii;
 use yii\filters\AccessControl;
 use common\components\Controller;
+use yii\base\DynamicModel;
+use yii\helpers\Json;
 use common\models\Comic;
-use common\models\ComicStrip;
-use common\models\User;
-use common\models\RequestComicForm;
 
 use MongoDB\BSON\UTCDateTime;
 use MongoDB\BSON\ObjectID;
 
 class ComicController extends Controller
 {
-	public function behaviors()
-	{
-		return [
-			'access' => [
-				'class' => AccessControl::className(),
-				'rules' => [
-					[
-						'allow' => true,
-						'actions' => ['subscribe', 'unsubscribe'],
-						'roles' => ['@'],
-					],
-					[
-						'allow' => true,
-						'actions' => ['index', 'view', 'request', 'render-image'],
-						'roles' => ['?', '@']
-					]
-				],
-			],
-		];
-	}
-	
-	
-	public function actionIndex()
-	{
-		return $this->actionView();
-	}
-	
-	public function actionView($id = null, $index = null)
-	{
-		$this->layout = 'tabbedComics';
-		
-		$comic = null;
-		$condition = ['live' => 1];
-		
-		if($id){
-			$condition['_id'] = new ObjectID($id);
-		}
-		if(
-			!(
-				$comic = Comic::find()
-					->where($condition)
-					->orderBy(['title' => SORT_ASC])
-					->one()
-			)
-		){
-			return $this->render('comicNotFound');
-		}
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['subscribe', 'unsubscribe'],
+                        'roles' => ['@'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'view', 'request', 'render-image'],
+                        'roles' => ['?', '@']
+                    ]
+                ],
+            ],
+        ];
+    }
 
-		if(!$current = $comic->current($index)){
-			return $this->render('comicStripNotFound', ['model' => $comic]);
-		}
-		$current->comic = $comic;
-		$previous = $comic->previous($current);
-		$next = $comic->next($current);
+    public function actionIndex()
+    {
+        return $this->actionView();
+    }
 
-		return $this->render(
-			'view', 
-			[
-				'model' => $comic, 
-				'comicStrip' => $current, 
-				'previousStrip' => $previous,
-				'nextStrip' => $next,
-			]
-		);
-	}
-	
-	public function actionSubscribe()
-	{
-		if(
-			($comic_id = Yii::$app->getRequest()->get('comic_id')) && 
-			($model = Comic::find()->where(['_id' => new ObjectID($comic_id)])->one())
-		){
-			$user = Yii::$app->user->identity;
-			if(User::updateAll(
-				[
-					'$push' => [
-						'comics' => [
-							'date' => new UTCDateTime(time()*1000),
-							'comic_id' => $model->_id
-						]
-					]
-				],
-				['_id' => $user->_id, 'comics.comic_id' => ['$ne' => $model->_id]]
-			)){
-				return json_encode(['success' => true, 'message' => 'You are now subscribed']);
-			}
-			
-			foreach($user->comics as $comic){
-				if((String)$comic['comic_id'] === (String)$model->_id){
-					return json_encode(['success' => false, 'message' => 'You are already subscribed']);
-				}
-			}
-			return json_encode(['success' => false, 'message' => 'There was an unknown error']);
-		}
-		return json_encode(['success' => false, 'message' => 'That comic does not exist']);
-	}
-	
-	public function actionUnsubscribe()
-	{
-		if(
-			($comic_id = Yii::$app->getRequest()->get('comic_id')) &&
-			($model = Comic::find()->where(['_id' => new ObjectID($comic_id)])->one())
-		){
-			$user = Yii::$app->user->identity;
-			if(User::updateAll(
-				[
-					'$pull' => [
-						'comics' => ['comic_id' => $model->_id]
-					]
-				],
-				['_id' => $user->_id]
-			)){
-				return json_encode(['success' => true, 'message' => 'You are now unsubscribed']);
-			}
-				
-			foreach($user->comics as $comic){
-				if((String)$comic['comic_id'] === (String)$model->_id){
-					return json_encode(['success' => false, 'message' => 'There was an unknown error']);
-				}
-			}
-			return json_encode(['success' => false, 'message' => 'You are already unsubscribed']);
-		}
-		return json_encode(['success' => false, 'message' => 'That comic does not exist']);
-	}
-	
-	public function actionRequest()
-	{
-		$model = new RequestComicForm;
-		if($model->load($_POST) && $model->validate()){
-			/// send email
-			\Yii::$app->mail->compose('requestComic', ['model' => $model])
-				->setFrom([\Yii::$app->params['supportEmail'] => 'Sam Millman'])
-				->setTo(\Yii::$app->params['adminEmail'])
-				->setSubject('Comic Request for c!y')
-				->send();
-			return json_encode(['success' => true]);
-		}else{
-			return json_encode(['success' => false, 'errors' => $model->getErrors()]);
-		}
-	}
-	
-	public function actionRenderImage($id)
-	{
-		return Comic::renderStripImage($id);
-	}
+    public function actionView($id = null, $index = null)
+    {
+        $this->layout = 'tabbedComics';
+
+        $comic = null;
+        $condition = ['live' => 1];
+
+        if ($id) {
+            $condition['_id'] = new ObjectID($id);
+        }
+        if (
+            !(
+                $comic = Comic::find()
+                    ->where($condition)
+                    ->orderBy(['title' => SORT_ASC])
+                    ->one()
+            )
+        ) {
+            return $this->render('comicNotFound');
+        }
+
+        if (!$current = $comic->current($index)) {
+            return $this->render('comicStripNotFound', ['model' => $comic]);
+        }
+
+        $current->comic = $comic;
+        $previous = $comic->previous($current);
+        $next = $comic->next($current);
+
+        return $this->render(
+            'view',
+            [
+                'model' => $comic,
+                'comicStrip' => $current,
+                'previousStrip' => $previous,
+                'nextStrip' => $next,
+            ]
+        );
+    }
+
+    public function actionSubscribe()
+    {
+        if (
+            ($comic_id = Yii::$app->getRequest()->get('comic_id')) &&
+            ($model = Comic::find()->where(['_id' => new ObjectID($comic_id)])->one())
+        ) {
+            $user = Yii::$app->user->identity;
+            if ($user->addComic($model->_id)) {
+                return Json::encode([
+                    'success' => true,
+                    'message' => Yii::t(
+                        'app',
+                        'You subscribed to {title}',
+                        ['title' => $model->title]
+                    )
+                ]);
+            }
+            return Json::encode([
+                'success' => false,
+                'message' => Yii::t(
+                    'app',
+                    'Unknown error'
+                )
+            ]);
+        }
+        return Json::encode([
+            'success' => false,
+            'message' => Yii::t(
+                'app',
+                'Comic not found'
+            )
+        ]);
+    }
+
+    public function actionUnsubscribe()
+    {
+        if (
+            ($comic_id = Yii::$app->getRequest()->get('comic_id')) &&
+            ($model = Comic::find()->where(['_id' => new ObjectID($comic_id)])->one())
+        ) {
+            $user = Yii::$app->user->identity;
+            if ($user->removeComic($model->_id)) {
+                return Json::encode([
+                    'success' => true,
+                    'message' => Yii::t(
+                        'app',
+                        'You unsubscribed from {title}',
+                        ['title' => $model->title]
+                    )
+                ]);
+            }
+            return Json::encode([
+                'success' => false,
+                'message' => Yii::t(
+                    'app',
+                    'Unknown error'
+                )
+            ]);
+        }
+        return Json::encode([
+            'success' => false,
+            'message' => Yii::t(
+                'app',
+                'Comic not found'
+            )
+        ]);
+    }
+
+    public function actionRequest()
+    {
+        $model = $this->comicRequestForm();
+
+        if ($model->load($_POST) && $model->validate()) {
+            /// send email
+            Yii::$app->mail
+                ->compose('requestComic', ['model' => $model])
+                ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->params['supportName']])
+                ->setTo(Yii::$app->params['adminEmail'])
+                ->setSubject(
+                    Yii::t(
+                        'app',
+                        'Comic Request for c!y'
+                    )
+                )
+                ->send();
+            return Json::encode([
+                'success' => true,
+                'message' => Yii::t(
+                    'app',
+                    'Request has been received, thank you!'
+                )
+            ]);
+        } else {
+            return Json::encode([
+                'success' => false,
+                'errors' => $model->getErrors(),
+                'message' => Yii::t(
+                    'app',
+                    'Could not send your request because:'
+                )
+            ]);
+        }
+    }
+
+    public function actionRenderImage($id)
+    {
+        return Comic::renderStripImage($id);
+    }
+
+    protected function comicRequestForm()
+    {
+        return (
+            new DynamicModel([
+                'url',
+                'name',
+                'email'
+            ])
+        )
+            ->addRule(['url', 'name'], 'required')
+            ->addRule('url', 'url')
+            ->addRule('email', 'email')
+            ->addRule('name', 'string', ['max' => 350]);
+    }
 }
