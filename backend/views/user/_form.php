@@ -28,8 +28,7 @@ use yii\helpers\Url;
             foreach ($rolesResult as $v) {
                 $roles[$v->name] = $v->name;
             }
-
-            $model->role = Yii::$app->authManager->getAssignments($model->id)[0]->roleName;
+            $model->role = key(Yii::$app->authManager->getAssignments($model->id));
 
             echo $form->field($model, 'role')->dropdownList($roles)
             ?>

@@ -19,7 +19,7 @@ $this->registerJs("
 	});
 ");
 ?>
-<div class="user-settings">
+<div class="user-update">
     <h2><?= Yii::t('app', 'Subscriptions') ?></h2>
     <?php $form = ActiveForm::begin(['id' => 'user-update', 'enableClientValidation' => false]) ?>
 

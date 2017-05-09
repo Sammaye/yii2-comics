@@ -29,9 +29,9 @@ class ComicStrip extends ActiveRecord
 
     public function rules()
     {
-        $dateValidator = [
+        $index = $next = $previous = [
             '',
-            'yii\mongodb\MongoDateValidator',
+            'yii\mongodb\validators\MongoDateValidator',
             'format' => 'php:d/m/Y',
             'mongoDateAttribute' => '',
             'when' => function ($model) {
@@ -42,27 +42,22 @@ class ComicStrip extends ActiveRecord
     		}"
         ];
 
+        $index[0] = $index['mongoDateAttribute'] = 'index';
+        $next[0] = $next['mongoDateAttribute'] = 'next';
+        $previous[0] = $next['mongoDateAttribute'] = 'previous';
+
         $rules = [
             [['comic_id'], 'required'],
-            ['comic_id', 'yii\mongodb\MongoIdValidator', 'forceFormat' => 'object'],
+            ['comic_id', 'yii\mongodb\validators\MongoIdValidator', 'forceFormat' => 'object'],
 
             ['url', 'string', 'max' => 250],
 
             ['skip', 'integer', 'min' => 0, 'max' => 1],
             ['skip', 'filter', 'filter' => 'intval'],
 
-            array_merge(
-                $dateValidator,
-                ['index', 'mongoDateAttribute' => 'index']
-            ),
-            array_merge(
-                $dateValidator,
-                ['next', 'mongoDateAttribute' => 'next']
-            ),
-            array_merge(
-                $dateValidator,
-                ['previous', 'mongoDateAttribute' => 'previous']
-            ),
+            $index,
+            $next,
+            $previous,
 
             /*
             [
@@ -93,7 +88,7 @@ class ComicStrip extends ActiveRecord
 
             [
                 'date',
-                'yii\mongodb\MongoDateValidator',
+                'yii\mongodb\validators\MongoDateValidator',
                 'format' => 'php:d/m/Y',
                 'mongoDateAttribute' => 'date',
             ],

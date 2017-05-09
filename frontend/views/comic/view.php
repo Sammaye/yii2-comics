@@ -16,7 +16,7 @@ if ($model->type === Comic::TYPE_DATE) {
 		dateFormat : 'dd-mm-yy',
 		changeMonth: true,
 		changeYear: true,
-		maxDate: '" . date('d-m-Y', $model->comic->last_index) . "'
+		maxDate: '" . $model->getLatestIndexValue() . "'
 	});
 	");
 } else {

@@ -4,6 +4,7 @@ namespace common\components;
 
 use Yii;
 use yii2tech\embedded\mongodb\ActiveRecord as BaseActiveRecord;
+use ReflectionClass;
 
 class ActiveRecord extends BaseActiveRecord
 {

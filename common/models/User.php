@@ -43,6 +43,12 @@ class User extends ActiveRecord implements IdentityInterface
 
     public function rules()
     {
+        $rolesResult = Yii::$app->authManager->getRoles();
+        $roles = [];
+        foreach ($rolesResult as $v) {
+            $roles[] = $v->name;
+        }
+
         return [
 
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
@@ -51,6 +57,7 @@ class User extends ActiveRecord implements IdentityInterface
                 self::STATUS_BANNED,
                 self::STATUS_ACTIVE
             ]],
+            ['status', 'filter', 'filter' => 'intval'],
 
             ['username', 'required'],
             ['username', 'string', 'min' => 3, 'max' => 20],
@@ -125,6 +132,8 @@ class User extends ActiveRecord implements IdentityInterface
             ['adminSetPassword', 'filter', 'filter' => 'trim'],
             ['adminSetPassword', 'string', 'min' => 6],
             ['adminSetPassword', 'required', 'on' => [self::SCENARIO_ADMIN]],
+
+            ['role', 'in', 'range' => $roles],
 
             [
                 [
@@ -335,7 +344,7 @@ class User extends ActiveRecord implements IdentityInterface
 
         $comics[] = [
             'date' => new UTCDateTime(time() * 1000),
-            '_id' => $id instanceof ObjectID ? $id : new ObjectID($id)
+            'comic_id' => $id instanceof ObjectID ? $id : new ObjectID($id)
         ];
         $this->comics = $comics;
 
@@ -362,10 +371,13 @@ class User extends ActiveRecord implements IdentityInterface
             return true;
         }
         $newSubs = [];
-        foreach ($currentSubs as $k => $sub) {
-            foreach ($subs as $sk => $subKey) {
-                if ($subKey === (String)$sub['comic_id']) {
-                    $newSubs[$sk] = $sub;
+
+        if (is_array($subs) && count($subs) > 0) {
+            foreach ($currentSubs as $k => $sub) {
+                foreach ($subs as $sk => $subKey) {
+                    if ($subKey === (String)$sub['comic_id']) {
+                        $newSubs[$sk] = $sub;
+                    }
                 }
             }
         }

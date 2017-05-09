@@ -14,9 +14,11 @@ $(document).on('change', '#comic-scraper', function(){
         ) . "', 
 		{
 			type_change: JSON.stringify(
-				$('#comicForm input:not(input[name=\'_csrf\']), #comicForm select, #comicForm textarea')
-				.serializeArray()
-			)
+				$('#comic-form')
+				    .find('input:not(input[name=\'_csrf\']), select, textarea')
+				    .serializeArray()
+			),
+			_csrf: $('#comic-form').find('input[name=_csrf]').val()
 		}
 	);
 });

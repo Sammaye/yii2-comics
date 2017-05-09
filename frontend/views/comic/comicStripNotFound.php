@@ -17,14 +17,18 @@ $this->title = Yii::t('app', '#404 ZOMG strip Not Found!');
     <div class="comic-date-picker">
         <form method="get" action="<?= Url::to(['comic/view', 'id' => (String)$model->_id]) ?>">
             <div>
-                <a href="#" disabled="disabled" class="btn btn-lg btn-default">&laquo;</a>
+                <?php if ($model->current_index) { ?>
+                    <a href="<?= $model->indexUrl($model->current_index) ?>" class="btn btn-lg btn-default">&laquo;</a>
+                <?php } else { ?>
+                    <a href="#" disabled="disabled" class="btn btn-lg btn-default">&laquo;</a>
+                <?php } ?>
                 <input
                     type="text"
                     class="form-control input-lg"
                     name="index"
                     id="datepicker"
                     value="<?php
-                    if (Yii::$app->request->get('index')) {
+                    if ($value = Yii::$app->request->get('index')) {
                         $value = $model->index($value);
                         if ($value instanceof UTCDateTime) {
                             echo date('d-m-Y', $value->toDateTime()->getTimestamp());
@@ -32,7 +36,7 @@ $this->title = Yii::t('app', '#404 ZOMG strip Not Found!');
                             echo $value;
                         }
                     } else {
-                        $value = '####';
+                        echo '####';
                     }
                     ?>"
                 />

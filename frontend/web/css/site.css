@@ -152,6 +152,10 @@ a.desc:after {
     margin: 20px 0;
 }
 
+.site-login .new-user-signup {
+    text-align: center;
+}
+
 .view-comic-content {
     border: 1px solid #ddd;
     border-top: 0;
@@ -368,48 +372,48 @@ a.desc:after {
     display: none;
 }
 
-.user-settings h2 {
+.user-update h2 {
     margin: 30px 0 20px 0;
 }
 
-.site-login .new-user-signup {
-    text-align: center;
-}
-
-.user-settings .sortable-outer {
+.user-update .sortable-outer {
     border: 1px solid #ccc;
     border-top: 0;
     border-bottom: 0;
     margin: 30px 0;
 }
 
-.user-settings .sortable-subscriptions {
+.user-update .sortable-subscriptions {
     padding: 0;
 }
 
-.user-settings .sortable-subscriptions li {
+.user-update .sortable-subscriptions li {
     border-top: 1px solid #ccc;
     list-style: none;
     padding: 15px;
 }
 
-.user-settings .sortable-subscriptions li span {
+.user-update .sortable-subscriptions li span {
     font-size: 16px;
     display: block;
     padding-top: 5px;
     float: left;
 }
 
-.user-settings .sortable-subscriptions li .btn {
+.user-update .sortable-subscriptions li .btn {
     float: right;
 }
 
-.user-settings .sortable-subscriptions li:last-child {
+.user-update .sortable-subscriptions li:last-child {
     border-bottom: 1px solid #ccc;
 }
 
-.user-settings .delete-account-link {
+.user-update .delete-account-link {
     margin-top: 50px;
+}
+
+.user-update .panel-user-delete{
+    margin-top:30px;
 }
 
 .navbar-toggle {

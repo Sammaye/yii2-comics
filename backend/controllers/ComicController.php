@@ -40,17 +40,16 @@ class ComicController extends Controller
     public function actionCreate()
     {
         $record = [];
-        if ($typeChange = Json::decode(Yii::$app->request->post('type_change', []))) {
+        if ($typeChange = Json::decode(Yii::$app->request->post('type_change', '{}'))) {
             foreach ($typeChange as $k => $v) {
-                $name = preg_replace('#Comic\[#', '', rtrim($v->name, ']'));
-                $record[$name] = $v->value;
+                $name = preg_replace('#Comic\[#', '', rtrim($v['name'], ']'));
+                $record[$name] = $v['value'];
             }
         }
-        if ($record) {
-            $model = Comic::instantiate($record);
-            Comic::populateRecord($model, $record);
-            $model->setOldAttributes(null);
-        }
+
+        $model = Comic::instantiate($record);
+        Comic::populateRecord($model, $record);
+        $model->setOldAttributes(null);
 
         if ($model->load($_POST) && $model->save()) {
             Yii::$app->getSession()->setFlash(
@@ -68,10 +67,10 @@ class ComicController extends Controller
         $model = $this->loadModel($id);
 
         $record = [];
-        if ($typeChange = Json::decode(Yii::$app->request->post('type_change', []))) {
+        if ($typeChange = Json::decode(Yii::$app->request->post('type_change', '{}'))) {
             foreach ($typeChange as $k => $v) {
-                $name = preg_replace('#Comic\[#', '', rtrim($v->name, ']'));
-                $record[$name] = $v->value;
+                $name = preg_replace('#Comic\[#', '', rtrim($v['name'], ']'));
+                $record[$name] = $v['value'];
             }
         }
         if ($record) {

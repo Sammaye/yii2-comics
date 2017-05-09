@@ -56,9 +56,9 @@ class Comic extends ActiveRecord
 
     public function rules()
     {
-        $dateValidatorOptions = [
+        $current_index = $first_index = $last_index = [
             '',
-            'yii\mongodb\MongoDateValidator',
+            'yii\mongodb\validators\MongoDateValidator',
             'format' => 'php:d/m/Y',
             'mongoDateAttribute' => '',
             'when' => function ($model) {
@@ -68,6 +68,10 @@ class Comic extends ActiveRecord
         		return $('#comic-type').val() == '" . self::TYPE_DATE . "';
     		}"
         ];
+
+        $current_index[0] = $current_index['mongoDateAttribute'] = 'current_index';
+        $first_index[0] = $first_index['mongoDateAttribute'] = 'first_index';
+        $last_index[0] = $last_index['mongoDateAttribute'] = 'last_index';
 
         return [
 
@@ -108,18 +112,9 @@ class Comic extends ActiveRecord
         			return $('#comic-type').val() == '" . self::TYPE_DATE . "';
     			}"
             ],
-            array_merge(
-                $dateValidatorOptions,
-                ['current_index', 'mongoDateAttribute' => 'current_index']
-            ),
-            array_merge(
-                $dateValidatorOptions,
-                ['first_index', 'mongoDateAttribute' => 'first_index']
-            ),
-            array_merge(
-                $dateValidatorOptions,
-                ['last_index', 'mongoDateAttribute' => 'last_index']
-            ),
+            $current_index,
+            $first_index,
+            $last_index,
 
             //['index_format', 'default', '#^\d+$#'],
             [
@@ -439,6 +434,14 @@ class Comic extends ActiveRecord
         return $this->first_index;
     }
 
+    public function getLatestIndexValue()
+    {
+        if ($current_index = $this->getCurrentIndexValue()) {
+            return $current_index;
+        }
+        return $this->getLastIndexValue();
+    }
+
     public function index($index = null)
     {
         $index = $index ?: $this->current_index;
@@ -506,7 +509,7 @@ class Comic extends ActiveRecord
         }
 
         if ($save) {
-            $this->save(['current_index']);
+            $this->save(false, ['current_index']);
         }
     }
 
@@ -719,7 +722,7 @@ class Comic extends ActiveRecord
 
         $this->updateIndex($strip->index, false);
         $this->last_checked = new UTCDateTime($timeToday * 1000);
-        if (!$this->save(['last_checked', 'current_index'])) {
+        if (!$this->save(false, ['last_checked', 'current_index'])) {
             Yii::warning(
                 Yii::t(
                     'app',

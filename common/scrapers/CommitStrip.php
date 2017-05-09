@@ -78,7 +78,7 @@ class CommitStrip extends Comic
             // If the document existed as we updated it then just return a findOne of it
             if(
                 $this->populateStrip($model) && 
-                $model->save(['next'])
+                $model->save(false, ['next'])
             ){
 		        return $model;
 		    }
