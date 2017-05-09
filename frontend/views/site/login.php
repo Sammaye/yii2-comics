@@ -25,6 +25,7 @@ $this->title = Yii::t('app', 'Login');
                 <li><?= $authAuthChoice->clientLink($client) ?></li>
             <?php endforeach; ?>
         </ul>
+        <?php $authAuthChoice->end() ?>
         <p class="text-center text-muted"><?= Yii::t('app', 'Or manually') ?>:</p>
 
         <div class="login-form">

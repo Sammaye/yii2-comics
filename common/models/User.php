@@ -45,7 +45,6 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return [
 
-            ['status', 'required'],
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [
                 self::STATUS_DELETED,
@@ -212,7 +211,7 @@ class User extends ActiveRecord implements IdentityInterface
     /**
      * Finds user by username
      *
-     * @param  string $username
+     * @param  string $email
      * @return static|null
      */
     public static function findByUsername($email)
@@ -328,14 +327,14 @@ class User extends ActiveRecord implements IdentityInterface
     public function addComic($id)
     {
         $comics = is_array($this->comics) ? $this->comics : [];
-        foreach($comics as $comic){
-            if((String)$comic['comic_id'] === (String)$id){
+        foreach ($comics as $comic) {
+            if ((String)$comic['comic_id'] === (String)$id) {
                 return true;
             }
         }
 
         $comics[] = [
-            'date' => new UTCDateTime(time()*1000),
+            'date' => new UTCDateTime(time() * 1000),
             '_id' => $id instanceof ObjectID ? $id : new ObjectID($id)
         ];
         $this->comics = $comics;
@@ -346,8 +345,8 @@ class User extends ActiveRecord implements IdentityInterface
     public function removeComic($id)
     {
         $comics = is_array($this->comics) ? $this->comics : [];
-        foreach($comics as $k => $comic){
-            if((String)$comic['comic_id'] === (String)$id){
+        foreach ($comics as $k => $comic) {
+            if ((String)$comic['comic_id'] === (String)$id) {
                 unset($comics[$k]);
             }
         }

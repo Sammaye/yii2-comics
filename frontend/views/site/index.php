@@ -34,13 +34,14 @@ $this->params['excludeContainer'] = true;
                             'baseAuthUrl' => ['site/auth'],
                             'popupMode' => false,
                         ]); ?>
-                        <p class="text-center text-muted"><?= Yii::t('app', 'Using your favourite network') ?>:</p>
+                        <p class="text-center"><?= Yii::t('app', 'Using your favourite network') ?>:</p>
                         <ul class="social-login-methods">
                             <?php foreach ($authAuthChoice->getClients() as $client): ?>
                                 <li><?= $authAuthChoice->clientLink($client) ?></li>
                             <?php endforeach; ?>
                         </ul>
-                        <p class="text-center text-muted"><?= Yii::t('app', 'Or manually') ?>:</p>
+                        <?php $authAuthChoice->end() ?>
+                        <p class="text-center"><?= Yii::t('app', 'Or manually') ?>:</p>
                         <?php
                         $model = new SignupForm();
                         $form = ActiveForm::begin(['id' => 'form-signup', 'action' => ['site/signup']]); ?>

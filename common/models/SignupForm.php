@@ -1,4 +1,5 @@
 <?php
+
 namespace common\models;
 
 use common\models\User;
@@ -33,7 +34,7 @@ class SignupForm extends Model
                 'targetClass' => User::class,
                 'message' => Yii::t('app', 'This email address has already been taken')
             ],
-            
+
             ['password', 'required'],
             ['password', 'string', 'min' => 6],
         ];
@@ -50,11 +51,10 @@ class SignupForm extends Model
             $user = new User();
             $user->username = $this->username;
             $user->email = $this->email;
-            $user->role = $this->role;
             $user->setPassword($this->password);
 
             $user->generateAuthKey();
-            if($user->save()){
+            if (!$user->save()) {
                 $this->addError(
                     'username',
                     Yii::t(
@@ -62,6 +62,7 @@ class SignupForm extends Model
                         'Unknown error'
                     )
                 );
+                return null;
             }
 
             $auth = \Yii::$app->authManager;

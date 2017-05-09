@@ -7,7 +7,4 @@ use yii\web\Cookie;
 
 class Controller extends \yii\web\Controller
 {
-	public function beforeAction($action)
-	{
-	}
 }

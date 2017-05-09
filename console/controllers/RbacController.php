@@ -15,7 +15,7 @@ class RbacController extends Controller
 
         $staff = $auth->createRole('staff');
         $auth->add($staff);
-        $auth->addChild($staff, $moderator);
+        $auth->addChild($staff, $user);
 
         $admin = $auth->createRole('admin');
         $auth->add($admin);

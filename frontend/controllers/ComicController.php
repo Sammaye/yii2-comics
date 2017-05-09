@@ -154,7 +154,7 @@ class ComicController extends Controller
 
         if ($model->load($_POST) && $model->validate()) {
             /// send email
-            Yii::$app->mail
+            Yii::$app->mailer
                 ->compose('requestComic', ['model' => $model])
                 ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->params['supportName']])
                 ->setTo(Yii::$app->params['adminEmail'])
@@ -189,7 +189,7 @@ class ComicController extends Controller
         return Comic::renderStripImage($id);
     }
 
-    protected function comicRequestForm()
+    public function comicRequestForm()
     {
         return (
             new DynamicModel([

@@ -45,7 +45,7 @@ return [
         ],
         'mailer' => [
             'class' => 'common\components\ses\Mailer',
-	        'viewPath' => '@common/mails',
+	        'viewPath' => '@common/mail',
         ],
         'assetManager' => [
 	        'bundles' => [
