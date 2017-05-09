@@ -146,7 +146,7 @@ class UserController extends Controller
 
     public function loadModel($id)
     {
-        $model = User::findOne((int)$id);
+        $model = User::findOne(new ObjectId($id));
         if ($model === null) {
             throw new NotFoundHttpException();
         }
