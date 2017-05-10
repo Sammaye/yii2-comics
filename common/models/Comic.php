@@ -272,6 +272,7 @@ class Comic extends ActiveRecord
             );
         } elseif (
             $this->type === self::TYPE_ID &&
+            $this->isIndexInt($this->current_index) &&
             $this->current_index > $this->last_index
         ) {
             $this->addError(
@@ -501,6 +502,7 @@ class Comic extends ActiveRecord
                 $this->current_index = $index;
             } elseif (
                 $this->type === self::TYPE_ID &&
+                $this->isIndexInt($index) &&
                 $index > $this->current_index
             ) {
                 $this->current_index = $index;
@@ -524,6 +526,7 @@ class Comic extends ActiveRecord
                 return true;
             } elseif (
                 $this->type === self::TYPE_ID &&
+                $this->isIndexInt($index) &&
                 $index > $this->current_index
             ) {
                 return true;
@@ -536,10 +539,19 @@ class Comic extends ActiveRecord
                 return true;
             } elseif (
                 $this->type === self::TYPE_ID &&
+                $this->isIndexInt($index) &&
                 $index > $this->last_index
             ) {
                 return true;
             }
+        }
+        return false;
+    }
+
+    public function isIndexInt($value)
+    {
+        if (preg_match('#^[0-9]+$#', $value)) {
+            return true;
         }
         return false;
     }

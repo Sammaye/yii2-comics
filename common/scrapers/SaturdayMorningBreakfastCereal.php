@@ -11,7 +11,7 @@ use GuzzleHttp\Exception\ClientException;
 use MongoDB\BSON\UTCDateTime;
 use MongoDB\BSON\Binary;
 
-class LoadingArtist extends Comic
+class SaturdayMorningBreakfastCereal extends Comic
 {
     public function updateIndex($index, $save = true)
     {
@@ -58,7 +58,7 @@ class LoadingArtist extends Comic
                 $strip = $this->downloadStrip($strip->next, $data);
                 return $strip;
             } elseif ($ignoreCurrent) {
-                // $ignoreCurrent will normally be from admin 
+                // $ignoreCurrent will normally be from admin
                 // functions such as the scraper
                 Yii::warning(
                     Yii::t(
@@ -160,15 +160,10 @@ class LoadingArtist extends Comic
 
     public function navLink($type, $stripDom)
     {
-        if ($type === 'prev') {
-            $elements = $stripDom->query(
-                "//a[@class='prev bottom ir ir-$type']"
-            );
-        } else {
-            $elements = $stripDom->query(
-                "//a[@class='next bottom ir ir-$type']"
-            );
-        }
+        $elements = $stripDom->query(
+            "//div[@class='nav']/a[@class='$type']"
+        );
+
         if ($elements) {
             foreach ($elements as $element) {
                 // Only ever need the first one
@@ -176,7 +171,7 @@ class LoadingArtist extends Comic
                 $matches = [];
                 $baseUrl = str_replace('{$value}', '', $this->scrape_url);
                 preg_match_all(
-                    '#^' . preg_quote($baseUrl) . '(.*)\/$#',
+                    '#^' . preg_quote($baseUrl) . '(.*)$#',
                     $element->getAttribute('href'),
                     $matches
                 );
