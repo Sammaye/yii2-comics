@@ -31,7 +31,7 @@ class ComicStrip extends ActiveRecord
     {
         $index = $next = $previous = [
             '',
-            'yii\mongodb\validators\MongoDateValidator',
+            'common\components\MongoDateValidator',
             'format' => 'php:d/m/Y',
             'mongoDateAttribute' => '',
             'when' => function ($model) {
@@ -88,7 +88,7 @@ class ComicStrip extends ActiveRecord
 
             [
                 'date',
-                'yii\mongodb\validators\MongoDateValidator',
+                'common\components\MongoDateValidator',
                 'format' => 'php:d/m/Y',
                 'mongoDateAttribute' => 'date',
             ],

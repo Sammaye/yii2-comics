@@ -29,9 +29,9 @@ class ComicController extends Controller
                 : new ObjectID($comic_id);
 
             if (
-            $comic = Comic::find()
-                ->where(['_id' => $comic_id, 'live' => 1])
-                ->one()
+                $comic = Comic::find()
+                    ->where(['_id' => $comic_id, 'live' => 1])
+                    ->one()
             ) {
                 $comic->scrapeStrip();
                 return self::EXIT_CODE_NORMAL;

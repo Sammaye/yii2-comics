@@ -14,7 +14,7 @@ use yii\helpers\Url;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use yii\imagine\Image;
-use yii\mongodb\validators\MongoDateValidator;
+use common\components\MongoDateValidator;
 use common\models\ComicStrip;
 
 use MongoDB\BSON\UTCDateTime;
@@ -58,7 +58,7 @@ class Comic extends ActiveRecord
     {
         $current_index = $first_index = $last_index = [
             '',
-            'yii\mongodb\validators\MongoDateValidator',
+            'common\components\MongoDateValidator',
             'format' => 'php:d/m/Y',
             'mongoDateAttribute' => '',
             'when' => function ($model) {
@@ -112,6 +112,7 @@ class Comic extends ActiveRecord
         			return $('#comic-type').val() == '" . self::TYPE_DATE . "';
     			}"
             ],
+
             $current_index,
             $first_index,
             $last_index,
@@ -654,7 +655,7 @@ class Comic extends ActiveRecord
      */
     public function scrapeStrip()
     {
-        $timeToday = mktime(0, 0, 0, date('m'), date('d'), date('Y'));
+        $timeToday = (new \DateTime('now'))->setTime(0, 0)->getTimestamp();
 
         $strip = $this->current();
         $archiveRotated = false;
