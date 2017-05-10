@@ -9,6 +9,8 @@ use yii\web\HttpException;
 use common\components\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Inflector;
 use common\models\User;
 use common\models\LoginForm;
 use common\models\PasswordResetRequestForm;
@@ -73,36 +75,47 @@ class SiteController extends Controller
 
         if (!($authclient = Yii::$app->getRequest()->get('authclient'))) {
             // boom
-            throw new HttpException(403, 'Something went terribly wrong in 
-    			the social network and they have given off a bad request');
+            throw new HttpException(
+                403,
+                Yii::t(
+                    'app',
+                    'Social network returned a bad request'
+                )
+            );
         }
 
         if ($authclient === 'facebook') {
 
-            // Nomralise googlemail to gmail
-            $gmailEmail = preg_replace('/googlemail.com/', 'gmail.com', $attributes['email']);
-            $googleEmail = preg_replace('/gmail.com/', 'googlemail.com', $attributes['email']);
-
-            if (
-                !($user = User::find()->where(['facebook_id' => $attributes['id']])->one()) &&
-                !($user = User::find()->where(['or', ['email' => $gmailEmail], ['email' => $googleEmail]])->one())
-            ) {
-                // New user
-                $user = new User;
-                $user->username = $attributes['name'] . rand(100, 3234567);
-                $user->email = $attributes['email'];
+            $field = 'facebook_id';
+            $id = ArrayHelper::getValue($attributes, 'id');
+            $username = Inflector::slug(
+                ArrayHelper::getValue($attributes, 'name') . rand(100, 3234567),
+                ''
+            );
+            $email = ArrayHelper::getValue($attributes, 'email');
+            if (!$email) {
+                Yii::$app->session->setFlash(
+                    'error',
+                    Yii::t(
+                        'app',
+                        'Your Facebook account has no email, please add one'
+                    )
+                );
+                return Url::to(['site/signup']);
             }
 
-            $user->facebook_id = $attributes['id'];
-            if (!$user->save()) {
-                // Boom
-                throw new HttpException(403, 'Could not seem to save your user,
-    				you may wish to visit this sites help section for support');
-            }
         } elseif ($authclient === 'google') {
 
+            $field = 'google_id';
+            $id = ArrayHelper::getValue($attributes, 'id');
+            $username = Inflector::slug(
+                ArrayHelper::getValue($attributes, 'displayName') . rand(100, 3234567),
+                ''
+            );
             $email = null;
-            foreach ($attributes['emails'] as $e) {
+
+            $emails = ArrayHelper::getValue($attributes, 'emails');
+            foreach ($emails as $e) {
                 if (
                     (
                         preg_match('/googlemail.com/', $e['value']) ||
@@ -116,32 +129,51 @@ class SiteController extends Controller
             }
 
             if (!$email) {
-                // boom
-                throw new HttpException(403, 'Could not seem to get an email for your account');
-            }
-
-            $gmailEmail = preg_replace('/googlemail.com/', 'gmail.com', $email);
-            $googleEmail = preg_replace('/gmail.com/', 'googlemail.com', $email);
-
-            if (
-                !($user = User::find()->where(['google_id' => $attributes['id']])->one()) &&
-                !($user = User::find()->where(['or', ['email' => $gmailEmail], ['email' => $googleEmail]])->one())
-            ) {
-                // New user
-                $user = new User;
-                $user->username = $attributes['displayName'] . rand(100, 3234567);
-                $user->email = $email;
-            }
-
-            $user->google_id = $attributes['id'];
-            if (!$user->save()) {
-                // Boom
-                throw new HttpException(403, 'Could not seem to save your user, 
-    				you may wish to visit this sites help section for support');
+                Yii::$app->session->setFlash(
+                    'error',
+                    Yii::t(
+                        'app',
+                        'Your Google account has no email, please add one'
+                    )
+                );
+                return Url::to(['site/signup']);
             }
         } else {
             // Boom again
-            throw new HttpException(403, 'That is not currently a valid sign in method');
+            throw new HttpException(
+                403,
+                Yii::t(
+                    'app',
+                    'That is not currently a valid sign in method'
+                )
+            );
+        }
+
+        // Nomralise googlemail to gmail
+        $gmailEmail = preg_replace('/googlemail.com/', 'gmail.com', $email);
+        $googleEmail = preg_replace('/gmail.com/', 'googlemail.com', $email);
+
+        if (
+            !($user = User::find()->where([$field => $attributes['id']])->one()) &&
+            !($user = User::find()->where(['email' => ['$in' => [$gmailEmail, $googleEmail]]])->one())
+        ) {
+            // New user
+            $user = new User;
+            $user->username = $username;
+            $user->email = $email;
+        }
+
+        $user->$field = $id;
+
+        if (!$user->save()) {
+            // Boom
+            throw new HttpException(
+                403,
+                Yii::t(
+                    'app',
+                    'Could not save your data, visit the help section for support'
+                )
+            );
         }
 
         // then log them in
@@ -150,8 +182,13 @@ class SiteController extends Controller
         if ($model->login(false)) {
         } else {
             // Boom
-            throw new HttpException(403, 'Could not seem to log you in however, everything 
-    			else succeeded. You could try again or visit the help section for support');
+            throw new HttpException(
+                403,
+                Yii::t(
+                    'app',
+                    'Could not log you in. Try again or visit the help section for support'
+                )
+            );
         }
     }
 

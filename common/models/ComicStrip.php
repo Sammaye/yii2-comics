@@ -44,7 +44,7 @@ class ComicStrip extends ActiveRecord
 
         $index[0] = $index['mongoDateAttribute'] = 'index';
         $next[0] = $next['mongoDateAttribute'] = 'next';
-        $previous[0] = $next['mongoDateAttribute'] = 'previous';
+        $previous[0] = $previous['mongoDateAttribute'] = 'previous';
 
         $rules = [
             [['comic_id'], 'required'],
