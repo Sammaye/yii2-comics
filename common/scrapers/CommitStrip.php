@@ -161,9 +161,9 @@ class CommitStrip extends Comic
     public function navLink($type, $stripDom)
     {
         $elements = $stripDom->query(
-            "//div[@id='content']/div[@class='swiper-wrapper']/div[@class='swiper-slide']/nav[@class='nav-single']/span[@class='nav-$type']/a"
+            "//div[@id='content']/div[@class='swiper-container']/div[@class='swiper-wrapper']/div[@class='swiper-slide']/nav[@class='nav-single']/span[@class='nav-$type']/a"
         );
-        
+
 		if($elements){
 			foreach($elements as $element){
                 // Only ever need the first one
