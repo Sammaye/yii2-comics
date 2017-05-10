@@ -8,6 +8,8 @@ use common\widgets\Select2Asset;
 
 Select2Asset::register($this);
 
+$this->params['excludeContainer'] = true;
+
 $this->registerJs("
 
 $('.alert-summarise').summarise();
@@ -44,19 +46,19 @@ $('#request-comic-modal').on('hidden.bs.modal', function () {
 $('#comicSelector').select2({
 	width: '100%',
 	placeholder: 'Select a Comic',
+	dropdownCssClass: 'view-comic-select-comic-results',
 	templateSelection: function (selection) {
 		try{
 			var o = $.parseJSON(selection.text);
-			return $('<span/>').html(o.title + '<span>By ' + o.author + '</span>');
+			return $('<span/>').html(o.title + (o.author ? '<span>By ' + o.author + '</span>' : ''));
 		}catch(e){
 			return selection.text;
 		}
 	},
 	templateResult: function (result) {
-		console.log(result);
 		try{
 			var o = $.parseJSON(result.text);
-			return $('<span/>').html(o.title + '<span>By ' + o.author + '</span>'); 
+			return $('<span/>').html(o.title + (o.author ? '<span>By ' + o.author + '</span>' : '')); 
 		}catch(e){
 			return result.text;
 		}
@@ -67,7 +69,6 @@ $('#comicSelector').on('change', function(e){
 	window.location.href = '" . Url::to(['/comic']) . '/' . "' + $('#comicSelector option:selected').val();
 });
 ");
-
 
 $this->beginContent('@app/views/layouts/main.php'); ?>
 
@@ -85,32 +86,40 @@ foreach (
     //}
 }
 ?>
-    <div class="view-comic-nav-top">
-        <div class="row">
-            <div class="col-sm-35">
-                <?php if (count($comics) > 0) {
-                    echo Html::dropDownList(
-                        'comcSelector',
-                        isset($this->params['comic_id']) ? $this->params['comic_id'] : null,
-                        $comics,
-                        ['id' => 'comicSelector', 'class' => 'form-control']
-                    );
-                } ?>
-            </div>
-            <div class="col-sm-13">
-                <ul class="nav nav-tabs comics-view-nav" role="tablist">
-                    <li class="float-right">
-                        <a href="#" data-toggle="modal" data-target=".request-comic-modal">
-                            <span class="glyphicon glyphicon-plus"></span>
-                            <?= Yii::t('app', 'Demand addition') ?>
-                        </a>
-                    </li>
-                </ul>
+<div class="comic-view">
+    <div class="container">
+        <?= common\widgets\Alert::widget() ?>
+    </div>
+    <div class="nav-top">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-35">
+                    <?php if (count($comics) > 0) {
+                        echo Html::dropDownList(
+                            'comcSelector',
+                            isset($this->params['comic_id']) ? $this->params['comic_id'] : null,
+                            $comics,
+                            ['id' => 'comicSelector', 'class' => 'form-control']
+                        );
+                    } ?>
+                </div>
+                <div class="col-sm-13">
+
+                    <a
+                        href="#"
+                        class="btn btn-default btn-lg btn-transparent pull-right"
+                        data-toggle="modal"
+                        data-target=".request-comic-modal"
+                    >
+                        <span class="glyphicon glyphicon-plus"></span>
+                        <?= Yii::t('app', 'Demand Addition') ?>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="view-comic-content"><?= $content ?></div>
+    <div class="content container"><?= $content ?></div>
 
     <div class="modal fade request-comic-modal" id="request-comic-modal">
         <div class="modal-dialog">
@@ -162,5 +171,5 @@ foreach (
             </div>
         </div>
     </div>
-
+</div>
 <?php $this->endContent() ?>

@@ -39,7 +39,7 @@ $(document).on('click', '.btn-subscribe', function(e){
 		if(data.success){
 			var btn = $('.btn-subscribe');
 			btn.find('span').removeClass('glyphicon-ok').addClass('glyphicon-remove');
-			btn.get(0).lastChild.nodeValue = ' Remove from email';
+			btn.get(0).lastChild.nodeValue = '" . Yii::t('app', 'Unsubscribe') . "';
 			btn.addClass('btn-unsubscribe btn-danger').removeClass('btn-subscribe btn-success');
 		}
 	});
@@ -52,7 +52,7 @@ $(document).on('click', '.btn-unsubscribe', function(e){
 		if(data.success){
 			var btn = $('.btn-unsubscribe');
 			btn.find('span').removeClass('glyphicon-remove').addClass('glyphicon-ok')
-			btn.get(0).lastChild.nodeValue = ' Add to my email';
+			btn.get(0).lastChild.nodeValue = '" . Yii::t('app', 'Subscribe') . "';
 			btn.addClass('btn-subscribe btn-success').removeClass('btn-unsubscribe btn-danger');
 		}
 	});
@@ -105,12 +105,12 @@ $this->params['comic_id'] = (String)$model->_id;
                 ?>
                 <a href="#" class="btn btn-lg btn-danger btn-unsubscribe">
                     <span class="glyphicon glyphicon-remove"></span>
-                    <?= Yii::t('app', 'Remove from email') ?>
+                    <?= Yii::t('app', 'Unsubscribe') ?>
                 </a>
             <?php } else { ?>
                 <a href="#" class="btn btn-lg btn-success btn-subscribe">
                     <span class="glyphicon glyphicon-ok"></span>
-                    <?= Yii::t('app', 'Add to my email') ?>
+                    <?= Yii::t('app', 'Subscribe') ?>
                 </a>
             <?php } ?>
         </div>

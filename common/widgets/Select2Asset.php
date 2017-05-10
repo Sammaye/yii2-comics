@@ -7,7 +7,7 @@ use yii\web\AssetBundle;
 class Select2Asset extends AssetBundle
 {
 	public $css = ['css/select2.css'];
-	public $js = ['js/select2.js'];
+	public $js = ['js/select2.full.js'];
 	public $depends = [
 		'yii\web\JqueryAsset'
 	];
