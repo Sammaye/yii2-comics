@@ -889,9 +889,15 @@ class Comic extends ActiveRecord
         } catch (ClientException $e) {
             // Log the exception
             $this->addScrapeError(
-                (String)$this->_id . ' returned ' .
-                $e->getResponse()->getStatusCode()
-                . ' for ' . $url,
+                Yii::t(
+                    'app',
+                    '{id} returned {response} for {url}',
+                    [
+                        'id' => (String)$this->_id,
+                        'response' => $e->getResponse()->getStatusCode(),
+                        'url' => $url
+                    ]
+                ),
                 $ignoreErrors
             );
             return null;
