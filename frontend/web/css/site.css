@@ -444,7 +444,7 @@ a.desc:after {
 
 .comic-view .nav-top .btn-transparent {
     padding: 13px 16px;
-    margin-bottom:10px;
+    margin-bottom: 10px;
 }
 
 .comic-view .nav-top .btn-transparent:hover,
@@ -457,7 +457,7 @@ a.desc:after {
 }
 
 .comic-view .nav-top .select2-container {
-    margin-bottom:10px;
+    margin-bottom: 10px;
 }
 
 .comic-view .nav-top .select2-container .select2-selection__rendered {
@@ -473,7 +473,7 @@ a.desc:after {
 }
 
 .comic-view .nav-top .select2-container--open .select2-selection--single,
-.comic-view .nav-top .select2-container--open .select2-selection__rendered{
+.comic-view .nav-top .select2-container--open .select2-selection__rendered {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
 }
@@ -508,8 +508,8 @@ a.desc:after {
 }
 
 .comic-view .btn-unsubscribe .glyphicon,
-.comic-view .btn-subscribe .glyphicon{
-    margin-right:5px;
+.comic-view .btn-subscribe .glyphicon {
+    margin-right: 5px;
 }
 
 .comic-view-not-found {
