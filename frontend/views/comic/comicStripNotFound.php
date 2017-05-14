@@ -46,7 +46,7 @@ $this->title = Yii::t('app', '#404 ZOMG strip Not Found!');
     </div>
 
     <div class="alert alert-danger">
-        <?= Yii::t('app', 'C!y has no record of this strip!') ?>
+        <?= Yii::t('app', 'cly has no record of this strip!') ?>
     </div>
     <p><?= Yii::t(
         'app',

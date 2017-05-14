@@ -144,7 +144,10 @@ class SaturdayMorningBreakfastCereal extends Comic
         $model->next = $next;
         $model->previous = $previous;
 
-        $model->img = new Binary(file_get_contents($url), Binary::TYPE_GENERIC);
+        $model->img = new Binary(
+            file_get_contents(str_replace(' ', '%20', $url)),
+            Binary::TYPE_GENERIC
+        );
         return true;
     }
 

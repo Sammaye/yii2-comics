@@ -5,7 +5,7 @@ use yii\helpers\Url;
 /**
  * @var yii\web\View $this
  */
-$this->title = Yii::t('app', 'c!y Help');
+$this->title = Yii::t('app', 'cly Help');
 $this->params['wrapClass'] = 'wrap-white';
 
 ?>

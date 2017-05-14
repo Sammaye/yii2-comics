@@ -8,7 +8,7 @@ $this->beginContent('@app/views/layouts/base.php') ?>
     <div class="wrap<?= isset($this->params['wrapClass']) ? ' ' . $this->params['wrapClass'] : '' ?>">
         <?php
             NavBar::begin([
-                'brandLabel' => Yii::t('app', 'c!y'),
+                'brandLabel' => Yii::t('app', 'cly'),
                 'brandUrl' => Yii::$app->homeUrl,
                 'options' => [
                     'class' => 'navbar navbar-fixed-top',

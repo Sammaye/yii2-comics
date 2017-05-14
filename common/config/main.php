@@ -28,7 +28,7 @@ return [
 					'message' => [
 						'from' => [$params['errorEmail'] => 'Cly Errors'],
 						'to' => [$params['adminEmail']],
-						'subject' => 'c!y Website Error',
+						'subject' => 'cly Website Error',
 					],
 				],
 				[
@@ -38,7 +38,7 @@ return [
                     'message' => [
 						'from' => [$params['errorEmail'] => 'Cly Errors'],
 						'to' => [$params['adminEmail']],
-						'subject' => 'c!y Website Warning',
+						'subject' => 'cly Website Warning',
                     ],
                 ],
 	        ],

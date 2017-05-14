@@ -13,7 +13,7 @@ $lastComicTitle = null;
     <div style='margin:10px 0;'>
         <?php if ($strip->skip) { ?>
             <a href="<?= $strip->url ?>"
-               target="_blank"><?= Yii::t('app', 'This strip is not compatible with c!y but you can click here to view it on their site') ?></a>
+               target="_blank"><?= Yii::t('app', 'This strip is not compatible with cly but you can click here to view it on their site') ?></a>
         <?php } elseif (is_array($strip->img)) {
             ?><a href="<?= $strip->url ?>" rel="nofollow" target="_blank"><?php
             foreach ($strip->img as $k => $img) { ?>
