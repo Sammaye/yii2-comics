@@ -77,7 +77,7 @@ class ConsoleTarget extends Target
         $label = $this->generateLabel($message);
         $text = $this->generateText($message);
 
-        return str_pad($label, $this->padSize, ' ') . ' '.$text;
+        return str_pad($label, $this->padSize, ' ') . ' ' . $text;
     }
 
     /**
@@ -91,16 +91,16 @@ class ConsoleTarget extends Target
 
         //Add date to log
         if (true == $this->displayDate) {
-            $label.= '['.date($this->dateFormat, $message[3]).']';
+            $label .= '[' . date($this->dateFormat, $message[3]) . ']';
         }
 
         //Add category to label
         if (true == $this->displayCategory) {
-            $label.= "[".$message[2]."]";
+            $label .= "[" . $message[2] . "]";
         }
         $level = Logger::getLevelName($message[1]);
 
-        $tmpLevel= "[$level]";
+        $tmpLevel = "[$level]";
 
         if (Console::streamSupportsAnsiColors(\STDOUT)) {
             if (isset($this->color[$level])) {
@@ -109,7 +109,7 @@ class ConsoleTarget extends Target
                 $tmpLevel = Console::ansiFormat($tmpLevel, [Console::BOLD]);
             }
         }
-        $label.= $tmpLevel;
+        $label .= $tmpLevel;
 
         return $label;
     }
@@ -123,7 +123,7 @@ class ConsoleTarget extends Target
     {
         $text = $message[0];
         if (is_array($text) || is_object($text)) {
-            $text = "Array content is \n\r".json_encode($text, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            $text = "Array content is \n\r" . json_encode($text, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         } elseif (!is_string($text)) {
             $text = 'Message is ' . gettype($text);
         }

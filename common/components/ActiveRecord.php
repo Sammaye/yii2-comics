@@ -12,7 +12,7 @@ class ActiveRecord extends BaseActiveRecord
 
     public function formName()
     {
-        if($this->_formName){
+        if ($this->_formName) {
             return $this->_formName;
         }
 
