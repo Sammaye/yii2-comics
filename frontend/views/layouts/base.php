@@ -11,8 +11,8 @@ AppAsset::register($this);
 SummariseAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
-    <!DOCTYPE html>
-    <html lang="<?= Yii::$app->language ?>">
+<!DOCTYPE html>
+<html lang="<?= Yii::$app->language ?>">
     <head>
         <meta charset="<?= Yii::$app->charset ?>"/>
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -74,5 +74,5 @@ SummariseAsset::register($this);
             ga('send', 'pageview');
         </script>
     </body>
-    </html>
+</html>
 <?php $this->endPage() ?>
