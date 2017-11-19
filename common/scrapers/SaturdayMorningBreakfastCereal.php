@@ -140,6 +140,10 @@ class SaturdayMorningBreakfastCereal extends Comic
         $next = $this->nextLink($dayDoc);
         $previous = $this->previousLink($dayDoc);
 
+	    if(!preg_match('#^http#', $url)){
+		    $url = trim($model->comic->homepage, '/') . '/' . trim($url, '/');
+	    }
+
         $model->url = $url;
         $model->next = $next;
         $model->previous = $previous;
