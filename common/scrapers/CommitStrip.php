@@ -45,7 +45,7 @@ class CommitStrip extends Comic
         } else {
             // Try and redownload and see if there is a next now
             $strip = $this->downloadStrip($strip->index, $data);
-            if ($strip->next) {
+            if ($strip && $strip->next) {
                 // If we have a next now then let's get that
                 $strip = $this->downloadStrip($strip->next, $data);
                 return $strip;
