@@ -49,7 +49,7 @@ class CommitStrip extends Comic
                 // If we have a next now then let's get that
                 $strip = $this->downloadStrip($strip->next, $data);
                 return $strip;
-            } elseif ($ignoreCurrent) {
+            } elseif ($strip && $ignoreCurrent) {
                 // $ignoreCurrent will normally be from admin 
                 // functions such as the scraper
                 Yii::warning(
@@ -63,6 +63,17 @@ class CommitStrip extends Comic
                         ]
                     )
                 );
+            } else {
+	            Yii::warning(
+		            Yii::t(
+			            'app',
+			            '{title} ({id}) could not load strip at all',
+			            [
+				            'title' => $this->title,
+				            'id' => (String)$this->_id
+			            ]
+		            )
+	            );
             }
         }
 
