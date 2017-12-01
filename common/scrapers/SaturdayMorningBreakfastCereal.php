@@ -200,7 +200,7 @@ class SaturdayMorningBreakfastCereal extends Comic
                 $url,
                 [
                     'headers' => [
-                        'User-Agent' => 'Googlebot/2.1 (http://www.googlebot.com/bot.html)'
+                        'User-Agent' => $this->scraper_user_agent ?: $this->userAgents['Chrome User']
                     ]
                 ]
             );

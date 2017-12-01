@@ -31,6 +31,14 @@ $(document).on('change', '#comic-type', function(){
 	}
 });
 $('#comic-type').trigger('change');
+
+$(document).on('change', '#scraper_user_agent_prefill', function(e){
+    var val = this.value;
+    
+    if(val){
+        $('#comic-scraper_user_agent').val(val);
+    }        
+});
 ");
 ?>
 <?php $form = ActiveForm::begin(['id' => 'comic-form', 'enableClientValidation' => false]) ?>
@@ -58,6 +66,29 @@ $('#comic-type').trigger('change');
             <?= $form->field($model, 'scrape_url') ?>
             <?= $form->field($model, 'dom_path') ?>
             <?= $form->field($model, 'index_format') ?>
+            <div>
+                <?= Html::activeLabel($model, 'scraper_user_agent') ?>
+                <p class="help-block">Selecting a user agent from the dropdown will pre-fill the scraper's user agent field with that option. You can also just type one in manually.</p>
+                <div class="row">
+                    <div class="col-sm-15">
+                        <div class="form-group field-comic-scraper_user_agent_prefill">
+                            <?= Html::dropDownList(
+                                'scraper_user_agent_prefill',
+                                null,
+                                array_flip($model->userAgents),
+                                [
+                                    'class' => 'form-control',
+                                    'prompt' => 'Choose a Pre-fill',
+                                    'id' => 'scraper_user_agent_prefill'
+                                ]
+                            ) ?>
+                        </div>
+                    </div>
+                    <div class="col-sm-33">
+                        <?= $form->field($model, 'scraper_user_agent')->label(false) ?>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="col-sm-22 col-sm-push-4">
             <?= $form->field($model, 'current_index')->textInput(['value' => $model->getCurrentIndexValue()]) ?>

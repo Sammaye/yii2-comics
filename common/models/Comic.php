@@ -32,6 +32,11 @@ class Comic extends ActiveRecord
     private static $_scrapers;
     private $_scrapeErrors;
 
+    public $userAgents = [
+        'Google Bot' => 'Googlebot/2.1 (http://www.googlebot.com/bot.html)',
+        'Chrome User' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
+    ];
+
     public function formName()
     {
         return 'Comic';
@@ -100,6 +105,8 @@ class Comic extends ActiveRecord
 
             ['scraper', 'in', 'range' => array_keys($this->getScrapers())],
             ['dom_path', 'string', 'max' => 400],
+
+            ['scraper_user_agent', 'string', 'max' => 1500],
 
             [
                 'index_format',
@@ -301,6 +308,7 @@ class Comic extends ActiveRecord
 
             'scraper',
             'dom_path',
+            'scraper_user_agent',
             'index_format',
             'current_index',
             'last_index',
@@ -360,6 +368,10 @@ class Comic extends ActiveRecord
             if (is_string($this->$v) && strlen($this->$v) <= 0) {
                 $this->$v = null;
             }
+        }
+
+        if(!$this->scraper_user_agent){
+            $this->scraper_user_agent = $this->userAgents['Google Bot'];
         }
 
         return parent::beforeSave($insert);
@@ -864,7 +876,7 @@ class Comic extends ActiveRecord
                 $this->scrapeUrl($index),
                 [
                     'headers' => [
-                        'User-Agent' => 'Googlebot/2.1 (http://www.googlebot.com/bot.html)'
+                        'User-Agent' => $this->scraper_user_agent ?: $this->userAgents['Chrome User']
                     ]
                 ]
             );
@@ -882,7 +894,7 @@ class Comic extends ActiveRecord
                 $url,
                 [
                     'headers' => [
-                        'User-Agent' => 'Googlebot/2.1 (http://www.googlebot.com/bot.html)'
+                        'User-Agent' => $this->scraper_user_agent ?: $this->userAgents['Chrome User']
                     ]
                 ]
             );
