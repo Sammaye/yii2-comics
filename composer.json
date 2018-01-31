@@ -27,7 +27,7 @@
 		"ofat/yii2-yashop-ses": "*",
 		"facebook/php-sdk-v4": "^5.0@stable",
 		"guzzlehttp/guzzle": "^6.0@stable",
-		"mongodb/mongodb": "^1.0.0",
+		"mongodb/mongodb": "^1.0.0@stable",
 		"yii2tech/embedded": "^1.0@dev"
 	},
 	"require-dev": {

@@ -30,7 +30,7 @@ class Comic extends ActiveRecord
     const SCENARIO_SEARCH = 'search';
 
     private static $_scrapers;
-    private $_scrapeErrors;
+    private $_scrapeErrors = [];
 
     public $userAgents = [
         'Google Bot' => 'Googlebot/2.1 (http://www.googlebot.com/bot.html)',

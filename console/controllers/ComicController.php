@@ -10,6 +10,7 @@ use common\models\User;
 
 use MongoDB\BSON\UTCDateTime;
 use MongoDB\BSON\ObjectID;
+use yii\console\ExitCode;
 
 class ComicController extends Controller
 {
@@ -34,7 +35,7 @@ class ComicController extends Controller
                     ->one()
             ) {
                 $comic->scrapeStrip();
-                return self::EXIT_CODE_NORMAL;
+                return ExitCode::OK;
             } else {
                 Yii::error(
                     Yii::t(
@@ -43,7 +44,7 @@ class ComicController extends Controller
                         ['id' => (String)$comic->_id]
                     )
                 );
-                return self::EXIT_CODE_ERROR;
+                return ExitCode::UNSPECIFIED_ERROR;
             }
 
         } else {
@@ -55,7 +56,7 @@ class ComicController extends Controller
             ) {
                 $comic->scrapeStrip();
             }
-            return self::EXIT_CODE_NORMAL;
+            return ExitCode::OK;
         }
     }
 
@@ -166,7 +167,7 @@ class ComicController extends Controller
                 )
                 ->send();
         }
-        return self::EXIT_CODE_NORMAL;
+        return ExitCode::OK;
     }
 
     public function actionCheckTimeOfNew($comic_id)
@@ -181,7 +182,7 @@ class ComicController extends Controller
             Yii::error(
                 Yii::t('app', 'That comic could not be found')
             );
-            return self::EXIT_CODE_ERROR;
+            return ExitCode::UNSPECIFIED_ERROR;
         }
 
         $strip = $comic->current();
@@ -203,7 +204,7 @@ class ComicController extends Controller
                         ]
                     )
                 );
-                return self::EXIT_CODE_NORMAL;
+                return ExitCode::OK;
             }
             sleep(3600);
         }
