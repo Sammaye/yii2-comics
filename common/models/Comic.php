@@ -725,13 +725,13 @@ class Comic extends ActiveRecord
         } elseif (!$archiveRotated) {
             if (
                 (
-                $strip = $this->next(
-                    $strip,
-                    true,
-                    $this->active
-                        ? ['date' => new UTCDateTime($timeToday * 1000)]
-                        : []
-                )
+                    $strip = $this->next(
+                        $strip,
+                        true,
+                        $this->active
+                            ? ['date' => new UTCDateTime($timeToday * 1000)]
+                            : []
+                    )
                 ) === null
             ) {
                 /*

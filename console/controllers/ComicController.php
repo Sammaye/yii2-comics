@@ -22,7 +22,12 @@ class ComicController extends Controller
         return parent::beforeAction($action);
     }
 
-    public function actionScrape($comic_id = null)
+    public function actionForceScrape($comic_id = null)
+    {
+        return $this->actionScrape($comic_id, true);
+    }
+
+    public function actionScrape($comic_id = null, $force = false)
     {
         if ($comic_id) {
             $comic_id = $comic_id instanceof ObjectID
@@ -34,7 +39,28 @@ class ComicController extends Controller
                     ->where(['_id' => $comic_id, 'live' => 1])
                     ->one()
             ) {
-                $comic->scrapeStrip();
+                $strip = $comic->scrapeStrip();
+                do {
+                    $has_next = false;
+                    if ($strip && $comic->active && ($strip->next || $force)) {
+                        $strip = $comic->next(
+                            $strip,
+                            true,
+                            $comic->active
+                                ? [
+                                    'date' => new UTCDateTime(
+                                        (new \DateTime('now'))
+                                            ->setTime(0, 0)
+                                            ->getTimestamp() * 1000
+                                    )
+                                ]
+                                : []
+                        );
+                        if ($strip) {
+                            $has_next = true;
+                        }
+                    }
+                } while ($has_next);
                 return ExitCode::OK;
             } else {
                 Yii::error(
@@ -54,7 +80,28 @@ class ComicController extends Controller
                     ->each()
                 as $comic
             ) {
-                $comic->scrapeStrip();
+                $strip = $comic->scrapeStrip();
+                do {
+                    $has_next = false;
+                    if ($strip && $comic->active && ($strip->next || $force)) {
+                        $strip = $comic->next(
+                            $strip,
+                            true,
+                            $comic->active
+                                ? [
+                                'date' => new UTCDateTime(
+                                    (new \DateTime('now'))
+                                        ->setTime(0, 0)
+                                        ->getTimestamp() * 1000
+                                )
+                            ]
+                                : []
+                        );
+                        if ($strip) {
+                            $has_next = true;
+                        }
+                    }
+                } while ($has_next);
             }
             return ExitCode::OK;
         }
