@@ -40,6 +40,8 @@ class ComicController extends Controller
                     ->one()
             ) {
                 $strip = $comic->scrapeStrip();
+
+                $timeToday = (new \DateTime('now'))->setTime(0, 0)->getTimestamp();
                 do {
                     $has_next = false;
                     if ($strip && $comic->active && ($strip->next || $force)) {
@@ -48,16 +50,25 @@ class ComicController extends Controller
                             true,
                             $comic->active
                                 ? [
-                                    'date' => new UTCDateTime(
-                                        (new \DateTime('now'))
-                                            ->setTime(0, 0)
-                                            ->getTimestamp() * 1000
-                                    )
+                                    'date' => new UTCDateTime($timeToday * 1000)
                                 ]
                                 : []
                         );
+
                         if ($strip) {
-                            $has_next = true;
+                            $comic->updateIndex($strip->index, false);
+                            $comic->last_checked = new UTCDateTime($timeToday * 1000);
+                            if (!$comic->save(false, ['last_checked', 'current_index'])) {
+                                Yii::warning(
+                                    Yii::t(
+                                        'app',
+                                        'Could not save last checked and current_index for {id}',
+                                        ['id' => (String)$this->_id]
+                                    )
+                                );
+                            } else {
+                                $has_next = true;
+                            }
                         }
                     }
                 } while ($has_next);
@@ -81,6 +92,8 @@ class ComicController extends Controller
                 as $comic
             ) {
                 $strip = $comic->scrapeStrip();
+
+                $timeToday = (new \DateTime('now'))->setTime(0, 0)->getTimestamp();
                 do {
                     $has_next = false;
                     if ($strip && $comic->active && ($strip->next || $force)) {
@@ -89,16 +102,25 @@ class ComicController extends Controller
                             true,
                             $comic->active
                                 ? [
-                                'date' => new UTCDateTime(
-                                    (new \DateTime('now'))
-                                        ->setTime(0, 0)
-                                        ->getTimestamp() * 1000
-                                )
-                            ]
+                                    'date' => new UTCDateTime($timeToday * 1000)
+                                ]
                                 : []
                         );
+
                         if ($strip) {
-                            $has_next = true;
+                            $comic->updateIndex($strip->index, false);
+                            $comic->last_checked = new UTCDateTime($timeToday * 1000);
+                            if (!$comic->save(false, ['last_checked', 'current_index'])) {
+                                Yii::warning(
+                                    Yii::t(
+                                        'app',
+                                        'Could not save last checked and current_index for {id}',
+                                        ['id' => (String)$this->_id]
+                                    )
+                                );
+                            } else {
+                                $has_next = true;
+                            }
                         }
                     }
                 } while ($has_next);
