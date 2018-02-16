@@ -836,7 +836,13 @@ class Comic extends ActiveRecord
         }
 
         try {
-            if (($model->url) && ($binary = file_get_contents($model->url))) {
+
+            // Sometimes people like to put crappy spceial characters into file names
+            $filename = pathinfo($model->url, PATHINFO_FILENAME);
+            $encoded_filename = rawurlencode($filename);
+            $url = str_replace($filename, $encoded_filename, $model->url);
+
+            if (($model->url) && ($binary = file_get_contents($url))) {
                 $model->img = new Binary($binary, Binary::TYPE_GENERIC);
                 return true;
             }
