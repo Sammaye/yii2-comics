@@ -168,7 +168,7 @@ class SaturdayMorningBreakfastCereal extends Comic
     public function navLink($type, $stripDom)
     {
         $elements = $stripDom->query(
-            "//div[@class='cc-nav']/a[@class='cc-$type']"
+            "//nav[@class='cc-nav']/a[@class='cc-$type']"
         );
 
         if ($elements) {
