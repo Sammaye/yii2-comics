@@ -6,7 +6,8 @@ $params = array_merge(
     require(__DIR__ . '/params-local.php')
 );
 
-$commonConfig = array_merge(
+require_once(__DIR__ . '/../../vendor/yiisoft/yii2/helpers/ArrayHelper.php');
+$commonConfig = yii\helpers\ArrayHelper::merge(
     require(__DIR__ . '/../../common/config/main.php'),
     require(__DIR__ . '/../../common/config/main-local.php')
 );
