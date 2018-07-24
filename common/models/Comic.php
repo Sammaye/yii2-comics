@@ -869,9 +869,17 @@ class Comic extends ActiveRecord
             } else {
                 $image = Image::getImagine()->load($model->img->getData());
             }
-            return $image->show('png');
+
+            ob_start();
+            $image->show('png');
+            $image_raw = ob_get_contents();
+            ob_clean();
+
+            \Yii::$app->response->format = yii\web\Response::FORMAT_RAW;
+            \Yii::$app->response->data = $image_raw;
+
         }
-        return '';
+        return \Yii::$app->response;
     }
 
     public function indexExist($index)
