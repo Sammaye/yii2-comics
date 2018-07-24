@@ -16,8 +16,8 @@ class ComicController extends Controller
 {
     public function beforeAction($action)
     {
-        Yii::$app->getUrlManager()->setBaseUrl('http://comics.sammaye.com/');
-        Yii::$app->getUrlManager()->setHostInfo('http://comics.sammaye.com/');
+        Yii::$app->getUrlManager()->setBaseUrl('https://sammaye.com/comics/');
+        Yii::$app->getUrlManager()->setHostInfo('https://sammaye.com/comics/');
 
         return parent::beforeAction($action);
     }
