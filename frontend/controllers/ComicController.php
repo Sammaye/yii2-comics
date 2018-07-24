@@ -161,7 +161,7 @@ class ComicController extends Controller
                 ->setSubject(
                     Yii::t(
                         'app',
-                        'Comic Request for cly'
+                        'Comic Request for comics'
                     )
                 )
                 ->send();

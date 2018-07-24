@@ -13,7 +13,7 @@ $commonConfig = yii\helpers\ArrayHelper::merge(
 );
 
 return [
-    'id' => 'cly-backend',
+    'id' => 'comics-backend',
     'basePath' => dirname(__DIR__),
     'controllerNamespace' => 'backend\controllers',
     'bootstrap' => ['log'],

@@ -148,7 +148,7 @@ $this->params['comic_id'] = (String)$model->_id;
             <a href="<?= $comicStrip->url ?>" target="_blank" rel="nofollow">
                 <?= Yii::t(
                     'app',
-                    'This strip is not compatible with cly but you can click here to view it on their site'
+                    'This strip is not compatible with comics but you can click here to view it on their site'
                 ) ?>
             </a>
         </div>

@@ -230,7 +230,7 @@ class ComicController extends Controller
                 ->setSubject(
                     Yii::t(
                         'app',
-                        'Your cly Feed for {date}',
+                        'Your comics Feed for {date}',
                         ['date' => date('d-m-Y')]
                     )
                 )

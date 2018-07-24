@@ -13,7 +13,7 @@ $commonConfig = yii\helpers\ArrayHelper::merge(
 );
 
 return [
-    'id' => 'cly-console',
+    'id' => 'comics-console',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'console\controllers',

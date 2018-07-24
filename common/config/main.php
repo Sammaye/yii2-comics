@@ -6,7 +6,7 @@ $params = array_merge(
 );
 
 return [
-    'name' => 'cly',
+    'name' => 'comics',
 	'timeZone' => 'UTC',
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
     'extensions' => require(__DIR__ . '/../../vendor/yiisoft/extensions.php'),
@@ -26,9 +26,9 @@ return [
 					'levels' => ['error'],
 					'except' => ['yii\web\HttpException:404'],
 					'message' => [
-						'from' => [$params['errorEmail'] => 'Cly Errors'],
+						'from' => [$params['errorEmail'] => 'Comics Errors'],
 						'to' => [$params['adminEmail']],
-						'subject' => 'cly Website Error',
+						'subject' => 'comics Website Error',
 					],
 				],
 				[
@@ -36,9 +36,9 @@ return [
                     'levels' => ['warning'],
                     'categories' => ['application'],
                     'message' => [
-						'from' => [$params['errorEmail'] => 'Cly Errors'],
+						'from' => [$params['errorEmail'] => 'Comics Errors'],
 						'to' => [$params['adminEmail']],
-						'subject' => 'cly Website Warning',
+						'subject' => 'comics Website Warning',
                     ],
                 ],
 	        ],
