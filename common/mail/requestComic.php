@@ -8,7 +8,7 @@ use yii\helpers\Html;
 ?>
 
 <p><?= Yii::t('app', 'Hello,') ?></p>
-<p><?= Yii::t('app', 'Someone wants a comic adding to the comics website.') ?></p>
+<p><?= Yii::t('app', "Someone wants a comic adding to Sammaye's Comics website.") ?></p>
 <p><?= Yii::t('app', 'Name: {name}', ['name' => $model->name]) ?></p>
 <p><?= Yii::t('app', 'URL: {url}', ['url' => $model->url]) ?></p>
 <p></p>

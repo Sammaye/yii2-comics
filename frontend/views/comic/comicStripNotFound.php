@@ -18,7 +18,7 @@ $this->title = Yii::t('app', '#404 ZOMG strip Not Found!');
         <form method="get" action="<?= Url::to(['comic/view', 'id' => (String)$model->_id]) ?>">
             <div>
                 <?php if ($model->current_index) { ?>
-                    <a href="<?= $model->indexUrl($model->current_index) ?>" class="btn btn-lg btn-default">&laquo;</a>
+                    <a href="<?= $model->indexUrl($model->current_index) ?>" class="btn btn-lg btn-default btn-previous-comic">&laquo;</a>
                 <?php } else { ?>
                     <a href="#" disabled="disabled" class="btn btn-lg btn-default">&laquo;</a>
                 <?php } ?>
@@ -46,7 +46,7 @@ $this->title = Yii::t('app', '#404 ZOMG strip Not Found!');
     </div>
 
     <div class="alert alert-danger">
-        <?= Yii::t('app', 'comics has no record of this strip!') ?>
+        <?= Yii::t('app', "Sammaye's Comics has no record of this strip!") ?>
     </div>
     <p><?= Yii::t(
         'app',

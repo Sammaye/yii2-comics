@@ -64,8 +64,12 @@ $(document).on('change', '#scraper_user_agent_prefill', function(e){
             <?= $form->field($model, 'type')->dropDownList($model->getTypes()) ?>
             <?= $form->field($model, 'scraper')->dropDownList($model::getScrapers(), ['prompt' => 'Default']) ?>
             <?= $form->field($model, 'scrape_url') ?>
-            <?= $form->field($model, 'dom_path') ?>
+            <?= $form->field($model, 'base_url') ?>
+            <?= $form->field($model, 'image_dom_path') ?>
+        </div>
+        <div class="col-sm-22 col-sm-push-4">
             <?= $form->field($model, 'index_format') ?>
+            <?= $form->field($model, 'current_index')->textInput(['value' => $model->getCurrentIndexValue()]) ?>
             <div>
                 <?= Html::activeLabel($model, 'scraper_user_agent') ?>
                 <p class="help-block">Selecting a user agent from the dropdown will pre-fill the scraper's user agent field with that option. You can also just type one in manually.</p>
@@ -90,8 +94,16 @@ $(document).on('change', '#scraper_user_agent_prefill', function(e){
                 </div>
             </div>
         </div>
+    </div>
+    <hr/>
+    <div class="row">
+        <div class="col-sm-22">
+            <?= $form->field($model, 'nav_url_regex') ?>
+            <?= $form->field($model, 'nav_previous_dom_path') ?>
+            <?= $form->field($model, 'nav_next_dom_path') ?>
+            <?= $form->field($model, 'nav_page_number_dom_path') ?>
+        </div>
         <div class="col-sm-22 col-sm-push-4">
-            <?= $form->field($model, 'current_index')->textInput(['value' => $model->getCurrentIndexValue()]) ?>
             <?= $form->field($model, 'last_index')->textInput(['value' => $model->getLastIndexValue()]) ?>
             <?= $form->field($model, 'first_index')->textInput(['value' => $model->getFirstIndexValue()]) ?>
             <?= $form->field($model, 'index_step') ?>

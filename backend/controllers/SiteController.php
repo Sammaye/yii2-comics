@@ -22,8 +22,12 @@ class SiteController extends Controller
     {
         return [
             'access' => [
-                'class' => AccessControl::className(),
+                'class' => AccessControl::class,
                 'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['login'],
+                    ],
                     [
                         'allow' => true,
                         'roles' => ['staff'],
@@ -31,7 +35,7 @@ class SiteController extends Controller
                 ],
             ],
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'logout' => ['post'],
                 ],
@@ -54,5 +58,10 @@ class SiteController extends Controller
     public function actionIndex()
     {
         return $this->redirect(['comic/index']);
+    }
+
+    public function actionLogin()
+    {
+        return $this->redirect(Yii::$app->frontendUrlManager->createUrl(['site/login']));
     }
 }

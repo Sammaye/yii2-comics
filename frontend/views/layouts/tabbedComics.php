@@ -15,6 +15,30 @@ $this->registerJs("
 $('.alert-summarise').summarise();
 $('.alert-summarise').summarise('close');
 
+$(document).on('keydown', function(e) {
+    if ($(':focus').is('input, select, textarea')) {
+        return;
+    }
+    
+    switch(e.which) {
+        case 37: // left
+            if ($('.btn-previous-comic').length > 0){
+                $('.btn-previous-comic')[0].click();
+            }
+            break;
+        case 39: // right
+            if ($('.btn-next-comic').length > 0){
+                $('.btn-next-comic')[0].click();
+            }
+            break;
+        case 13:
+            // Would require too many is() checks to be useful
+        default: 
+            return;
+    }
+    e.preventDefault();
+});
+
 $('#requestComicForm').on('submit', function(e){
 	e.preventDefault();
 	

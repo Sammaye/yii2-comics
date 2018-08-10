@@ -25,11 +25,11 @@ return [
         ],
     	'session' => [
     		'cookieParams' => [],
-    		'name' => 'sess_cookie'
+    		'name' => 'sess_cookie',
     	],
         'request' => [
             'baseUrl' => '/system',
-        	'cookieValidationKey' => $params['request.cookieValidationKey']
+        	'cookieValidationKey' => $params['request.cookieValidationKey'],
         ],
         'urlManager' => $commonConfig['components']['backendUrlManager'],
         'errorHandler' => [

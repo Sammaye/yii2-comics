@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\bootstrap\ActiveForm;
+use common\models\Comic;
 
 use MongoDB\BSON\UTCDateTime;
 
@@ -14,26 +15,26 @@ use MongoDB\BSON\UTCDateTime;
 <?= $form->field($model, 'index')->textInput([
     'value' =>
         $model->index instanceof UTCDateTime
-            ? $model->index->toDateTime()->format('d/m/Y')
+            ? $model->index->toDateTime()->format(Yii::$app->getFormatter()->fieldDateFormat)
             : $model->index
 ]) ?>
 <?= $form->field($model, 'date')->textInput([
     'value' =>
         $model->date instanceof UTCDateTime
-            ? $model->date->toDateTime()->format('d/m/Y')
+            ? $model->date->toDateTime()->format(Yii::$app->getFormatter()->fieldDateFormat)
             : $model->date
 ]) ?>
 <?= $form->field($model, 'skip')->checkbox() ?>
 <?= $form->field($model, 'next')->textInput([
     'value' =>
         $model->next instanceof UTCDateTime
-            ? $model->next->toDateTime()->format('d/m/Y')
+            ? $model->next->toDateTime()->format(Yii::$app->getFormatter()->fieldDateFormat)
             : $model->next
 ]) ?>
 <?= $form->field($model, 'previous')->textInput([
     'value' =>
         $model->previous instanceof UTCDateTime
-            ? $model->previous->toDateTime()->format('d/m/Y')
+            ? $model->previous->toDateTime()->format(Yii::$app->getFormatter()->fieldDateFormat)
             : $model->previous
 ]) ?>
 <?php if (!$model->getIsNewRecord()) {

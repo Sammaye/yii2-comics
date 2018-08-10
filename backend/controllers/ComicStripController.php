@@ -16,7 +16,7 @@ class ComicStripController extends Controller
     {
         return [
             'access' => [
-                'class' => AccessControl::className(),
+                'class' => AccessControl::class,
                 'rules' => [
                     [
                         'allow' => true,
@@ -37,7 +37,7 @@ class ComicStripController extends Controller
             if ($model->validate()) {
                 // This currently done without care as to its outcome
                 if (!$model->skip) {
-                    $model->comic->populateStrip($model);
+                    $model->comic->scrapeStrip($model);
                     if (count($model->comic->getScrapeErrors()) > 0) {
                         foreach ($model->comic->getScrapeErrors() as $error) {
                             $model->addError('url', $error);
@@ -59,7 +59,6 @@ class ComicStripController extends Controller
     public function actionUpdate($id)
     {
         if ($model = ComicStrip::find()->where(['_id' => new ObjectID($id)])->one()) {
-
             if ($model->load($_POST) && $model->save()) {
                 return $this->redirect(['comic/update', 'id' => $model->comic_id]);
             }
@@ -93,7 +92,7 @@ class ComicStripController extends Controller
         if ($model = ComicStrip::find()->where(['_id' => new ObjectID($id)])->one()) {
             $model->url = null;
             $model->img = null;
-            if ($model->comic->populateStrip($model) && $model->save()) {
+            if ($model->comic->scrapeStrip($model) && $model->save()) {
                 Yii::$app->getSession()->setFlash(
                     'success',
                     Yii::t(

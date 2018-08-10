@@ -20,26 +20,33 @@ return [
 				[
 					'class' => 'yii\log\FileTarget',
 					'levels' => ['error', 'warning'],
+                    'except' => ['comic\*'],
 				],
 				[
 					'class' => 'yii\log\EmailTarget',
 					'levels' => ['error'],
-					'except' => ['yii\web\HttpException:404'],
+					'except' => ['yii\web\HttpException:404', 'comic\*'],
 					'message' => [
-						'from' => [$params['errorEmail'] => 'Comics Errors'],
+						'from' => [$params['errorEmail'] => "Sammaye's Comics Errors"],
 						'to' => [$params['adminEmail']],
-						'subject' => 'comics Website Error',
+						'subject' => "Sammaye's Comics Website Error",
 					],
 				],
 				[
                     'class' => 'yii\log\EmailTarget',
                     'levels' => ['warning'],
-                    'categories' => ['application'],
+                    'except' => ['comic\*'],
                     'message' => [
-						'from' => [$params['errorEmail'] => 'Comics Errors'],
+						'from' => [$params['errorEmail'] => "Sammaye's Comics Errors"],
 						'to' => [$params['adminEmail']],
-						'subject' => 'comics Website Warning',
+						'subject' => "Sammaye's Comics Website Warning",
                     ],
+                ],
+                [
+                    'class' => 'common\components\MongoDbTarget',
+                    'levels' => ['warning', 'error'],
+                    'categories' => ['comic\*'],
+                    'logVars' => [],
                 ],
 	        ],
         ],
@@ -94,7 +101,9 @@ return [
 		        '<controller:[\w-]+>/<action:[\w-]+>'=>'<controller>/<action>',
 	        ]
         ],
-        'formatter' => ['class' => 'common\components\Formatter'],
+        'formatter' => [
+            'class' => 'common\components\Formatter',
+        ],
         
         # You will need to setup your environments to add these application keys
         'authClientCollection' => [

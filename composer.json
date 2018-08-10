@@ -1,14 +1,9 @@
 {
-	"name": "sammaye/yii2-advanced-template",
-	"description": "A template for awesomeness.",
-	"keywords": ["yii2", "framework", "advanced", "application template"],
-	"homepage": "http://www.sammaye.wordpress.com/",
+	"name": "sammaye/comics",
+	"description": "A comic aggregator for delivering my favourite comics to me",
+	"homepage": "https://sammaye.com/",
 	"type": "project",
 	"license": "BSD-3-Clause",
-	"support": {
-		"issues": "https://github.com/Sammaye/yii2-test/issues",
-		"source": "https://github.com/Sammaye/yii2-test"
-	},
 	"minimum-stability": "dev",
 	"require": {
 		"php": ">=5.4.0",

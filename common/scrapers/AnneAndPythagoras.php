@@ -13,90 +13,104 @@ use MongoDB\BSON\Binary;
 
 class AnneAndPythagoras extends Comic
 {
-    public function populateStrip(&$model, $url = null)
+    public function scrapeStrip(&$model, $url = null)
     {
-        $imgUrl = null;
+        $imageUrl = null;
 
-        if (!$model->url) {
-            $doc = $this->xPath($url ?: $this->scrapeUrl($model->index));
-
-            if ($doc) {
-
-                $images = [];
-
-                $scripts = $doc->query("//script");
-                foreach ($scripts as $s) {
-                    # see if there are any matches for var datePickerDate in the script node's contents
-                    if (preg_match('#CarouselAssets: (.*?), CarouselCaption#', $s->nodeValue, $matches)) {
-                        # the date itself (captured in brackets) is in $matches[1]
-                        $images = json_decode($matches[1], true);
-                    }
-                }
-
-                if (!$images) {
-                    //raise error
-                    $this->addScrapeError(
-                        Yii::t(
-                            'app',
-                            '{id} could not find img array from JS for {url}',
-                            [
-                                'id' => (String)$this->_id,
-                                'url' => $this->scrapeUrl($model->index)
-                            ]
-                        )
-                    );
-                    return false;
-                }
-
-                foreach ($images as $k => $v) {
-                    if ($k === (int)$model->index) {
-                        $imgUrl = $v['src'];
-                    }
-                }
-            }
-
-            if (!$imgUrl) {
-                $this->addScrapeError(
-                    Yii::t(
-                        'app',
-                        '{id} ({index}) could not find img with src for {url}',
-                        [
-                            'id' => (String)$this->_id,
-                            'index' => $model->index,
-                            'url' => $this->scrapeUrl($model->index)
-                        ]
-                    )
-                );
-                return false;
-            }
-
-            $parts = parse_url($imgUrl);
-
-            if ($parts) {
-                if (
-                    !isset($parts['scheme']) &&
-                    isset($parts['host'])
-                ) {
-                    $imgUrl = 'http://' . trim($imgUrl, '//');
-                } elseif (
-                    (
-                        !isset($parts['scheme']) ||
-                        !isset($parts['host'])
-                    ) &&
-                    isset($parts['path'])
-                ) {
-                    // The URL is relative as such add the homepage onto the beginning
-                    $imgUrl = trim($this->homepage, '/') . '/' . trim($parts['path'], '/');
-                }
-            }
-            $model->url = $imgUrl;
+        $baseUrl = rtrim($this->base_url ?: $this->scrape_url, '/');
+        $baseUrlScheme = parse_url($baseUrl, PHP_URL_SCHEME) ?: 'http';
+        $baseUrlHost = parse_url($baseUrl, PHP_URL_HOST);
+        if (!$baseUrlHost) {
+            // As a last resort we will check the homepage link
+            $baseUrl = rtrim($this->homepage, '/');
+            $baseUrlScheme = parse_url($baseUrl, PHP_URL_SCHEME) ?: 'http';
+            $baseUrlHost = parse_url($baseUrl, PHP_URL_HOST);
         }
 
+        $url = $url ?: $this->scrapeUrl($model->index);
+        $dom = $this->getScrapeDom($url);
+
+        if (!$dom) {
+            return $this->addScrapeError(
+                '{id} could not instantiate DOMDocument Object for {url}',
+                [
+                    'id' => (String)$this->_id,
+                    'url' => $url,
+                ]
+            );
+        }
+
+        $images = [];
+
+        $scripts = $dom->query("//script");
+        foreach ($scripts as $s) {
+            # see if there are any matches for var datePickerDate in the script node's contents
+            if (preg_match('#CarouselAssets: (.*?), CarouselCaption#', $s->nodeValue, $matches)) {
+                # the date itself (captured in brackets) is in $matches[1]
+                $images = json_decode($matches[1], true);
+            }
+        }
+
+        if (!$images) {
+            //raise error
+            return $this->addScrapeError(
+                '{id} could not find img array from JS for {url}',
+                [
+                    'id' => (String)$this->_id,
+                    'url' => $url
+                ]
+            );
+        }
+
+        foreach ($images as $k => $v) {
+            if ($k === (int)$model->index) {
+                $imageUrl = $v['src'];
+            }
+        }
+
+        if (!$imageUrl) {
+            return $this->addScrapeError(
+                '{id} ({index}) could not find img with src for {url}',
+                [
+                    'id' => (String)$this->_id,
+                    'index' => $model->index,
+                    'url' => $url
+                ]
+            );
+        }
+
+        $imageUrlParts = parse_url($imageUrl);
+        if ($imageUrlParts) {
+            $imageUrlHost = null;
+            if (!isset($imageUrlParts['scheme']) && !isset($imageUrlParts['host'])) {
+                $imageUrlHost = $baseUrlScheme . '://' . $baseUrlHost . '/';
+            } elseif (!isset($imageUrlParts['scheme'])) {
+                $imageUrlHost = $baseUrlScheme . '://';
+            }
+
+            if ($imageUrlHost) {
+                $imageUrl = $imageUrlHost . ltrim($imageUrl, '/');
+            }
+        }
+        $model->image_url = $imageUrl;
+        $model->next = isset($images[(int)$model->index + 1]) ? (int)$model->index + 1 : null;
+        $model->previous = isset($images[(int)$model->index - 1]) ? (int)$model->index - 1 : null;
+
         try {
-            if (($model->url) && ($binary = file_get_contents($model->url))) {
+            // Sometimes people like to put crappy special characters into file names
+            if (pathinfo($model->image_url, PATHINFO_EXTENSION)) {
+                $filename = pathinfo($model->image_url, PATHINFO_FILENAME);
+                $encodedFilename = rawurlencode($filename);
+                $imageUrl = str_replace($filename, $encodedFilename, $model->image_url);
+            }
+
+            if (($model->image_url) && ($binary = file_get_contents($imageUrl))) {
+                $model->image_md5 = md5($binary);
                 $model->img = new Binary($binary, Binary::TYPE_GENERIC);
                 return true;
             }
+
+            throw new \Exception;
         } catch (\Exception $e) {
             // the file probably had a problem beyond our control
             // As such define this as a skip strip since I cannot store it

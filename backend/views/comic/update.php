@@ -3,8 +3,9 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\helpers\Url;
-use common\models\ComicStrip;
 use common\models\Comic;
+use common\models\ComicStrip;
+use common\models\Log;
 
 $this->title = Yii::t(
     'app',
@@ -35,6 +36,8 @@ echo GridView::widget([
     'columns' => [
         '_id',
         'url',
+        'image_url',
+        'image_md5',
         [
             'attribute' => 'index',
             'format' => 'raw',
@@ -63,5 +66,32 @@ echo GridView::widget([
                 return Url::toRoute($params);
             }
         ]
+    ]
+]) ?>
+<hr/>
+<h4>Log</h4>
+<?php
+
+$log = new Log(['scenario' => Log::SCENARIO_SEARCH]);
+
+echo GridView::widget([
+    'dataProvider' => $log->search($model->_id),
+    'filterModel' => $log,
+    'columns' => [
+        '_id',
+        'level',
+        'category',
+        'prefix',
+        [
+            'attribute' => 'message',
+            'value' => function ($model, $key, $index, $column) {
+                return nl2br($model->message);
+            },
+            'format' => 'html',
+        ],
+        [
+            'attribute' => 'log_time',
+            'format' => 'date'
+        ],
     ]
 ]) ?>

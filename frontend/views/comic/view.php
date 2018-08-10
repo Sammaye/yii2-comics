@@ -18,6 +18,10 @@ if ($model->type === Comic::TYPE_DATE) {
 		changeYear: true,
 		maxDate: '" . $model->getLatestIndexValue() . "'
 	});
+	
+	$('#datepicker').on('change', function(e){
+	    $(this).parents('form').submit();
+    });
 	");
 } else {
     $this->title = Yii::t(
@@ -28,10 +32,6 @@ if ($model->type === Comic::TYPE_DATE) {
 }
 
 $this->registerJs("
-$('#datepicker').on('change', function(e){
-	$(this).parents('form').submit();
-});
-
 $(document).on('click', '.btn-subscribe', function(e){
 	e.preventDefault();
 	$.get('" . Url::to(['comic/subscribe']) . "', {comic_id: '" . (String)$model->_id . "'}, null, 'json')
@@ -121,9 +121,9 @@ $this->params['comic_id'] = (String)$model->_id;
     <form method="get" action="<?= Url::to(['comic/view', 'id' => (String)$model->_id]) ?>">
         <div>
             <?php if ($previousStrip) { ?>
-                <a href="<?= $model->indexUrl($previousStrip->index) ?>" class="btn btn-lg btn-default">&laquo;</a>
+                <a href="<?= $model->indexUrl($previousStrip->index) ?>" class="btn btn-lg btn-default btn-previous-comic">&laquo;</a>
             <?php } else { ?>
-                <a href="#" disabled="disabled" class="btn btn-lg btn-default">&laquo;</a>
+                <a href="#" disabled="disabled" class="btn btn-lg btn-default btn-next-comic">&laquo;</a>
             <?php } ?>
 
             <input
@@ -135,7 +135,7 @@ $this->params['comic_id'] = (String)$model->_id;
             />
 
             <?php if ($nextStrip) { ?>
-                <a href="<?= $model->indexUrl($nextStrip->index) ?>" class="btn btn-lg btn-default">&raquo;</a>
+                <a href="<?= $model->indexUrl($nextStrip->index) ?>" class="btn btn-lg btn-default btn-next-comic">&raquo;</a>
             <?php } else { ?>
                 <a href="#" disabled="disabled" class="btn btn-lg btn-default">&raquo;</a>
             <?php } ?>
@@ -148,7 +148,7 @@ $this->params['comic_id'] = (String)$model->_id;
             <a href="<?= $comicStrip->url ?>" target="_blank" rel="nofollow">
                 <?= Yii::t(
                     'app',
-                    'This strip is not compatible with comics but you can click here to view it on their site'
+                    "This strip is not compatible with Sammaye's Comics but you can click here to view it on their site"
                 ) ?>
             </a>
         </div>

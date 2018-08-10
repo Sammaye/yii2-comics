@@ -8,20 +8,16 @@ $this->beginContent('@app/views/layouts/base.php') ?>
 <div class="wrap<?= isset($this->params['wrapClass']) ? ' ' . $this->params['wrapClass'] : '' ?>">
     <?php
         NavBar::begin([
-            'brandLabel' => Yii::t('app', 'comics'),
+            'brandLabel' => Yii::t('app', "Sammaye's Comics"),
             'brandUrl' => Yii::$app->homeUrl,
             'options' => [
                 'class' => 'navbar navbar-fixed-top',
             ],
         ]);
         $menuItems = [
-            ['label' =>
-                Yii::t('app', 'View Comics'),
+            [
+                'label' => Yii::t('app', 'View Comic Archive'),
                 'url' => ['/comic']
-            ],
-            ['label' =>
-                Yii::t('app', 'Help'),
-                'url' => ['/site/help']
             ],
         ];
         if (Yii::$app->user->isGuest) {
@@ -48,6 +44,12 @@ $this->beginContent('@app/views/layouts/base.php') ?>
                 'linkOptions' => ['data-method' => 'post']
             ];
         }
+
+        $menuItems[] = [
+            'label' => Yii::t('app', 'Help'),
+            'url' => ['/site/help']
+        ];
+
         echo Nav::widget([
             'options' => ['class' => 'navbar-nav navbar-right'],
             'items' => $menuItems,

@@ -5,7 +5,7 @@ use yii\helpers\Url;
 /**
  * @var yii\web\View $this
  */
-$this->title = Yii::t('app', 'comics Help');
+$this->title = Yii::t('app', "Sammaye's Comics Help");
 $this->params['wrapClass'] = 'wrap-white';
 
 ?>
@@ -36,7 +36,6 @@ $this->params['wrapClass'] = 'wrap-white';
                     <div class="panel-body">
                         <a href="#what-is-site">What is this site?</a>
                         <a href="#is-it-free">Is it free?</a>
-                        <a href="#supported-comics">What comics do you support?</a>
                         <a href="#add-comics">What can I do to get a comic I like put into my email?</a>
                         <a href="#why">Why did you create this site?</a>
                         <a href="#cookies">Does this site use cookies?</a>
@@ -66,19 +65,6 @@ $this->params['wrapClass'] = 'wrap-white';
                 <h3>Is it free?</h3>
                 <p>Yes.</p>
                 <p>I have no intention on charging for this, nor ever.</p>
-            </div>
-
-            <div class="faq-item">
-                <span id="supported-comics" class="head-anchor"></span>
-                <h3>What comics do you support?</h3>
-                <p>Currently only my personal favourites:</p>
-                <ul>
-                    <li>Garfield</li>
-                    <li>U.S. Acres</li>
-                    <li>Dilbert</li>
-                    <li>xkcd</li>
-                </ul>
-                <p>However, it is easy to add more, see the FAQ below...</p>
             </div>
 
             <div class="faq-item">

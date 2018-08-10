@@ -9,6 +9,8 @@ use MongoDB\BSON\UTCDateTime;
 
 class Formatter extends \yii\i18n\Formatter
 {
+    public $fieldDateFormat = 'd/m/Y';
+
     public function asDate($value, $format = null)
     {
         if ($value instanceof UTCDateTime) {

@@ -18,7 +18,7 @@ class ComicController extends Controller
     {
         return [
             'access' => [
-                'class' => AccessControl::className(),
+                'class' => AccessControl::class,
                 'rules' => [
                     [
                         'allow' => true,
@@ -44,12 +44,16 @@ class ComicController extends Controller
     {
         $this->layout = 'tabbedComics';
 
+        /**
+         * @var Comic
+         */
         $comic = null;
         $condition = ['live' => 1];
 
         if ($id) {
             $condition['_id'] = new ObjectID($id);
         }
+
         if (
             !(
                 $comic = Comic::find()
@@ -161,7 +165,7 @@ class ComicController extends Controller
                 ->setSubject(
                     Yii::t(
                         'app',
-                        'Comic Request for comics'
+                        "Comic Request for Sammaye's Comics"
                     )
                 )
                 ->send();

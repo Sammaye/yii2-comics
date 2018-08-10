@@ -32,7 +32,7 @@ class ComicStrip extends ActiveRecord
         $index = $next = $previous = [
             '',
             'common\components\MongoDateValidator',
-            'format' => 'php:d/m/Y',
+            'format' => 'php:' . Yii::$app->getFormatter()->fieldDateFormat,
             'mongoDateAttribute' => '',
             'when' => function ($model) {
                 return $model->comic->type === Comic::TYPE_DATE;
@@ -51,6 +51,7 @@ class ComicStrip extends ActiveRecord
             ['comic_id', 'yii\mongodb\validators\MongoIdValidator', 'forceFormat' => 'object'],
 
             ['url', 'string', 'max' => 250],
+            ['image_url', 'string', 'max' => 250],
 
             ['skip', 'integer', 'min' => 0, 'max' => 1],
             ['skip', 'filter', 'filter' => 'intval'],
@@ -89,8 +90,10 @@ class ComicStrip extends ActiveRecord
             [
                 'date',
                 'common\components\MongoDateValidator',
-                'format' => 'php:d/m/Y',
+                'format' => 'php:' . Yii::$app->getFormatter()->fieldDateFormat,
                 'mongoDateAttribute' => 'date',
+                'max' => (new \DateTime('now'))->format(Yii::$app->getFormatter()->fieldDateFormat),
+                'min' => (new \DateTime('1600-01-01'))->format(Yii::$app->getFormatter()->fieldDateFormat),
             ],
 
             [
@@ -98,6 +101,7 @@ class ComicStrip extends ActiveRecord
                     '_id',
                     'comic_id',
                     'url',
+                    'image_url',
                     'index',
                     'updated_at',
                     'created_at'
@@ -115,7 +119,9 @@ class ComicStrip extends ActiveRecord
             '_id',
             'comic_id',
             'url',
+            'image_url',
             'img',
+            'image_md5',
             'index',
             'skip',
             'date',
@@ -184,7 +190,7 @@ class ComicStrip extends ActiveRecord
         ]);
         return new ActiveDataProvider([
             'query' => $query,
-            'sort' => ['defaultOrder' => ['index' => SORT_DESC]]
+            'sort' => ['defaultOrder' => ['date' => SORT_DESC]]
         ]);
     }
 }

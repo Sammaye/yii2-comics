@@ -9,7 +9,7 @@ use yii\authclient\widgets\AuthChoice;
 /**
  * @var yii\web\View $this
  */
-$this->title = Yii::t('app', 'Welcome to comics');
+$this->title = Yii::t('app', "Welcome to Sammaye's Comics");
 
 $this->params['excludeContainer'] = true;
 ?>
@@ -18,7 +18,7 @@ $this->params['excludeContainer'] = true;
         <div class="container alert-container">
             <?= common\widgets\Alert::widget() ?>
             <div class="jumbotron">
-                <h1>Welcome to comics</h1>
+                <h1>Welcome to Sammaye's Comics</h1>
                 <div class="row">
                     <div class="col-sm-24">
                         <p class="text-muted text-discolored">Sammaye's Comics</p>

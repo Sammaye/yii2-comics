@@ -2,6 +2,7 @@
 
 namespace console\controllers;
 
+use common\models\Log;
 use Yii;
 use yii\console\Controller;
 use common\models\ComicStrip;
@@ -36,42 +37,10 @@ class ComicController extends Controller
 
             if (
                 $comic = Comic::find()
-                    ->where(['_id' => $comic_id, 'live' => 1])
+                    ->where(['_id' => $comic_id])
                     ->one()
             ) {
-                $strip = $comic->scrapeStrip();
-
-                $timeToday = (new \DateTime('now'))->setTime(0, 0)->getTimestamp();
-                do {
-                    $has_next = false;
-                    if ($strip && $comic->active && ($strip->next || $force)) {
-                        $strip = $comic->next(
-                            $strip,
-                            true,
-                            $comic->active
-                                ? [
-                                    'date' => new UTCDateTime($timeToday * 1000)
-                                ]
-                                : []
-                        );
-
-                        if ($strip) {
-                            $comic->updateIndex($strip->index, false);
-                            $comic->last_checked = new UTCDateTime($timeToday * 1000);
-                            if (!$comic->save(false, ['last_checked', 'current_index'])) {
-                                Yii::warning(
-                                    Yii::t(
-                                        'app',
-                                        'Could not save last checked and current_index for {id}',
-                                        ['id' => (String)$this->_id]
-                                    )
-                                );
-                            } else {
-                                $has_next = true;
-                            }
-                        }
-                    }
-                } while ($has_next);
+                $comic->scrapeCron($force);
                 return ExitCode::OK;
             } else {
                 Yii::error(
@@ -91,39 +60,7 @@ class ComicController extends Controller
                     ->each()
                 as $comic
             ) {
-                $strip = $comic->scrapeStrip();
-
-                $timeToday = (new \DateTime('now'))->setTime(0, 0)->getTimestamp();
-                do {
-                    $has_next = false;
-                    if ($strip && $comic->active && ($strip->next || $force)) {
-                        $strip = $comic->next(
-                            $strip,
-                            true,
-                            $comic->active
-                                ? [
-                                    'date' => new UTCDateTime($timeToday * 1000)
-                                ]
-                                : []
-                        );
-
-                        if ($strip) {
-                            $comic->updateIndex($strip->index, false);
-                            $comic->last_checked = new UTCDateTime($timeToday * 1000);
-                            if (!$comic->save(false, ['last_checked', 'current_index'])) {
-                                Yii::warning(
-                                    Yii::t(
-                                        'app',
-                                        'Could not save last checked and current_index for {id}',
-                                        ['id' => (String)$this->_id]
-                                    )
-                                );
-                            } else {
-                                $has_next = true;
-                            }
-                        }
-                    }
-                } while ($has_next);
+                $comic->scrapeCron($force);
             }
             return ExitCode::OK;
         }
@@ -223,14 +160,27 @@ class ComicController extends Controller
                 );
             }
 
+            $log_entries = [];
+            if (Yii::$app->getAuthManager()->checkAccess($user->_id, 'staff')) {
+                $log_entries = Log::findAll([
+                    'log_time' => ['$gt' => (new \DateTime('today'))->format('U.u')]
+                ]);
+            }
+
             Yii::$app->getMailer()
-                ->compose('comicFeed', ['strips' => $strips])
+                ->compose(
+                    'comicFeed',
+                    [
+                        'strips' => $strips,
+                        'log_entries' => $log_entries
+                    ]
+                )
                 ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->params['supportName']])
                 ->setTo($user->email)
                 ->setSubject(
                     Yii::t(
                         'app',
-                        'Your comics Feed for {date}',
+                        "Your Sammaye's Comics Feed for {date}",
                         ['date' => date('d-m-Y')]
                     )
                 )

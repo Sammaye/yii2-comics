@@ -16,7 +16,7 @@ class ComicController extends Controller
     {
         return [
             'access' => [
-                'class' => AccessControl::className(),
+                'class' => AccessControl::class,
                 'rules' => [
                     [
                         'allow' => true,
@@ -65,18 +65,19 @@ class ComicController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->loadModel($id);
-
         $record = [];
+
         if ($typeChange = Json::decode(Yii::$app->request->post('type_change', '{}'))) {
             foreach ($typeChange as $k => $v) {
                 $name = preg_replace('#Comic\[#', '', rtrim($v['name'], ']'));
                 $record[$name] = $v['value'];
             }
         }
+
         if ($record) {
+            $record['_id'] = $model->_id;
             $model = Comic::instantiate($record);
             Comic::populateRecord($model, $record);
-            //$model->setOldAttributes(null);
         }
 
         if ($model->load($_POST) && $model->save()) {
