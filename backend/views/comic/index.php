@@ -1,8 +1,8 @@
 <?php
 
-use Yii;
 use yii\helpers\Html;
 use yii\grid\GridView;
+use common\models\Log;
 
 $this->title = Yii::t('app', 'Manage Comics');
 ?>
@@ -40,4 +40,31 @@ $this->title = Yii::t('app', 'Manage Comics');
             'template' => '{update} {delete}',
         ]
     ],
+]) ?>
+<hr />
+<h4>Recent Log Entries</h4>
+<?php
+
+$log = new Log(['scenario' => Log::SCENARIO_SEARCH]);
+
+echo GridView::widget([
+    'dataProvider' => $log->search(),
+    'filterModel' => $log,
+    'columns' => [
+        '_id',
+        'level',
+        'category',
+        'prefix',
+        [
+            'attribute' => 'message',
+            'value' => function ($model, $key, $index, $column) {
+                return nl2br($model->message);
+            },
+            'format' => 'html',
+        ],
+        [
+            'attribute' => 'log_time',
+            'format' => 'date'
+        ],
+    ]
 ]) ?>

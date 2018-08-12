@@ -228,4 +228,29 @@ class ComicController extends Controller
             sleep(3600);
         }
     }
+
+    public function actionMigrate() {
+        $migratedCount = 0;
+        do {
+            $strip = ComicStrip::findOne(['image_md5' => null]);
+            echo (new \DateTime)->format('Y-m-d H:i:s') . " - $strip->_id";
+            if ($strip->comic->scrapeStrip($strip) && $strip->save()) {
+                if ($strip->comic->_id == new ObjectId('591427c99d9925051673f486')) {
+                    $strip->url = null;
+                    $strip->save(false, ['url']);
+                }
+                $migratedCount++;
+            }
+
+            sleep(3);
+
+            if (!($migratedCount % 10)) {
+                echo (new \DateTime)->format('Y-m-d H:i:s') . " - $migratedCount strips migrated";
+            }
+
+            if (!($migratedCount % 100)) {
+                sleep(180);
+            }
+        } while (true);
+    }
 }

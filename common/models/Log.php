@@ -42,11 +42,12 @@ class Log extends ActiveRecord
         ];
     }
 
-    public function search($comic_id)
+    public function search($comic_id = null)
     {
         foreach ($this->attributes() as $field) {
             $this->$field = null;
         }
+
         if ($get = Yii::$app->getRequest()->get($this->formName())) {
             $this->attributes = $get;
         }
@@ -59,8 +60,9 @@ class Log extends ActiveRecord
         $query->filterWhere([
             '_id' => $this->_id ? new ObjectID($this->_id) : null,
             'level' => $this->level ? new Regex($this->level) : null,
+            'category' => $this->category ? new Regex(preg_quote($this->category, '/')) : null,
             'prefix' => $this->prefix ? new Regex($this->prefix) : null,
-            'message' => $this->message ? new Regex($this->message) : null,
+            'message' => $this->message ? new Regex(preg_quote($this->message, '/')) : null,
             'created_at' =>
                 $this->log_time
                     ? new UTCDateTime(strtotime($this->log_time) * 1000)
