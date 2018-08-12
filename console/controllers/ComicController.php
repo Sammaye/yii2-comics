@@ -232,13 +232,20 @@ class ComicController extends Controller
     public function actionMigrate() {
         $migratedCount = 0;
         do {
-            $strip = ComicStrip::findOne(['image_md5' => null]);
+            $strip = ComicStrip::findOne([
+                'comic_id' => ['$nin' => [new ObjectID('5733a92d47ac180b538b4568')]],
+                'migrated' => null
+            ]);
             echo (new \DateTime)->format('Y-m-d H:i:s') . " - $strip->_id" . "\n";
             if ($strip->comic->scrapeStrip($strip) && $strip->save()) {
                 if ($strip->comic->_id == new ObjectId('591427c99d9925051673f486')) {
                     $strip->url = null;
                     $strip->save(false, ['url']);
                 }
+                Yii::$app->mongodb->getCollection(ComicStrip::collectionName())->update(
+                    ['_id' => $strip->_id],
+                    ['$set' => ['migrated' => true]]
+                );
                 $migratedCount++;
             }
 
