@@ -20,6 +20,7 @@ class Log extends ActiveRecord
                 [
                     '_id',
                     'level',
+                    'category',
                     'prefix',
                     'message',
                     'log_time',
