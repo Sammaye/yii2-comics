@@ -233,7 +233,7 @@ class ComicController extends Controller
         $migratedCount = 0;
         do {
             $strip = ComicStrip::findOne(['image_md5' => null]);
-            echo (new \DateTime)->format('Y-m-d H:i:s') . " - $strip->_id";
+            echo (new \DateTime)->format('Y-m-d H:i:s') . " - $strip->_id" . "\n";
             if ($strip->comic->scrapeStrip($strip) && $strip->save()) {
                 if ($strip->comic->_id == new ObjectId('591427c99d9925051673f486')) {
                     $strip->url = null;
@@ -245,7 +245,7 @@ class ComicController extends Controller
             sleep(3);
 
             if (!($migratedCount % 10)) {
-                echo (new \DateTime)->format('Y-m-d H:i:s') . " - $migratedCount strips migrated";
+                echo (new \DateTime)->format('Y-m-d H:i:s') . " - $migratedCount strips migrated" . "\n";
             }
 
             if (!($migratedCount % 100)) {
