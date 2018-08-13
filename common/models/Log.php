@@ -64,11 +64,16 @@ class Log extends ActiveRecord
             'category' => $this->category ? new Regex(preg_quote($this->category, '/')) : null,
             'prefix' => $this->prefix ? new Regex($this->prefix) : null,
             'message' => $this->message ? new Regex(preg_quote($this->message, '/')) : null,
-            'created_at' =>
-                $this->log_time
-                    ? new UTCDateTime(strtotime($this->log_time) * 1000)
-                    : null,
         ]);
+
+        if ($this->log_time) {
+            $date = \DateTime::createFromFormat('Y-m-d', $this->log_time);
+            if ($date) {
+                $this->log_time = (float)$date->format('U.u');
+            } else {
+                $this->log_time = (float)$this->log_time;
+            }
+        }
 
         return new ActiveDataProvider([
             'query' => $query,
