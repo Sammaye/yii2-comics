@@ -285,11 +285,11 @@ class ComicController extends Controller
 
             sleep(60);
 
-            if (!($migratedCount % 10)) {
+            if ($migratedCount && !($migratedCount % 10)) {
                 echo (new \DateTime)->format('Y-m-d H:i:s') . " - $migratedCount strips migrated" . "\n";
             }
 
-            if (!($migratedCount % 100)) {
+            if ($migratedCount && !($migratedCount % 100)) {
                 sleep(108000);
             }
         } while (true);
