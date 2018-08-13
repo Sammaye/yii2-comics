@@ -2,6 +2,7 @@
 
 namespace common\models;
 
+use GuzzleHttp\Exception\RequestException;
 use Yii;
 use yii\base\InvalidArgumentException;
 use yii\base\InvalidConfigException;
@@ -1057,13 +1058,15 @@ class Comic extends ActiveRecord
                     }
                 ]
             );
-        } catch (ClientException $e) {
+        } catch (RequestException $e) {
             // Log the exception
             return $this->addScrapeError(
                 '{id} returned {response} for {url}',
                 [
                     'id' => (String)$this->_id,
-                    'response' => $e->getResponse()->getStatusCode(),
+                    'response' => $e instanceof RequestException && $e->hasResponse()
+                        ? $e->getResponse()->getStatusCode()
+                        : $e->getMessage(),
                     'url' => $url
                 ],
                 $ignoreErrors
