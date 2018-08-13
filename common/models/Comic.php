@@ -660,19 +660,18 @@ class Comic extends ActiveRecord
         if (!$ignoreCurrent && $this->isIndexOutOfRange($index)) {
             return null;
         }
-        return $this->getStrip($index, $data, $ignoreCurrent);
+        return $this->findStrip($index, $data);
     }
 
     public function previous(ComicStrip $strip, array $data = [])
     {
         if ($strip->previous) {
-            return $this->getStrip($strip->previous, $data);
+            return $this->findStrip($strip->previous, $data);
         } elseif ($this->nav_previous_dom_path) {
             // Try and redownload and see if there is a previous now
-            $strip = $this->getStrip($strip->index, $data);
-            if ($strip->previous) {
+            if ($this->scrapeStrip($strip) && $strip->previous && $strip->save()) {
                 // If we have a previous now then let's get that
-                $strip = $this->getStrip($strip->previous, $data);
+                $strip = $this->findStrip($strip->previous, $data);
                 return $strip;
             }
         }
@@ -681,7 +680,7 @@ class Comic extends ActiveRecord
         $index = $this->index($strip->index);
 
         if ($this->type === self::TYPE_DATE) {
-            $strip = $this->getStrip(new UTCDateTime(
+            $strip = $this->findStrip(new UTCDateTime(
                 strtotime("-" . ($this->index_step ?: '1 day'), $index->toDateTime()->getTimestamp()) * 1000
             ));
         } elseif ($this->type === self::TYPE_ID && $this->isIndexInt($index)) {
@@ -689,7 +688,7 @@ class Comic extends ActiveRecord
             if (($index - $indexStep) <= 0) {
                 return null;
             }
-            $strip = $this->getStrip($index - $indexStep, $data);
+            $strip = $this->findStrip($index - $indexStep, $data);
         } else {
             return null;
         }
@@ -708,15 +707,17 @@ class Comic extends ActiveRecord
     public function next(ComicStrip $strip, $scrape = false, array $data = [])
     {
         if ($strip->next) {
-            return $this->getStrip($strip->next, $data, $scrape);
-        } elseif ($this->nav_next_dom_path && $scrape) {
-            // Try and redownload and see if there is a next now
-            $strip = $this->getStrip($strip->index, $data);
-            if ($strip && $strip->next) {
-                // If we have a next now then let's get that
-                $strip = $this->getStrip($strip->next, $data);
-                return $strip;
-            }
+            return $this->findStrip($strip->next, $data);
+        } elseif (
+            $scrape &&
+            $this->nav_next_dom_path &&
+            $this->scrapeStrip($strip) &&
+            $strip->next &&
+            $strip->save()
+        ) {
+            // If we have a next now then let's get that
+            $strip = $this->findStrip($strip->next, $data);
+            return $strip;
         }
 
         // Else we will try and guess it
@@ -742,40 +743,30 @@ class Comic extends ActiveRecord
             return null;
         }
 
-        if (
-            $strip = ComicStrip::find()
-                ->where(['comic_id' => $this->_id, 'index' => $nextIndex])
-                ->one()
-        ) {
-            return $strip;
-        } else {
-            $strip = $this->getStrip($nextIndex, $data);
+        $strip = $this->findStrip($nextIndex, $data);
 
-            if (!$strip) {
-                // As a last resort, to try and compensate for
-                // odd schedules, do we have any next?
-                $strip = ComicStrip::find()
-                    ->where(['comic_id' => $this->_id, 'index' => ['$gt' => $index]])
-                    ->orderBy(['index' => SORT_DESC])
-                    ->one();
-            }
-            return $strip;
+        if (!$strip) {
+            // As a last resort, to try and compensate for
+            // odd schedules, do we have any next?
+            $strip = ComicStrip::find()
+                ->where(['comic_id' => $this->_id, 'index' => ['$gt' => $index]])
+                ->orderBy(['index' => SORT_DESC])
+                ->one();
         }
+        return $strip;
     }
 
-    public function getStrip($index, array $data = [], $scrape = true)
+    public function findStrip($index, array $data = [], $scrape = true)
     {
         $index = $this->index($index);
 
-        if (
-            $strip = ComicStrip::find()
-                ->where(['comic_id' => $this->_id, 'index' => $index])
-                ->one()
-        ) {
-            return $strip;
-        } elseif ($scrape) {
-            $model = ComicStrip::find()->where(['comic_id' => $this->_id, 'index' => $index])->one();
+        $model = ComicStrip::find()
+            ->where(['comic_id' => $this->_id, 'index' => $index])
+            ->one();
 
+        if ($model) {
+            return $model;
+        } elseif ($scrape) {
             if (!$model) {
                 $model = new ComicStrip();
                 $model->comic_id = $this->_id;
@@ -964,13 +955,13 @@ class Comic extends ActiveRecord
                 $this->type === self::TYPE_DATE &&
                 $currentStrip->index->toDateTime()->getTimestamp() == $this->last_index->toDateTime()->getTimestamp()
             ) {
-                $strip = $this->getStrip($this->first_index);
+                $strip = $this->findStrip($this->first_index);
                 $archiveRotated = true;
             } elseif (
                 $this->type === self::TYPE_ID &&
                 $currentStrip->index == $this->last_index
             ) {
-                $strip = $this->getStrip($this->first_index);
+                $strip = $this->findStrip($this->first_index);
                 $archiveRotated = true;
             }
         }
