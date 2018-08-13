@@ -265,6 +265,7 @@ class ComicController extends Controller
 
         $migratedCount = 0;
         do {
+            touch($lock_file);
             $strip = ComicStrip::findOne([
                 'comic_id' => ['$nin' => [new ObjectID('5733a92d47ac180b538b4568')]],
                 'migrated' => null
@@ -282,14 +283,14 @@ class ComicController extends Controller
                 $migratedCount++;
             }
 
-            sleep(3);
+            sleep(60);
 
             if (!($migratedCount % 10)) {
                 echo (new \DateTime)->format('Y-m-d H:i:s') . " - $migratedCount strips migrated" . "\n";
             }
 
             if (!($migratedCount % 100)) {
-                sleep(180);
+                sleep(108000);
             }
         } while (true);
     }
