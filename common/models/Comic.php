@@ -840,27 +840,28 @@ class Comic extends ActiveRecord
         }
 
         if (!$imageUrl) {
-            return $this->addScrapeError(
+            $this->addScrapeError(
                 '{id} could not find img with src for {url}',
                 [
                     'id' => (String)$this->_id,
                     'url' => $url
                 ]
             );
-        }
+        } else {
+            $imageUrlParts = parse_url($imageUrl);
+            if ($imageUrlParts) {
+                $imageUrlHost = null;
+                if (!isset($imageUrlParts['scheme']) && !isset($imageUrlParts['host'])) {
+                    $imageUrlHost = $baseUrlScheme . '://' . $baseUrlHost . '/';
+                } elseif (!isset($imageUrlParts['scheme'])) {
+                    $imageUrlHost = $baseUrlScheme . '://';
+                }
 
-        $imageUrlParts = parse_url($imageUrl);
-        if ($imageUrlParts) {
-            $imageUrlHost = null;
-            if (!isset($imageUrlParts['scheme']) && !isset($imageUrlParts['host'])) {
-                $imageUrlHost = $baseUrlScheme . '://' . $baseUrlHost . '/';
-            } elseif (!isset($imageUrlParts['scheme'])) {
-                $imageUrlHost = $baseUrlScheme . '://';
+                if ($imageUrlHost) {
+                    $imageUrl = $imageUrlHost . ltrim($imageUrl, '/');
+                }
             }
-
-            if ($imageUrlHost) {
-                $imageUrl = $imageUrlHost . ltrim($imageUrl, '/');
-            }
+            $model->image_url = $imageUrl;
         }
 
         if ($this->nav_next_dom_path && $this->nav_previous_dom_path) {
@@ -900,21 +901,22 @@ class Comic extends ActiveRecord
         }
 
         $model->url = $url;
-        $model->image_url = $imageUrl;
 
         try {
-            // Sometimes people like to put crappy special characters into file names
-            if (pathinfo($model->image_url, PATHINFO_EXTENSION)) {
-                $filename = pathinfo($model->image_url, PATHINFO_FILENAME);
-                $encodedFilename = rawurlencode($filename);
-                $imageUrl = str_replace($filename, $encodedFilename, $model->image_url);
-            }
+            if ($model->image_url) {
+                // Sometimes people like to put crappy special characters into file names
+                if (pathinfo($model->image_url, PATHINFO_EXTENSION)) {
+                    $filename = pathinfo($model->image_url, PATHINFO_FILENAME);
+                    $encodedFilename = rawurlencode($filename);
+                    $imageUrl = str_replace($filename, $encodedFilename, $model->image_url);
+                }
 
-            if (($model->image_url) && ($binary = file_get_contents($imageUrl))) {
-                $model->image_md5 = md5($binary);
-                $model->img = new Binary($binary, Binary::TYPE_GENERIC);
-                $model->skip = 0;
-                return true;
+                if (($binary = file_get_contents($imageUrl))) {
+                    $model->image_md5 = md5($binary);
+                    $model->img = new Binary($binary, Binary::TYPE_GENERIC);
+                    $model->skip = 0;
+                    return true;
+                }
             }
 
             throw new \Exception;
