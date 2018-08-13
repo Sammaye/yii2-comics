@@ -290,7 +290,7 @@ class ComicController extends Controller
             }
 
             if ($migratedCount && !($migratedCount % 100)) {
-                sleep(108000);
+                sleep(1800);
             }
         } while (true);
     }
