@@ -229,7 +229,40 @@ class ComicController extends Controller
         }
     }
 
-    public function actionMigrate() {
+    public function actionMigrate()
+    {
+        $lock_file = '/var/lock/migrate_lock';
+
+        if (file_exists($lock_file)) {
+            $filemtime = filemtime($lock_file);
+
+            // Unlock stale file
+            if (
+                !$filemtime ||
+                $filemtime < (new \DateTime('-10 minutes'))->getTimestamp()
+            ) {
+                $lock_fp = fopen($lock_file, 'wb+');
+                flock($lock_fp, LOCK_UN);
+                fclose($lock_fp);
+                unlink($lock_file);
+            }
+        }
+
+        $lock_fp = fopen($lock_file, 'wb+');
+        $has_lock = flock($lock_fp, LOCK_EX | LOCK_NB);
+
+        register_shutdown_function(function () use ($lock_fp, $has_lock, $lock_file) {
+            if ($has_lock) {
+                flock($lock_fp, LOCK_UN);
+                fclose($lock_fp);
+                unlink($lock_file);
+            }
+        });
+
+        if (!$has_lock) {
+            return;
+        }
+
         $migratedCount = 0;
         do {
             $strip = ComicStrip::findOne([
