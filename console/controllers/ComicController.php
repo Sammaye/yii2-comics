@@ -163,7 +163,7 @@ class ComicController extends Controller
             $log_entries = [];
             if (Yii::$app->getAuthManager()->checkAccess($user->_id, 'staff')) {
                 $log_entries = Log::findAll([
-                    'log_time' => ['$gt' => (new \DateTime('today'))->format('U.u')]
+                    'log_time' => ['$gt' => (float)(new \DateTime('today'))->format('U.u')]
                 ]);
             }
 

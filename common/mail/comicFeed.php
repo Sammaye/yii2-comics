@@ -28,13 +28,15 @@ $lastComicTitle = null;
         <?php } ?>
     </div>
 <?php } ?>
-<br/>
-<br/>
-<hr/>
-<br/>
-<br/>
-<?php if (count($log_entries) > 0) {
-    foreach ($log_entries as $log_entry) {
-        echo nl2br($log_entry->message) . "<br/>";
+<?php if (count($log_entries) > 0) { ?>
+    <br/>
+    <br/>
+
+    <hr/>
+
+    <br/>
+    <br/>
+    <?php foreach ($log_entries as $log_entry) {
+        echo nl2br(str_replace(' ', '&nbsp;', $log_entry->message)) . "<br/>";
     }
 } ?>
