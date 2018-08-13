@@ -239,7 +239,7 @@ class ComicController extends Controller
             // Unlock stale file
             if (
                 !$filemtime ||
-                $filemtime < (new \DateTime('-10 minutes'))->getTimestamp()
+                $filemtime < (new \DateTime('-1 hour'))->getTimestamp()
             ) {
                 $lock_fp = fopen($lock_file, 'wb+');
                 flock($lock_fp, LOCK_UN);
