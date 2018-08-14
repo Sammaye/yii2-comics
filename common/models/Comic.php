@@ -675,6 +675,7 @@ class Comic extends ActiveRecord
                 $strip = $this->findStrip($strip->previous, $data);
                 return $strip;
             }
+            return null; // TODO Experimental
         }
 
         // Else we will ty and guess it
@@ -719,6 +720,8 @@ class Comic extends ActiveRecord
             // If we have a next now then let's get that
             $strip = $this->findStrip($strip->next, $data);
             return $strip;
+        } elseif ($this->nav_next_dom_path) {
+            return null; // TODO Experimental
         }
 
         // Else we will try and guess it
