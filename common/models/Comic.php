@@ -817,8 +817,9 @@ class Comic extends ActiveRecord
 
         if (!$dom) {
             return $this->addScrapeError(
-                '{id} could not instantiate DOMDocument Object for {url}',
+                '{title}({id}) could not instantiate DOMDocument Object for {url}',
                 [
+                    'title' => $this->title,
                     'id' => (String)$this->_id,
                     'url' => $url,
                 ]
@@ -844,8 +845,9 @@ class Comic extends ActiveRecord
 
         if (!$imageUrl) {
             $this->addScrapeError(
-                '{id} could not find img with src for {url}',
+                '{title}({id}) could not find img with src for {url}',
                 [
+                    'title' => $this->title,
                     'id' => (String)$this->_id,
                     'url' => $url
                 ]
@@ -890,14 +892,16 @@ class Comic extends ActiveRecord
                 preg_match_all("#$navUrlRegex#", $navLinkUrl, $matches);
 
                 if (!isset($matches['index'][0])) {
-                    return $this->addScrapeError(
-                        '{id} could not parse navigation URL {url} for the field {field}',
+                    $this->addScrapeError(
+                        '{title}({id}) could not parse navigation URL {url} for the field {field}',
                         [
+                            'title' => $this->title,
                             'id' => (String)$this->_id,
                             'url' => $navLinkUrl,
                             'field' => $k === 'previous' ? 'nav_previous_dom_path' : 'nav_next_dom_path',
                         ]
                     );
+                    continue;
                 }
                 $model->$k = $this->index($matches['index'][0], $this->index_format, true);
             }
@@ -974,7 +978,7 @@ class Comic extends ActiveRecord
 
         if (!$currentStrip) {
             return $this->addScrapeError(
-                'Could not find any strip for {title} ({id}) by the index {index}',
+                '{title}({id}) could not find any strip for the index {index}',
                 [
                     'title' => $this->title,
                     'id' => (String)$this->_id,
@@ -1002,7 +1006,7 @@ class Comic extends ActiveRecord
                 ) === null
             ) {
                 return $this->addScrapeError(
-                    '{title} ({id}) could not find next from {url}',
+                    '{title}({id}) could not find next from {url}',
                     [
                         'title' => $this->title,
                         'id' => (String)$this->_id,
@@ -1016,8 +1020,11 @@ class Comic extends ActiveRecord
         $this->last_checked = new UTCDateTime($timeToday * 1000);
         if (!$this->save(false, ['last_checked', 'current_index'])) {
             return $this->addScrapeError(
-                'Could not save last checked and current_index for {id}',
-                ['id' => (String)$this->_id]
+                '{title}({id}) Could not save last checked and current_index for {id}',
+                [
+                    'title' => $this->title,
+                    'id' => (String)$this->_id
+                ]
             );
         }
 
@@ -1037,8 +1044,11 @@ class Comic extends ActiveRecord
                     $this->last_checked = new UTCDateTime($timeToday * 1000);
                     if (!$this->save(false, ['last_checked', 'current_index'])) {
                         return $this->addScrapeError(
-                            'Could not save last checked and current_index for {id}',
-                            ['id' => (String)$this->_id]
+                            '{title}({id}) Could not save last checked and current_index for {id}',
+                            [
+                                'title' => $this->title,
+                                'id' => (String)$this->_id
+                            ]
                         );
                     } else {
                         $has_next = true;
@@ -1066,8 +1076,9 @@ class Comic extends ActiveRecord
         } catch (RequestException $e) {
             // Log the exception
             return $this->addScrapeError(
-                '{id} returned {response} for {url}',
+                '{title}({id}) returned {response} for {url}',
                 [
+                    'title' => $this->title,
                     'id' => (String)$this->_id,
                     'response' => $e instanceof RequestException && $e->hasResponse()
                         ? $e->getResponse()->getStatusCode()

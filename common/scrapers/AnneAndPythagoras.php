@@ -32,8 +32,9 @@ class AnneAndPythagoras extends Comic
 
         if (!$dom) {
             return $this->addScrapeError(
-                '{id} could not instantiate DOMDocument Object for {url}',
+                '{title}({id}) could not instantiate DOMDocument Object for {url}',
                 [
+                    'title' => $this->title,
                     'id' => (String)$this->_id,
                     'url' => $url,
                 ]
@@ -54,8 +55,9 @@ class AnneAndPythagoras extends Comic
         if (!$images) {
             //raise error
             return $this->addScrapeError(
-                '{id} could not find img array from JS for {url}',
+                '{title}({id}) could not find img array from JS for {url}',
                 [
+                    'title' => $this->title,
                     'id' => (String)$this->_id,
                     'url' => $url
                 ]
@@ -70,8 +72,9 @@ class AnneAndPythagoras extends Comic
 
         if (!$imageUrl) {
             return $this->addScrapeError(
-                '{id} ({index}) could not find img with src for {url}',
+                '{title}({id}) - ({index}) could not find img with src for {url}',
                 [
+                    'title' => $this->title,
                     'id' => (String)$this->_id,
                     'index' => $model->index,
                     'url' => $url
