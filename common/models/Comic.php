@@ -844,7 +844,8 @@ class Comic extends ActiveRecord
         }
 
         if (!$imageUrl) {
-            $this->addScrapeError(
+            $this->addScrapeWarning(
+                'app',
                 '{title}({id}) could not find img with src for {url}',
                 [
                     'title' => $this->title,
@@ -892,7 +893,8 @@ class Comic extends ActiveRecord
                 preg_match_all("#$navUrlRegex#", $navLinkUrl, $matches);
 
                 if (!isset($matches['index'][0])) {
-                    $this->addScrapeError(
+                    $this->addScrapeWarning(
+                        'app',
                         '{title}({id}) could not parse navigation URL {url} for the field {field}',
                         [
                             'title' => $this->title,
@@ -1104,6 +1106,15 @@ class Comic extends ActiveRecord
         if (!$ignore) {
             $message = Yii::t('app', $message, $params);
             $this->_scrapeErrors[] = $message;
+            Yii::warning($message, 'comic\\' . (String)$this->_id);
+        }
+        return false;
+    }
+
+    public function addScrapeWarning($message, $params = [], $ignore = false)
+    {
+        if (!$ignore) {
+            $message = Yii::t('app', $message, $params);
             Yii::warning($message, 'comic\\' . (String)$this->_id);
         }
         return false;
