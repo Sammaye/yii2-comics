@@ -45,7 +45,7 @@ class ComicController extends Controller
         $this->layout = 'tabbedComics';
 
         /**
-         * @var Comic
+         * @var Comic $comic
          */
         $comic = null;
         $condition = ['live' => 1];
@@ -65,7 +65,7 @@ class ComicController extends Controller
             return $this->render('comicNotFound');
         }
 
-        if (!$current = $comic->current($index)) {
+        if (!$current = $comic->current($comic->index($index, 'd-m-Y'))) {
             return $this->render('comicStripNotFound', ['model' => $comic]);
         }
 
