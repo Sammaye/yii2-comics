@@ -637,12 +637,9 @@ class Comic extends ActiveRecord
         return false;
     }
 
-    public function current($index = null, $ignoreCurrent = false, array $data = [])
+    public function current($index, array $data = [])
     {
         $index = $this->index($index ?: $this->current_index);
-        if (!$ignoreCurrent && $this->isIndexOutOfRange($index)) {
-            return null;
-        }
         return $this->findStrip($index, $data);
     }
 
@@ -976,7 +973,6 @@ class Comic extends ActiveRecord
             $currentStrip->date->toDateTime()->getTimestamp() === $timeToday
         ) {
             $strip = $currentStrip;
-            //return $strip;
         } elseif (!$archiveRotated) {
             if (
                 (
