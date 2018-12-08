@@ -9,7 +9,7 @@ class DebugModule extends BaseDebugModule
 {
     private $_basePath;
 
-    protected function checkAccess($action)
+    protected function checkAccess($action = null)
     {
         $user = Yii::$app->getUser();
 
