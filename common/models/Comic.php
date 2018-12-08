@@ -597,7 +597,8 @@ class Comic extends ActiveRecord
                     (
                         $firstIndex &&
                         $requestedIndex < $firstIndex
-                    )
+                    ) ||
+                    $requestedIndex <= 0
                 )
             ) {
                 return true;
@@ -648,8 +649,12 @@ class Comic extends ActiveRecord
         if ($strip->previous) {
             return $this->findStrip($strip->previous, $data);
         } elseif ($this->nav_previous_dom_path) {
-            // Try and redownload and see if there is a previous now
-            if ($this->scrapeStrip($strip) && $strip->previous && $strip->save()) {
+            // Try and re-download and see if there is a previous now
+            if (
+                $this->scrapeStrip($strip) &&
+                $strip->previous &&
+                $strip->save()
+            ) {
                 // If we have a previous now then let's get that
                 $strip = $this->findStrip($strip->previous, $data);
                 return $strip;
@@ -660,19 +665,26 @@ class Comic extends ActiveRecord
         // Else we will ty and guess it
         $index = $this->index($strip->index);
 
+        $previousIndex = null;
         if ($this->type === self::TYPE_DATE) {
-            $strip = $this->findStrip(new UTCDateTime(
-                strtotime("-" . ($this->index_step ?: '1 day'), $index->toDateTime()->getTimestamp()) * 1000
-            ));
+            $previousIndex = new UTCDateTime(
+                $index
+                    ->toDateTime()
+                    ->modify('-' . ($this->index_step ?: '1 day'))
+                    ->getTimestamp() * 1000
+            );
         } elseif ($this->type === self::TYPE_ID && $this->isIndexInt($index)) {
-            $indexStep = $this->index_step ?: 1;
-            if (($index - $indexStep) <= 0) {
-                return null;
-            }
-            $strip = $this->findStrip($index - $indexStep, $data);
-        } else {
+            $previousIndex = $index - ($this->index_step ?: 1);
+        }
+
+        if (
+            !$previousIndex ||
+            $this->isIndexOutOfRange($previousIndex)
+        ) {
             return null;
         }
+
+        $strip = $this->findStrip($this->index($previousIndex), $data);
 
         if (!$strip) {
             // As a last resort, to try and compensate for
@@ -689,17 +701,17 @@ class Comic extends ActiveRecord
     {
         if ($strip->next) {
             return $this->findStrip($strip->next, $data);
-        } elseif (
-            $scrape &&
-            $this->nav_next_dom_path &&
-            $this->scrapeStrip($strip) &&
-            $strip->next &&
-            $strip->save()
-        ) {
-            // If we have a next now then let's get that
-            $strip = $this->findStrip($strip->next, $data);
-            return $strip;
         } elseif ($this->nav_next_dom_path) {
+            if (
+                $scrape &&
+                $this->scrapeStrip($strip) &&
+                $strip->next &&
+                $strip->save()
+            ) {
+                // If we have a next now then let's get that
+                $strip = $this->findStrip($strip->next, $data);
+                return $strip;
+            }
             return null;
         }
 
@@ -709,15 +721,14 @@ class Comic extends ActiveRecord
         $nextIndex = null;
         if ($this->type === self::TYPE_DATE) {
             $nextIndex = new UTCDateTime(
-                strtotime("+" . ($this->index_step ?: '1 day'), $index->toDateTime()->getTimestamp()) * 1000
+                $index
+                    ->toDateTime()
+                    ->modify("+" . ($this->index_step ?: '1 day'))
+                    ->getTimestamp() * 1000
             );
         } elseif ($this->type === self::TYPE_ID && $this->isIndexInt($index)) {
             $nextIndex = $index + ($this->index_step ?: 1);
-        } else {
-            return null;
         }
-
-        $nextIndex = $this->index($nextIndex);
 
         if (
             !$nextIndex ||
@@ -726,7 +737,7 @@ class Comic extends ActiveRecord
             return null;
         }
 
-        $strip = $this->findStrip($nextIndex, $data);
+        $strip = $this->findStrip($this->index($nextIndex), $data);
 
         if (!$strip) {
             // As a last resort, to try and compensate for
@@ -940,7 +951,7 @@ class Comic extends ActiveRecord
         $archiveRotated = false;
 
         if (!$this->active) {
-            // Detect if index is at least position
+            // Detect if index is at last position
             // If it is then cycle
             if (
                 $this->type === self::TYPE_DATE &&
