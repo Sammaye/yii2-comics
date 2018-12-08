@@ -109,8 +109,16 @@ $(document).on('change', '#scraper_user_agent_prefill', function(e){
             <?= $form->field($model, 'nav_page_number_dom_path') ?>
         </div>
         <div class="col-sm-22 col-sm-push-4">
-            <?= $form->field($model, 'last_index')->textInput(['value' => $model->getLastIndexValue()]) ?>
-            <?= $form->field($model, 'first_index')->textInput(['value' => $model->getFirstIndexValue()]) ?>
+            <?= $form->field($model, 'last_index')->textInput([
+                'value' => $model->getLastIndexValue() instanceof UTCDateTime
+                    ? $model->getLastIndexValue()->toDateTime()->format(Yii::$app->getFormatter()->fieldDateFormat)
+                    : $model->getLastIndexValue()
+            ]) ?>
+            <?= $form->field($model, 'first_index')->textInput([
+                'value' => $model->getFirstIndexValue() instanceof UTCDateTime
+                    ? $model->getFirstIndexValue()->toDateTime()->format(Yii::$app->getFormatter()->fieldDateFormat)
+                    : $model->getFirstIndexValue()
+            ]) ?>
             <?= $form->field($model, 'index_step') ?>
         </div>
     </div>
