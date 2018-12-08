@@ -430,7 +430,7 @@ a.desc:after {
 }
 
 .comic-view {
-    margin-top: 51px;
+    padding-top: 51px;
 }
 
 .comic-view .content {
