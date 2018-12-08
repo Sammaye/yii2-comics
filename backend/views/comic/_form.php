@@ -69,7 +69,11 @@ $(document).on('change', '#scraper_user_agent_prefill', function(e){
         </div>
         <div class="col-sm-22 col-sm-push-4">
             <?= $form->field($model, 'index_format') ?>
-            <?= $form->field($model, 'current_index')->textInput(['value' => $model->getCurrentIndexValue()]) ?>
+            <?= $form->field($model, 'current_index')->textInput([
+                'value' => $model->getCurrentIndexValue() instanceof UTCDateTime
+                    ? $model->getCurrentIndexValue()->toDateTime()->format(Yii::$app->getFormatter()->fieldDateFormat)
+                    : $model->getCurrentIndexValue()
+            ]) ?>
             <div>
                 <?= Html::activeLabel($model, 'scraper_user_agent') ?>
                 <p class="help-block">Selecting a user agent from the dropdown will pre-fill the scraper's user agent field with that option. You can also just type one in manually.</p>
