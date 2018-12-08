@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a536ded639ff766d610ac6d8be0563ec",
+    "content-hash": "c2464b90bf30bc93a5e3d698f633d416",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.64.5",
+            "version": "3.81.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "c1292388910063803cfd7aa73d48ad4df42a526c"
+                "reference": "02a3ea09dd846c2d3bb923d6c91902f08c5bf2af"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/c1292388910063803cfd7aa73d48ad4df42a526c",
-                "reference": "c1292388910063803cfd7aa73d48ad4df42a526c",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/02a3ea09dd846c2d3bb923d6c91902f08c5bf2af",
+                "reference": "02a3ea09dd846c2d3bb923d6c91902f08c5bf2af",
                 "shasum": ""
             },
             "require": {
@@ -25,7 +25,7 @@
                 "ext-pcre": "*",
                 "ext-simplexml": "*",
                 "ext-spl": "*",
-                "guzzlehttp/guzzle": "^5.3.1|^6.2.1",
+                "guzzlehttp/guzzle": "^5.3.3|^6.2.1",
                 "guzzlehttp/promises": "~1.0",
                 "guzzlehttp/psr7": "^1.4.1",
                 "mtdowling/jmespath.php": "~2.2",
@@ -38,6 +38,8 @@
                 "doctrine/cache": "~1.4",
                 "ext-dom": "*",
                 "ext-openssl": "*",
+                "ext-pcntl": "*",
+                "ext-sockets": "*",
                 "nette/neon": "^2.3",
                 "phpunit/phpunit": "^4.8.35|^5.4.3",
                 "psr/cache": "^1.0"
@@ -46,7 +48,8 @@
                 "aws/aws-php-sns-message-validator": "To validate incoming SNS notifications",
                 "doctrine/cache": "To use the DoctrineCacheAdapter",
                 "ext-curl": "To send requests using cURL",
-                "ext-openssl": "Allows working with CloudFront private distributions and verifying received SNS messages"
+                "ext-openssl": "Allows working with CloudFront private distributions and verifying received SNS messages",
+                "ext-sockets": "To use client-side monitoring"
             },
             "type": "library",
             "extra": {
@@ -84,7 +87,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2018-08-03T18:10:54+00:00"
+            "time": "2018-12-06T20:10:37+00:00"
         },
         {
             "name": "bower-asset/bootstrap",
@@ -615,12 +618,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/promises.git",
-                "reference": "136531aa4e42f9b1971a47fb0faf60da00d2fefa"
+                "reference": "926eaa3ff73cde2becf652b785831bcb7618568a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/promises/zipball/136531aa4e42f9b1971a47fb0faf60da00d2fefa",
-                "reference": "136531aa4e42f9b1971a47fb0faf60da00d2fefa",
+                "url": "https://api.github.com/repos/guzzle/promises/zipball/926eaa3ff73cde2becf652b785831bcb7618568a",
+                "reference": "926eaa3ff73cde2becf652b785831bcb7618568a",
                 "shasum": ""
             },
             "require": {
@@ -658,7 +661,7 @@
             "keywords": [
                 "promise"
             ],
-            "time": "2018-03-25T01:26:01+00:00"
+            "time": "2018-10-30T00:20:04+00:00"
         },
         {
             "name": "guzzlehttp/psr7",
@@ -666,24 +669,27 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/psr7.git",
-                "reference": "4b981cdeb8c13d22a6c193554f8c686f53d5c958"
+                "reference": "5e61346ab1e1ca7d01d2f633bad9574d35717781"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/psr7/zipball/4b981cdeb8c13d22a6c193554f8c686f53d5c958",
-                "reference": "4b981cdeb8c13d22a6c193554f8c686f53d5c958",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/5e61346ab1e1ca7d01d2f633bad9574d35717781",
+                "reference": "5e61346ab1e1ca7d01d2f633bad9574d35717781",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.4.0",
                 "psr/http-message": "~1.0",
-                "ralouphie/getallheaders": "^2.0.5"
+                "ralouphie/getallheaders": "^2.0.5 || ^3.0.0"
             },
             "provide": {
                 "psr/http-message-implementation": "1.0"
             },
             "require-dev": {
                 "phpunit/phpunit": "~4.8.36 || ^5.7.27 || ^6.5.8"
+            },
+            "suggest": {
+                "zendframework/zend-httphandlerrunner": "Emit PSR-7 responses"
             },
             "type": "library",
             "extra": {
@@ -718,13 +724,14 @@
             "keywords": [
                 "http",
                 "message",
+                "psr-7",
                 "request",
                 "response",
                 "stream",
                 "uri",
                 "url"
             ],
-            "time": "2018-07-29T08:09:46+00:00"
+            "time": "2018-12-07T15:04:46+00:00"
         },
         {
             "name": "imagine/imagine",
@@ -789,12 +796,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/select2/select2.git",
-                "reference": "e02b34ba0f883e81c93b1b1a7caf849b464fdd30"
+                "reference": "60ee4a1179a09b43d9139fb9556521abe3fd879e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/select2/select2/zipball/e02b34ba0f883e81c93b1b1a7caf849b464fdd30",
-                "reference": "e02b34ba0f883e81c93b1b1a7caf849b464fdd30",
+                "url": "https://api.github.com/repos/select2/select2/zipball/60ee4a1179a09b43d9139fb9556521abe3fd879e",
+                "reference": "60ee4a1179a09b43d9139fb9556521abe3fd879e",
                 "shasum": ""
             },
             "require": {
@@ -822,7 +829,7 @@
             ],
             "description": "Select2 is a jQuery based replacement for select boxes.",
             "homepage": "https://select2.org/",
-            "time": "2017-11-05T00:48:55+00:00"
+            "time": "2018-09-05T01:14:22+00:00"
         },
         {
             "name": "kriswallsmith/assetic",
@@ -1261,12 +1268,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/process.git",
-                "reference": "4d6b125d5293cbceedc2aa10f2c71617e76262e7"
+                "reference": "abb46b909dd6ba0b50e10d4c10ffe6ee96dd70f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/process/zipball/4d6b125d5293cbceedc2aa10f2c71617e76262e7",
-                "reference": "4d6b125d5293cbceedc2aa10f2c71617e76262e7",
+                "url": "https://api.github.com/repos/symfony/process/zipball/abb46b909dd6ba0b50e10d4c10ffe6ee96dd70f2",
+                "reference": "abb46b909dd6ba0b50e10d4c10ffe6ee96dd70f2",
                 "shasum": ""
             },
             "require": {
@@ -1302,7 +1309,7 @@
             ],
             "description": "Symfony Process Component",
             "homepage": "https://symfony.com",
-            "time": "2018-08-03T10:42:44+00:00"
+            "time": "2018-11-20T16:10:26+00:00"
         },
         {
             "name": "yii2tech/embedded",
@@ -1310,16 +1317,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/yii2tech/embedded.git",
-                "reference": "6f2c24eb4321451cc8a62173441063a0d55aa0dc"
+                "reference": "a20e2640dbc028a72b7367c2bc8b9f9d00f53496"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yii2tech/embedded/zipball/6f2c24eb4321451cc8a62173441063a0d55aa0dc",
-                "reference": "6f2c24eb4321451cc8a62173441063a0d55aa0dc",
+                "url": "https://api.github.com/repos/yii2tech/embedded/zipball/a20e2640dbc028a72b7367c2bc8b9f9d00f53496",
+                "reference": "a20e2640dbc028a72b7367c2bc8b9f9d00f53496",
                 "shasum": ""
             },
             "require": {
-                "yiisoft/yii2": "~2.0.13"
+                "yiisoft/yii2": "~2.0.14"
             },
             "type": "yii2-extension",
             "extra": {
@@ -1329,7 +1336,7 @@
             },
             "autoload": {
                 "psr-4": {
-                    "yii2tech\\embedded\\": ""
+                    "yii2tech\\embedded\\": "src"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -1348,12 +1355,13 @@
                 "elasticsearch",
                 "embed",
                 "embedded",
+                "json",
                 "mongo",
                 "mongodb",
                 "nested",
                 "yii2"
             ],
-            "time": "2017-11-03T15:42:16+00:00"
+            "time": "2018-08-23T14:50:41+00:00"
         },
         {
             "name": "yiisoft/yii2",
@@ -1569,12 +1577,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-composer.git",
-                "reference": "f2a88bca8c1eb54ba35e5209bad632d93cac4c29"
+                "reference": "f4cb50d40ed34fc6f6b100d1a515dbdbc65e40ac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-composer/zipball/f2a88bca8c1eb54ba35e5209bad632d93cac4c29",
-                "reference": "f2a88bca8c1eb54ba35e5209bad632d93cac4c29",
+                "url": "https://api.github.com/repos/yiisoft/yii2-composer/zipball/f4cb50d40ed34fc6f6b100d1a515dbdbc65e40ac",
+                "reference": "f4cb50d40ed34fc6f6b100d1a515dbdbc65e40ac",
                 "shasum": ""
             },
             "require": {
@@ -1615,7 +1623,7 @@
                 "extension installer",
                 "yii2"
             ],
-            "time": "2018-07-05T15:45:38+00:00"
+            "time": "2018-08-25T10:44:34+00:00"
         },
         {
             "name": "yiisoft/yii2-imagine",
@@ -1717,12 +1725,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-mongodb.git",
-                "reference": "9836aa02a4dce75a0d023ec1c167a463b1a72bf1"
+                "reference": "eaa35e0f2bf405eba38abc1b1519c8d5470cf811"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-mongodb/zipball/9836aa02a4dce75a0d023ec1c167a463b1a72bf1",
-                "reference": "9836aa02a4dce75a0d023ec1c167a463b1a72bf1",
+                "url": "https://api.github.com/repos/yiisoft/yii2-mongodb/zipball/eaa35e0f2bf405eba38abc1b1519c8d5470cf811",
+                "reference": "eaa35e0f2bf405eba38abc1b1519c8d5470cf811",
                 "shasum": ""
             },
             "require": {
@@ -1758,7 +1766,7 @@
                 "mongodb",
                 "yii2"
             ],
-            "time": "2018-05-04T06:56:03+00:00"
+            "time": "2018-09-04T23:21:43+00:00"
         },
         {
             "name": "yiisoft/yii2-swiftmailer",
@@ -1845,12 +1853,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/fzaninotto/Faker.git",
-                "reference": "9c9e33857cf41bb9cbc8c1830e4d817fbacb03a2"
+                "reference": "06ac73da6517f58afe998ed46f93825d7a277d8d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fzaninotto/Faker/zipball/9c9e33857cf41bb9cbc8c1830e4d817fbacb03a2",
-                "reference": "9c9e33857cf41bb9cbc8c1830e4d817fbacb03a2",
+                "url": "https://api.github.com/repos/fzaninotto/Faker/zipball/06ac73da6517f58afe998ed46f93825d7a277d8d",
+                "reference": "06ac73da6517f58afe998ed46f93825d7a277d8d",
                 "shasum": ""
             },
             "require": {
@@ -1887,7 +1895,7 @@
                 "faker",
                 "fixtures"
             ],
-            "time": "2018-07-13T06:28:23+00:00"
+            "time": "2018-11-22T13:56:51+00:00"
         },
         {
             "name": "phpspec/php-diff",
@@ -1979,17 +1987,23 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-debug.git",
-                "reference": "307736c478453cc4da6a8b164c480944a3e46d85"
+                "reference": "9020db255600e185bca4c09b62ee22eed58f92db"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-debug/zipball/307736c478453cc4da6a8b164c480944a3e46d85",
-                "reference": "307736c478453cc4da6a8b164c480944a3e46d85",
+                "url": "https://api.github.com/repos/yiisoft/yii2-debug/zipball/9020db255600e185bca4c09b62ee22eed58f92db",
+                "reference": "9020db255600e185bca4c09b62ee22eed58f92db",
                 "shasum": ""
             },
             "require": {
-                "yiisoft/yii2": "~2.0.13",
-                "yiisoft/yii2-bootstrap": "~2.0.0"
+                "ext-mbstring": "*",
+                "php": ">=5.4",
+                "yiisoft/yii2": "~2.0.13"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "<7",
+                "yiisoft/yii2-coding-standards": "~2.0",
+                "yiisoft/yii2-swiftmailer": "*"
             },
             "type": "yii2-extension",
             "extra": {
@@ -2010,6 +2024,10 @@
                 {
                     "name": "Qiang Xue",
                     "email": "qiang.xue@gmail.com"
+                },
+                {
+                    "name": "Simon Karlen",
+                    "email": "simi.albi@outlook.com"
                 }
             ],
             "description": "The debugger extension for the Yii framework",
@@ -2018,7 +2036,7 @@
                 "debugger",
                 "yii2"
             ],
-            "time": "2018-06-25T11:30:12+00:00"
+            "time": "2018-12-07T15:41:54+00:00"
         },
         {
             "name": "yiisoft/yii2-faker",
@@ -2073,12 +2091,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-gii.git",
-                "reference": "60c53d399ebf12cac9b8daa1fa9d81b8b1ee9a91"
+                "reference": "111da4dee053c4f8cfa00e4e3738094eba6490d7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-gii/zipball/60c53d399ebf12cac9b8daa1fa9d81b8b1ee9a91",
-                "reference": "60c53d399ebf12cac9b8daa1fa9d81b8b1ee9a91",
+                "url": "https://api.github.com/repos/yiisoft/yii2-gii/zipball/111da4dee053c4f8cfa00e4e3738094eba6490d7",
+                "reference": "111da4dee053c4f8cfa00e4e3738094eba6490d7",
                 "shasum": ""
             },
             "require": {
@@ -2114,7 +2132,7 @@
                 "gii",
                 "yii2"
             ],
-            "time": "2018-07-11T19:23:16+00:00"
+            "time": "2018-12-01T20:41:05+00:00"
         }
     ],
     "aliases": [],

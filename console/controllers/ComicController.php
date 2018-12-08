@@ -137,12 +137,12 @@ class ComicController extends Controller
                         ];
                     }
 
-                    if (
-                        $strip = ComicStrip::find()
-                            ->where($condition)
-                            ->orderBy(['date' => SORT_DESC])
-                            ->one()
-                    ) {
+                    $comicStrips = ComicStrip::find()
+                        ->where($condition)
+                        ->orderBy(['date' => SORT_DESC])
+                        ->all();
+
+                    foreach ($comicStrips as $strip) {
                         $strip->comic = $comic;
                         $strips[] = $strip;
                     }

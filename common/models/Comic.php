@@ -219,10 +219,9 @@ class Comic extends ActiveRecord
                 )
             );
         } elseif ($this->type === self::TYPE_ID) {
-            // There is nothing to validate here atm really
-            //$this->addError($attribute, 'The index format must be valid syntax');
+            // There is nothing able to validate
         } else {
-            //$this->addError($attribute, 'Could not validate the index format since no type was set');
+            // Cannot say what a valid index format should be
         }
     }
 
@@ -245,6 +244,17 @@ class Comic extends ActiveRecord
             }
             $this->$attribute = $value;
         } elseif ($this->type === self::TYPE_ID) {
+
+            if (!$this->isIndexInt($this->index)) {
+                $this->addError(
+                    $attribute,
+                    Yii::t(
+                        'app',
+                        'Cannot use index step on string IDs'
+                    )
+                );
+            }
+
             if (!preg_match('#^\d+$#', $value)) {
                 $this->addError(
                     $attribute,
@@ -265,8 +275,6 @@ class Comic extends ActiveRecord
                 );
             }
             $this->$attribute = $value;
-        } else {
-            //$this->addError($attribute, 'Could not validate the index step since no type was set');
         }
     }
 
@@ -498,38 +506,17 @@ class Comic extends ActiveRecord
 
     public function getCurrentIndexValue()
     {
-        if ($this->current_index != null) {
-            if ($this->type === self::TYPE_DATE) {
-                return $this->current_index->toDateTime()->format(Yii::$app->getFormatter()->fieldDateFormat);
-            } elseif ($this->type === self::TYPE_ID) {
-                return (String)$this->current_index;
-            }
-        }
-        return $this->current_index;
+        return $this->index($this->current_index);
     }
 
     public function getLastIndexValue()
     {
-        if ($this->last_index != null) {
-            if ($this->type === self::TYPE_DATE) {
-                return $this->last_index->toDateTime()->format(Yii::$app->getFormatter()->fieldDateFormat);
-            } elseif ($this->type === self::TYPE_ID) {
-                return (String)$this->last_index;
-            }
-        }
-        return $this->last_index;
+        return $this->index($this->last_index);
     }
 
     public function getFirstIndexValue()
     {
-        if ($this->first_index != null) {
-            if ($this->type === self::TYPE_DATE) {
-                return $this->first_index->toDateTime()->format(Yii::$app->getFormatter()->fieldDateFormat);
-            } elseif ($this->type === self::TYPE_ID) {
-                return (String)$this->first_index;
-            }
-        }
-        return $this->first_index;
+        return $this->index($this->first_index);
     }
 
     public function getLatestIndexValue()
@@ -540,15 +527,16 @@ class Comic extends ActiveRecord
         return $this->getLastIndexValue();
     }
 
-    public function index($index = null, $format = null, $toString = false)
+    public function index($index, $format = null, $toString = false)
     {
-        $index = $index ?: $this->current_index;
         $format = $format ?: $this->index_format;
         if (
             $this->type === self::TYPE_DATE &&
             !$index instanceof UTCDateTime
         ) {
-            if (
+            if (!$index) {
+                return null;
+            } elseif (
                 (
                     new MongoDateValidator(['format' => 'php:' . $format])
                 )->validate($index)
@@ -573,73 +561,64 @@ class Comic extends ActiveRecord
         return $index;
     }
 
-    public function updateIndex($index, $save = true)
-    {
-        if ($this->active) {
-            if (
-                $this->type === self::TYPE_DATE &&
-                $index->toDateTime()->getTimestamp() > $this->current_index->toDateTime()->getTimestamp()
-            ) {
-                $this->current_index = $index;
-            } elseif (
-                $this->type === self::TYPE_ID &&
-                $this->isIndexInt($index) &&
-                $index > $this->current_index
-            ) {
-                $this->current_index = $index;
-            } elseif (
-                $this->type === self::TYPE_ID &&
-                !$this->isIndexInt($index)
-            ) {
-                $this->current_index = $index;
-            }
-        } else {
-            $this->current_index = $index;
-        }
-
-        if ($save) {
-            $this->save(false, ['current_index']);
-        }
-    }
-
     public function isIndexOutOfRange($index)
     {
+        $requestedIndex = $this->index($index);
+        $currentIndex = $this->index($this->current_index);
+
+        if (
+            $this->type === self::TYPE_ID &&
+            !$this->isIndexInt($currentIndex)
+        ) {
+            // Don't run for string indices
+            return false;
+        }
+
+        $firstIndex = $this->index($this->first_index);
+        $lastIndex = $this->index($this->last_index);
+
         if ($this->active) {
             if (
                 $this->type === self::TYPE_DATE &&
-                $index->toDateTime()->getTimestamp() > $this->current_index->toDateTime()->getTimestamp()
+                (
+                    $requestedIndex->toDateTime()->getTimestamp() > $currentIndex->toDateTime()->getTimestamp() ||
+                    (
+                        $firstIndex &&
+                        $requestedIndex->toDateTime()->getTimestamp() < $firstIndex->toDateTime()->getTimestamp()
+                    )
+                )
             ) {
                 return true;
             } elseif (
                 $this->type === self::TYPE_ID &&
-                $this->isIndexInt($index) &&
-                $index > $this->current_index
+                $this->isIndexInt($currentIndex) &&
+                (
+                    $requestedIndex > $currentIndex ||
+                    (
+                        $firstIndex &&
+                        $requestedIndex < $firstIndex
+                    )
+                )
             ) {
                 return true;
-            } elseif (
-                $this->type === self::TYPE_ID &&
-                !$this->isIndexInt($index) &&
-                $index !== $this->current_index
-            ) {
-                // TODO figure out how to detect if a sting range is out of range, this could be done by checking the next field on the strip
-                //return true;
             }
         } else {
             if (
                 $this->type === self::TYPE_DATE &&
-                $index->toDateTime()->getTimestamp() > $this->last_index->toDateTime()->getTimestamp()
+                (
+                    $requestedIndex->toDateTime()->getTimestamp() > $lastIndex->toDateTime()->getTimestamp() ||
+                    $requestedIndex->toDateTime()->getTimestamp() < $firstIndex->toDateTime()->getTimestamp()
+                )
             ) {
                 return true;
             } elseif (
                 $this->type === self::TYPE_ID &&
                 $this->isIndexInt($index) &&
-                $index > $this->last_index
-            ) {
-                return true;
-            } elseif (
-                $this->type === self::TYPE_ID &&
-                !$this->isIndexInt($index) &&
-                $index === $this->last_index
+                (
+                    $requestedIndex < $firstIndex ||
+                    $requestedIndex > $lastIndex
+
+                )
             ) {
                 return true;
             }
@@ -649,7 +628,10 @@ class Comic extends ActiveRecord
 
     public function isIndexInt($value)
     {
-        if (preg_match('#^[0-9]+$#', $value)) {
+        if (
+            preg_match('#^([+-]?[1-9]\d*|0)$#', $value) &&
+            (int)$value < PHP_INT_MAX
+        ) {
             return true;
         }
         return false;
@@ -675,7 +657,7 @@ class Comic extends ActiveRecord
                 $strip = $this->findStrip($strip->previous, $data);
                 return $strip;
             }
-            return null; // TODO Experimental
+            return null;
         }
 
         // Else we will ty and guess it
@@ -721,7 +703,7 @@ class Comic extends ActiveRecord
             $strip = $this->findStrip($strip->next, $data);
             return $strip;
         } elseif ($this->nav_next_dom_path) {
-            return null; // TODO Experimental
+            return null;
         }
 
         // Else we will try and guess it
@@ -905,7 +887,7 @@ class Comic extends ActiveRecord
                     );
                     continue;
                 }
-                $model->$k = $this->index($matches['index'][0], $this->index_format, true);
+                $model->$k = $this->index($matches['index'][0], $this->index_format);
             }
         }
 
@@ -1018,7 +1000,7 @@ class Comic extends ActiveRecord
             }
         }
 
-        $this->updateIndex($strip->index, false);
+        $this->current_index = $strip->index;
         $this->last_checked = new UTCDateTime($timeToday * 1000);
         if (!$this->save(false, ['last_checked', 'current_index'])) {
             return $this->addScrapeError(
@@ -1042,7 +1024,7 @@ class Comic extends ActiveRecord
                 );
 
                 if ($strip) {
-                    $this->updateIndex($strip->index, false);
+                    $this->current_index = $strip->index;
                     $this->last_checked = new UTCDateTime($timeToday * 1000);
                     if (!$this->save(false, ['last_checked', 'current_index'])) {
                         return $this->addScrapeError(

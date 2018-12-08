@@ -48,7 +48,6 @@ class ComicStripController extends Controller
                 }
 
                 if (count($model->getErrors()) <= 0 && $model->save(false)) {
-                    $model->comic->updateIndex($model->index);
                     return $this->redirect(['comic/update', 'id' => (string)$model->comic_id]);
                 }
             }
