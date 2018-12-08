@@ -521,10 +521,7 @@ class Comic extends ActiveRecord
 
     public function getLatestIndexValue()
     {
-        if ($current_index = $this->getCurrentIndexValue()) {
-            return $current_index;
-        }
-        return $this->getLastIndexValue();
+        return $this->getCurrentIndexValue() ?? $this->getLastIndexValue();
     }
 
     public function index($index, $format = null, $toString = false)
@@ -932,6 +929,7 @@ class Comic extends ActiveRecord
      * Used specifically by the scraper to get new strips
      * @param bool $force
      * @return array|\common\models\ComicStrip|null|\yii\mongodb\ActiveRecord
+     * @throws \Exception
      */
     public function scrapeCron($force = false)
     {
@@ -945,29 +943,7 @@ class Comic extends ActiveRecord
             );
         }
 
-        $timeToday = (new \DateTime('now'))->setTime(0, 0)->getTimestamp();
-
         $currentStrip = $this->current();
-        $archiveRotated = false;
-
-        if (!$this->active) {
-            // Detect if index is at last position
-            // If it is then cycle
-            if (
-                $this->type === self::TYPE_DATE &&
-                $currentStrip->index->toDateTime()->getTimestamp() == $this->last_index->toDateTime()->getTimestamp()
-            ) {
-                $strip = $this->findStrip($this->first_index);
-                $archiveRotated = true;
-            } elseif (
-                $this->type === self::TYPE_ID &&
-                $currentStrip->index == $this->last_index
-            ) {
-                $strip = $this->findStrip($this->first_index);
-                $archiveRotated = true;
-            }
-        }
-
         if (!$currentStrip) {
             return $this->addScrapeError(
                 '{title}({id}) could not find any strip for the index {index}',
@@ -979,74 +955,54 @@ class Comic extends ActiveRecord
             );
         }
 
-        if (
-            $currentStrip->date instanceof UTCDateTime &&
-            $currentStrip->date->toDateTime()->getTimestamp() === $timeToday
-        ) {
-            $strip = $currentStrip;
-        } elseif (!$archiveRotated) {
+        $timeToday = (new \DateTime('today'))->getTimestamp();
+
+        do {
+            $has_next = false;
+
             if (
+                !$this->active &&
                 (
+                    (
+                        $this->type === self::TYPE_DATE &&
+                        $this->index($currentStrip->index)->toDateTime()->getTimestamp() === $this->getLastIndexValue()->toDateTime()->getTimestamp()
+                    ) || (
+                        $this->type === self::TYPE_ID &&
+                        $this->index($currentStrip->index) === $this->getLastIndexValue()
+                    )
+                )
+            ) {
+                // We rotate the archive going back to first_index
+                $strip = $this->findStrip($this->index($this->first_index));
+            } else {
                 $strip = $this->next(
                     $currentStrip,
                     true,
                     $this->active
                         ? ['date' => new UTCDateTime($timeToday * 1000)]
                         : []
-                )
-                ) === null
-            ) {
-                return $this->addScrapeError(
-                    '{title}({id}) could not find next from {url}',
-                    [
-                        'title' => $this->title,
-                        'id' => (String)$this->_id,
-                        'url' => $this->scrapeUrl($currentStrip->index)
-                    ]
                 );
             }
-        }
 
-        $this->current_index = $strip->index;
-        $this->last_checked = new UTCDateTime($timeToday * 1000);
-        if (!$this->save(false, ['last_checked', 'current_index'])) {
-            return $this->addScrapeError(
-                '{title}({id}) Could not save last checked and current_index for {id}',
-                [
-                    'title' => $this->title,
-                    'id' => (String)$this->_id
-                ]
-            );
-        }
-
-        do {
-            $has_next = false;
-            if ($strip && $this->active && ($strip->next || $force)) {
-                $strip = $this->next(
-                    $strip,
-                    true,
-                    $this->active
-                        ? ['date' => new UTCDateTime($timeToday * 1000)]
-                        : []
-                );
-
-                if ($strip) {
-                    $this->current_index = $strip->index;
-                    $this->last_checked = new UTCDateTime($timeToday * 1000);
-                    if (!$this->save(false, ['last_checked', 'current_index'])) {
-                        return $this->addScrapeError(
-                            '{title}({id}) Could not save last checked and current_index for {id}',
-                            [
-                                'title' => $this->title,
-                                'id' => (String)$this->_id
-                            ]
-                        );
-                    } else {
-                        $has_next = true;
-                    }
+            if ($strip) {
+                $this->current_index = $this->index($strip->index);
+                $this->last_checked = new UTCDateTime($timeToday * 1000);
+                if (!$this->save(false, ['last_checked', 'current_index'])) {
+                    return $this->addScrapeError(
+                        '{title}({id}) Could not save last checked and current_index for {id}',
+                        [
+                            'title' => $this->title,
+                            'id' => (String)$this->_id
+                        ]
+                    );
                 }
             }
-        } while ($has_next);
+
+            if ($this->active && $strip && ($strip->next || $force)) {
+                $currentStrip = $strip;
+                $has_next = true;
+            }
+        } while($has_next);
     }
 
     public function getScrapeDom(&$url, $ignoreErrors = false)
