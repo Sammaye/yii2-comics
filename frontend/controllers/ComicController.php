@@ -65,7 +65,13 @@ class ComicController extends Controller
             return $this->render('comicNotFound');
         }
 
-        if (!$current = $comic->current($comic->index($index, 'd-m-Y'))) {
+        $current = $comic->findStrip(
+            $comic->index($index ?: $comic->current_index, 'd-m-Y'),
+            [],
+            false
+        );
+
+        if (!$current) {
             return $this->render('comicStripNotFound', ['model' => $comic]);
         }
 
