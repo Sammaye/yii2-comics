@@ -9,7 +9,7 @@ class DebugModule extends BaseDebugModule
 {
     private $_basePath;
 
-    protected function checkAccess()
+    protected function checkAccess($action)
     {
         $user = Yii::$app->getUser();
 
@@ -19,7 +19,7 @@ class DebugModule extends BaseDebugModule
         ) {
             return true;
         }
-        return parent::checkAccess();
+        return parent::checkAccess($action);
     }
 
     /**
