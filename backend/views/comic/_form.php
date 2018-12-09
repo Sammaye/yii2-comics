@@ -97,6 +97,7 @@ $(document).on('change', '#scraper_user_agent_prefill', function(e){
                         <?= $form->field($model, 'scraper_user_agent')->label(false) ?>
                     </div>
                 </div>
+                <?= $form->field($model, 'classic_edition')->checkbox() ?>
             </div>
         </div>
     </div>

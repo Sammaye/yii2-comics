@@ -151,14 +151,19 @@ class Comic extends ActiveRecord
             [
                 [
                     'active',
-                    'live'
+                    'live',
+                    'classic_edition',
                 ],
                 'integer',
                 'min' => 0,
                 'max' => 1
             ],
             [
-                ['active', 'live'],
+                [
+                    'active',
+                    'live',
+                    'classic_edition',
+                ],
                 'filter',
                 'filter' => 'intval'
             ],
@@ -337,6 +342,7 @@ class Comic extends ActiveRecord
 
             'active',
             'live',
+            'classic_edition',
             'last_checked',
             'updated_at',
             'created_at'
@@ -998,7 +1004,12 @@ class Comic extends ActiveRecord
                 }
             }
 
-            if ($this->active && $strip && ($strip->next || $force)) {
+            if (
+                $strip &&
+                $this->active &&
+                !$this->classic_edition &&
+                ($strip->next || $force)
+            ) {
                 $currentStrip = $strip;
                 $has_next = true;
             }
