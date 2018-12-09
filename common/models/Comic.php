@@ -641,10 +641,9 @@ class Comic extends ActiveRecord
         return false;
     }
 
-    public function current($index, array $data = [])
+    public function current()
     {
-        $index = $this->index($index ?: $this->current_index);
-        return $this->findStrip($index, $data);
+        return $this->findStrip($this->getCurrentIndexValue());
     }
 
     public function previous(ComicStrip $strip, array $data = [])
