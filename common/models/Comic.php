@@ -979,6 +979,11 @@ class Comic extends ActiveRecord
             ) {
                 // We rotate the archive going back to first_index
                 $strip = $this->findStrip($this->index($this->first_index));
+            } elseif (
+                $currentStrip->date->toDateTime()->getTimestamp() === $timeToday &&
+                (!$this->active || $this->classic_edition)
+            ) {
+                $strip = $currentStrip;
             } else {
                 $strip = $this->next(
                     $currentStrip,
