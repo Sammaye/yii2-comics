@@ -980,6 +980,7 @@ class Comic extends ActiveRecord
                 // We rotate the archive going back to first_index
                 $strip = $this->findStrip($this->index($this->first_index));
             } elseif (
+                $currentStrip->date instanceof UTCDateTime &&
                 $currentStrip->date->toDateTime()->getTimestamp() === $timeToday &&
                 (!$this->active || $this->classic_edition)
             ) {
@@ -988,9 +989,7 @@ class Comic extends ActiveRecord
                 $strip = $this->next(
                     $currentStrip,
                     true,
-                    $this->active
-                        ? ['date' => new UTCDateTime($timeToday * 1000)]
-                        : []
+                    ['date' => new UTCDateTime($timeToday * 1000)]
                 );
             }
 
