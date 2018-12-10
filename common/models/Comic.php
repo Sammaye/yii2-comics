@@ -1005,6 +1005,15 @@ class Comic extends ActiveRecord
                         ]
                     );
                 }
+            } else {
+                $this->addScrapeError(
+                    '{title}({id}) could not find next from {url}',
+                    [
+                        'title' => $this->title,
+                        'id' => (String)$this->_id,
+                        'url' => $this->scrapeUrl($currentStrip->index)
+                    ]
+                );
             }
 
             if (
